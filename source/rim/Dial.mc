@@ -24,14 +24,18 @@ module Dial {
     const MIDNIGHT_DEGREES = HALF_TURN;
     const MINUTES_PER_DAY = HOURS * Clock.MINUTES_PER_HOUR;
 
+    var screenWidth as Number = 0;
+    var screenHeight as Number = 0;
     var centerX as Number = 0;
     var centerY as Number = 0;
     var rim as Number = 0;
 
     //! Before anything sizes itself off the glass
     function setup(dc as Dc) as Void {
-        centerX = dc.getWidth() / 2;
-        centerY = dc.getHeight() / 2;
+        screenWidth = dc.getWidth();
+        screenHeight = dc.getHeight();
+        centerX = screenWidth / 2;
+        centerY = screenHeight / 2;
         rim = (centerX < centerY) ? centerX : centerY;
     }
 

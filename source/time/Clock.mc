@@ -45,6 +45,10 @@ module Clock {
         return twelveHour(hour);
     }
 
+    function isMorning(hour as Number) as Boolean {
+        return hour < HOURS_PER_HALF_DAY;
+    }
+
     //! Midnight and noon read as 12, not 0
     function twelveHour(hour as Number) as Number {
         var onFace = hour % HOURS_PER_HALF_DAY;

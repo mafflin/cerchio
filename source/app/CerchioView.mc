@@ -18,6 +18,7 @@ class CerchioView extends WatchUi.WatchFace {
     private var numerals as RimNumerals;
     private var dayCircle as DayCircle;
     private var hourHand as HourHand;
+    private var statusBar as StatusBar;
     private var secondsHand as SecondsHand;
     private var faceBuffer as FaceBuffer;
 
@@ -41,6 +42,7 @@ class CerchioView extends WatchUi.WatchFace {
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
+        statusBar = new StatusBar();
         secondsHand = new SecondsHand();
         faceBuffer = new FaceBuffer();
 
@@ -186,6 +188,7 @@ class CerchioView extends WatchUi.WatchFace {
         numerals.draw(dc);
         dayCircle.draw(dc);
         hourHand.draw(dc);
+        statusBar.draw(dc);
         timeDisplay.draw(dc);
     }
 

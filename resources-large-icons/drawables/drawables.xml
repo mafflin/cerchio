@@ -1,14 +1,18 @@
 <!--
-    Every icon below is tinted at draw time - Icon.paint hands :tintColor to
-    drawBitmap2 - so each one is packed as PNG. Left alone the resource
-    compiler converts a bitmap to the device's native format, which carries a
-    palette, and drawBitmap2 rejects a palettized source with "Source must not
-    use a color palette". LauncherIcon is drawn by the system and never
-    tinted, so it keeps the default packing.
+    The 36px status bar icons, for the larger screens.
+
+    These ids deliberately repeat resources/drawables/drawables.xml: monkey.jungle
+    puts this directory after the base one on the resourcePath of every device
+    with a screen of 360x360 or larger, and a repeated id overrides the earlier
+    one. LauncherIcon is not listed, so it keeps the base declaration.
+
+    packingFormat is on each of them for the same reason as in the base file:
+    a tinted bitmap may not carry a palette.
+
+    "large-icons" is not a device qualifier, so nothing picks this directory up
+    on its own - only the resourcePath lines in monkey.jungle do.
 -->
 <drawables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <bitmap id="LauncherIcon" filename="launcher_icon.png" />
-
     <bitmap id="Alarm" filename="alarm/alarm.png" packingFormat="png" />
     <bitmap id="Phone" filename="phone/phone.png" packingFormat="png" />
 

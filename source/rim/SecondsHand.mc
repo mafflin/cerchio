@@ -123,8 +123,8 @@ class SecondsHand {
 
         lefts[second] = max(min(innerXs[second], outerXs[second]) - reach, 0);
         tops[second] = max(min(innerYs[second], outerYs[second]) - reach, 0);
-        rights[second] = min(max(innerXs[second], outerXs[second]) + reach + 1, Dial.centerX * 2);
-        bottoms[second] = min(max(innerYs[second], outerYs[second]) + reach + 1, Dial.centerY * 2);
+        rights[second] = min(max(innerXs[second], outerXs[second]) + reach + 1, Dial.screenWidth);
+        bottoms[second] = min(max(innerYs[second], outerYs[second]) + reach + 1, Dial.screenHeight);
     }
 
     private function min(first as Number, second as Number) as Number {
