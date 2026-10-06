@@ -24,6 +24,7 @@ class CerchioView extends WatchUi.WatchFace {
         dayColors = new DayColors(daylight);
         numerals = new RimNumerals();
         dayCircle = new DayCircle(dayColors);
+        dayCircle.setBackground(background);
     }
 
     //! Size everything for this screen
@@ -48,8 +49,9 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! Everything the draw reads, before anything draws
     private function refreshReadings() as Void {
-        daylight.refresh();
-        dayColors.refresh();
+        if (daylight.refresh()) {
+            dayColors.refresh();
+        }
     }
 
     //! Once per dc: the dc between two updates is the system's
