@@ -5,7 +5,7 @@ import Toybox.Math;
 //! 01 through 24 against the edge of the glass, 24 at the bottom. Turned to
 //! face the middle, the bottom half flipped so it does not read upside down;
 //! a watch without vector fonts gets them upright. Colored with the day, in
-//! the data color until the sun is known. A highlighted numeral is a font
+//! the plain color until the sun is known or when not following it. A highlighted numeral is a font
 //! step larger in the accent color, centered on the others' line.
 class RimNumerals {
 
@@ -32,8 +32,9 @@ class RimNumerals {
     private var highlightFont as FontType = HIGHLIGHT_SYSTEM_FONT;
     private var isTurned as Boolean = false;
 
-    //! Until the sun is known
+    //! Until the sun is known, and always when not following it
     private var color as Number = Graphics.COLOR_WHITE;
+    private var followsSun as Boolean = true;
     private var highlightColor as Number = Graphics.COLOR_WHITE;
 
     //! The numeral draw() picks out, null for none
@@ -79,6 +80,10 @@ class RimNumerals {
 
     function setColor(color as Number) as Void {
         self.color = color;
+    }
+
+    function setFollowsSun(followsSun as Boolean) as Void {
+        self.followsSun = followsSun;
     }
 
     function setHighlightColor(highlightColor as Number) as Void {
@@ -141,6 +146,10 @@ class RimNumerals {
     }
 
     private function plainColorAt(index as Number) as Number {
+        if (!followsSun) {
+            return color;
+        }
+
         var dayColor = dayColors.knownColorAt(Dial.positionOfHour(index));
 
         if (dayColor == null) {

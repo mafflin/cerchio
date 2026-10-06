@@ -199,14 +199,17 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     //! Accent: the seconds hand and the goal numeral. Data: the time, the
-    //! status row, the data field, and the rim numerals until the sun is known.
+    //! status row, the data field, and the rim numerals until the sun is known
+    //! - unless the style grays them.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
+        var gray = Styles.hasGrayNumerals(editor.style());
 
         secondsHand.setColor(accent);
         numerals.setHighlightColor(accent);
-        numerals.setColor(data);
+        numerals.setColor(gray ? Palette.GRAY : data);
+        numerals.setFollowsSun(!gray);
         timeDisplay.setColor(data);
         statusBar.setColor(data);
         field.setColor(data);
@@ -304,7 +307,7 @@ class CerchioView extends WatchUi.WatchFace {
     private function refreshGoal() as Void {
         numerals.setHighlightIndex(null);
 
-        if (editor.style() != Styles.GOAL) {
+        if (!Styles.hasGoal(editor.style())) {
             return;
         }
 

@@ -3,6 +3,7 @@
 
     <string id="stylePlain">Plain</string>
     <string id="styleGoal">Goal</string>
+    <string id="styleGoalGray">Goal Gray</string>
 
     <string id="ColorWhite">White</string>
     <string id="ColorGray">Gray</string>
