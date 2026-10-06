@@ -1,29 +1,28 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Math;
 
-//! The seconds hand: a line from the glass in to the numerals' inner edge,
-//! clear of the circle. Every position is worked out once per screen, so a
-//! tick only looks up a line and its box. In low power mode a partial update
+//! The seconds hand: an equilateral arrow pointing out, its tip on the
+//! glass. Every position is worked out once per screen, so a tick only
+//! looks up three corners and their box. In low power mode a partial update
 //! copies the face back over the old box and the new one, then draws.
 class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! Three quarters wider than the hour hand
-    private const WIDTH_NUMERATOR = 2;
-    private const WIDTH_DIVISOR = 1;
+    //! The base, in degrees at the glass
+    private const WIDTH_DEGREES = 6;
 
-    //! Past the pen on every side, for its smoothed edges
+    //! An equilateral triangle's height over its base
+    private const EQUILATERAL_HEIGHT = 0.866;
+
+    //! Past the corners on every side, for the smoothed edges
     private const PADDING = 1;
 
     private var color as Number = Graphics.COLOR_WHITE;
-    private var width as Number = 1;
 
-    //! Per second: the line's ends, and the box it fits in
-    private var innerXs as Array<Number>;
-    private var innerYs as Array<Number>;
-    private var outerXs as Array<Number>;
-    private var outerYs as Array<Number>;
+    //! Per second: the tip, the two base corners, and the box they fit in
+    private var corners as Array<Array<[Numeric, Numeric]> >;
     private var lefts as Array<Number>;
     private var tops as Array<Number>;
     private var rights as Array<Number>;
@@ -33,10 +32,7 @@ class SecondsHand {
     private var drawnSecond as Number? = null;
 
     function initialize() {
-        innerXs = new [COUNT] as Array<Number>;
-        innerYs = new [COUNT] as Array<Number>;
-        outerXs = new [COUNT] as Array<Number>;
-        outerYs = new [COUNT] as Array<Number>;
+        corners = new [COUNT] as Array<Array<[Numeric, Numeric]> >;
         lefts = new [COUNT] as Array<Number>;
         tops = new [COUNT] as Array<Number>;
         rights = new [COUNT] as Array<Number>;
@@ -47,14 +43,13 @@ class SecondsHand {
         self.color = color;
     }
 
-    //! The round pen ends at innerEdge; outside, it runs off the glass
-    function prepare(hourHandWidth as Number, innerEdge as Number) as Void {
-        width = hourHandWidth * WIDTH_NUMERATOR / WIDTH_DIVISOR;
-
-        var inner = innerEdge + ((width + 1) / 2);
+    //! After Dial.setup()
+    function prepare() as Void {
+        var baseWidth = (2 * Dial.rim * Math.sin(Math.toRadians(WIDTH_DEGREES / 2.0))).toFloat();
+        var baseRadius = (Dial.rim - (baseWidth * EQUILATERAL_HEIGHT)).toFloat();
 
         for (var second = 0; second < COUNT; second++) {
-            place(second, inner);
+            place(second, baseRadius, baseWidth / 2);
         }
 
         drawnSecond = null;
@@ -89,14 +84,13 @@ class SecondsHand {
     }
 
     private function paint(dc as Dc, second as Number) as Void {
-        dc.setPenWidth(width);
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawLine(innerXs[second], innerYs[second], outerXs[second], outerYs[second]);
+        dc.fillPolygon(corners[second]);
 
         drawnSecond = second;
     }
 
-    //! The box around both seconds' lines
+    //! The box around both seconds' arrows
     private function clipAround(dc as Dc, first as Number, second as Number) as Void {
         var left = Numbers.min(lefts[first], lefts[second]);
         var top = Numbers.min(tops[first], tops[second]);
@@ -106,24 +100,46 @@ class SecondsHand {
         dc.setClip(left, top, right - left, bottom - top);
     }
 
-    private function place(second as Number, inner as Number) as Void {
+    private function place(second as Number, baseRadius as Float, halfWidth as Float) as Void {
         var radians = Dial.radiansOf(second * Dial.DEGREES_PER_SECOND);
+        var outX = Math.cos(radians);
 
-        innerXs[second] = Dial.pointX(radians, inner);
-        innerYs[second] = Dial.pointY(radians, inner);
-        outerXs[second] = Dial.pointX(radians, Dial.rim);
-        outerYs[second] = Dial.pointY(radians, Dial.rim);
+        // Screen y grows downward.
+        var outY = -Math.sin(radians);
+
+        // Across is out turned a quarter.
+        var acrossX = -outY * halfWidth;
+        var acrossY = outX * halfWidth;
+        var baseX = Dial.centerX + (baseRadius * outX);
+        var baseY = Dial.centerY + (baseRadius * outY);
+
+        corners[second] = [
+            [Dial.pointX(radians, Dial.rim), Dial.pointY(radians, Dial.rim)],
+            [Dial.pixel(baseX + acrossX), Dial.pixel(baseY + acrossY)],
+            [Dial.pixel(baseX - acrossX), Dial.pixel(baseY - acrossY)]
+        ] as Array<[Numeric, Numeric]>;
 
         boxAround(second);
     }
 
-    //! Past the ends by the round pen and the padding, cut down to the screen
+    //! Round the corners by the padding, cut down to the screen
     private function boxAround(second as Number) as Void {
-        var reach = ((width + 1) / 2) + PADDING;
+        var points = corners[second];
+        var left = points[0][0].toNumber();
+        var top = points[0][1].toNumber();
+        var right = left;
+        var bottom = top;
 
-        lefts[second] = Numbers.max(Numbers.min(innerXs[second], outerXs[second]) - reach, 0);
-        tops[second] = Numbers.max(Numbers.min(innerYs[second], outerYs[second]) - reach, 0);
-        rights[second] = Numbers.min(Numbers.max(innerXs[second], outerXs[second]) + reach + 1, Dial.screenWidth);
-        bottoms[second] = Numbers.min(Numbers.max(innerYs[second], outerYs[second]) + reach + 1, Dial.screenHeight);
+        for (var i = 1; i < points.size(); i++) {
+            left = Numbers.min(left, points[i][0].toNumber());
+            top = Numbers.min(top, points[i][1].toNumber());
+            right = Numbers.max(right, points[i][0].toNumber());
+            bottom = Numbers.max(bottom, points[i][1].toNumber());
+        }
+
+        lefts[second] = Numbers.max(left - PADDING, 0);
+        tops[second] = Numbers.max(top - PADDING, 0);
+        rights[second] = Numbers.min(right + PADDING + 1, Dial.screenWidth);
+        bottoms[second] = Numbers.min(bottom + PADDING + 1, Dial.screenHeight);
     }
 }
