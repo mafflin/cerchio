@@ -26,6 +26,9 @@ class Icon {
 
     private var shown as Boolean = false;
 
+    //! Off for the status slot's item the editor did not pick
+    private var enabled as Boolean = true;
+
     //! resourceId is null for icons that override bitmap()
     function initialize(resourceId as ResourceId?) {
         self.resourceId = resourceId;
@@ -36,10 +39,14 @@ class Icon {
         return true;
     }
 
+    function setEnabled(enabled as Boolean) as Void {
+        self.enabled = enabled;
+    }
+
     //! Settle whether the icon shows this draw. Compared to true: a setting
     //! like alarmCount is null on a watch without the feature.
     function updateShown(settings as System.DeviceSettings) as Boolean {
-        shown = (isReporting(settings) == true);
+        shown = enabled && (isReporting(settings) == true);
 
         return shown;
     }
@@ -78,7 +85,7 @@ class Icon {
         return loaded as BitmapResource;
     }
 
-    //! Overridden by the battery, which says something with color
+    //! Overridden by the battery and the wind, which say something with color
     protected function tint() as Number {
         return TINT;
     }

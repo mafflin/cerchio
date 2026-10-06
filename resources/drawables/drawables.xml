@@ -11,6 +11,7 @@
 
     <bitmap id="Alarm" filename="alarm/alarm.png" packingFormat="png" />
     <bitmap id="Phone" filename="phone/phone.png" packingFormat="png" />
+    <bitmap id="Notifications" filename="notifications/notifications.png" packingFormat="png" />
 
     <bitmap id="Battery0" filename="battery/battery_0.png" packingFormat="png" />
     <bitmap id="Battery10" filename="battery/battery_10.png" packingFormat="png" />

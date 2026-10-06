@@ -24,6 +24,7 @@ class CerchioView extends WatchUi.WatchFace {
     private var numerals as RimNumerals;
     private var dayCircle as DayCircle;
     private var hourHand as HourHand;
+    private var windReading as WindReading;
     private var statusBar as StatusBar;
     private var field as ComplicationField;
     private var secondsHand as SecondsHand;
@@ -57,7 +58,8 @@ class CerchioView extends WatchUi.WatchFace {
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
-        statusBar = new StatusBar();
+        windReading = new WindReading();
+        statusBar = new StatusBar(windReading);
         field = new ComplicationField(SlotId.CENTER, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY);
         secondsHand = new SecondsHand();
         activityReading = new ActivityReading();
@@ -91,6 +93,7 @@ class CerchioView extends WatchUi.WatchFace {
     //! editedType is null while initializing
     function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
         editor.apply(config, editedType);
+        statusBar.showNotifications(editor.showsNotifications());
         redraw();
     }
 
@@ -275,6 +278,8 @@ class CerchioView extends WatchUi.WatchFace {
         if (daylight.refresh()) {
             dayColors.refresh();
         }
+
+        windReading.refresh();
 
         refreshGoal();
     }

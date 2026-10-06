@@ -18,6 +18,9 @@ class Editor {
 
     private var currentStyle as Number = Styles.DEFAULT;
 
+    //! The status slot's pick: notifications, or the wind
+    private var notificationsPicked as Boolean = false;
+
     //! While the editor pulses the field, it draws the field itself
     private var pulsing as Boolean = false;
 
@@ -36,6 +39,10 @@ class Editor {
         return pulsing;
     }
 
+    function showsNotifications() as Boolean {
+        return notificationsPicked;
+    }
+
     //! Accent: the seconds hand and the goal numeral. Data: the rim numerals.
     //! editedType is null while initializing.
     function apply(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
@@ -51,7 +58,8 @@ class Editor {
         }
     }
 
-    //! The drawable to pulse; null for the goal, which has none
+    //! The drawable to pulse; null for the goal and the status slot, which
+    //! have none
     function pulse(complication as ComplicationRef) as ComplicationDrawableRef? {
         if (complication.uniqueIdentifier != SlotId.CENTER) {
             return null;
@@ -99,6 +107,14 @@ class Editor {
     //! null until picked: the default type stands
     private function applySlot(slot as WatchFaceConfig.ComplicationRef) as Void {
         var complicationId = slot.complicationId;
+
+        if (slot.uniqueIdentifier == SlotId.STATUS) {
+            if (complicationId != null) {
+                notificationsPicked = (complicationId.getType() == Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT);
+            }
+
+            return;
+        }
 
         if (slot.uniqueIdentifier == SlotId.GOAL) {
             if (complicationId != null) {

@@ -16,6 +16,15 @@ class StatusBar {
 
     private var icons as Array<Icon>;
 
+    //! Always on screen, so its artwork is the row's measure
+    private var battery as Battery;
+
+    //! Has to be told its size
+    private var wind as Wind;
+
+    //! Shares the wind's place: the editor picks one
+    private var notifications as Notifications;
+
     //! The line below the time the row mirrors
     private var mirrorY as Number = 0;
 
@@ -25,13 +34,27 @@ class StatusBar {
     private var rowHeight as Number = 0;
     private var gap as Number = 0;
 
-    function initialize() {
+    function initialize(windReading as WindReading) {
+        battery = new Battery();
+        wind = new Wind(windReading);
+        notifications = new Notifications();
+
         icons = [
-            new Battery(),
+            battery,
             new Phone(),
             new Alarm(),
+            wind,
+            notifications,
             new Meridiem()
         ] as Array<Icon>;
+
+        showNotifications(false);
+    }
+
+    //! The status slot: notifications, or the wind
+    function showNotifications(shown as Boolean) as Void {
+        notifications.setEnabled(shown);
+        wind.setEnabled(!shown);
     }
 
     //! Once per layout
@@ -45,6 +68,9 @@ class StatusBar {
         if (count == 0) {
             return;
         }
+
+        // The wind has no bitmap to measure; it fills the battery's square.
+        wind.setSquare(battery.height());
 
         layOut(count);
         drawIcons(dc);

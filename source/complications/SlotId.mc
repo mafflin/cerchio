@@ -2,6 +2,7 @@
 module SlotId {
     enum Value {
         CENTER = 1,
-        GOAL = 2
+        GOAL = 2,
+        STATUS = 3
     }
 }
