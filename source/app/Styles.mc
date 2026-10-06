@@ -6,7 +6,8 @@ module Styles {
         PLAIN = 1,
         GOAL = 2,
         GOAL_GRAY = 3,
-        GOAL_GRAY_SMALL = 4
+        GOAL_GRAY_SMALL = 4,
+        GOAL_GRAY_EDGE = 5
     }
 
     const DEFAULT = PLAIN;
@@ -18,7 +19,12 @@ module Styles {
 
     //! The numerals gray rather than in the day's colors
     function hasGrayNumerals(style as Number) as Boolean {
-        return (style == GOAL_GRAY) || hasSmallTime(style);
+        return (style == GOAL_GRAY) || hasSmallTime(style) || hasEdgeCircle(style);
+    }
+
+    //! The circle round the edge of the glass, the numerals inside it
+    function hasEdgeCircle(style as Number) as Boolean {
+        return style == GOAL_GRAY_EDGE;
     }
 
     //! The time a font step smaller

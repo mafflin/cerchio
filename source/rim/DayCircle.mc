@@ -2,10 +2,11 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-//! A circle just inside the numerals in the day's colors, a gap wherever the
-//! color changes; whole in the fallback color until the sun is known. Solar
-//! noon is a piece of the line as long as the line is wide, split off by a
-//! gap either side. drawArc works in whole degrees, too coarse for a gap, so
+//! A circle in the day's colors, just inside the numerals or round the edge
+//! of the glass with the numerals inside it; a gap wherever the color
+//! changes, whole in the fallback color until the sun is known. Solar noon is
+//! a piece of the line as long as the line is wide, split off by a gap either
+//! side. drawArc works in whole degrees, too coarse for a gap, so
 //! the sectors run edge to edge and the gaps are cut across them as lines.
 class DayCircle {
 
@@ -14,8 +15,9 @@ class DayCircle {
     private const PEN_BASE = 2;
     private const PEN_DIVISOR = 54;
 
-    //! Air between the numerals and the circle, as a share of the radius
-    private const GAP_DIVISOR = 32;
+    //! Between the glass and the line's outer edge, so the smoothing is not
+    //! cut off by the round screen
+    private const EDGE_MARGIN = 1;
 
     //! A gap along the circle: a share of the radius past an offset, so it
     //! grows faster than the screen - the small MIP glass needs little, the
@@ -43,10 +45,20 @@ class DayCircle {
         self.background = background;
     }
 
-    //! The pen reaches half its width past the radius
-    function prepare(numeralsInnerEdge as Number) as Void {
+    //! After Dial.setup()
+    function prepareAtEdge() as Void {
+        placeOutsideAt(Dial.rim - EDGE_MARGIN);
+    }
+
+    function prepareInside(numeralsInnerEdge as Number) as Void {
+        placeOutsideAt(numeralsInnerEdge - (Dial.rim / Dial.AIR_DIVISOR));
+    }
+
+    //! The line's outer edge at outerEdge; the pen reaches half its width
+    //! past the radius
+    private function placeOutsideAt(outerEdge as Number) as Void {
         penWidth = PEN_BASE + (Dial.rim / PEN_DIVISOR);
-        radius = numeralsInnerEdge - (Dial.rim / GAP_DIVISOR) - ((penWidth + 1) / 2);
+        radius = outerEdge - ((penWidth + 1) / 2);
 
         cutWidth = (Dial.rim - SPLIT_OFFSET) / SPLIT_DIVISOR;
         cutReach = (penWidth / 2) + 1;
@@ -55,6 +67,11 @@ class DayCircle {
     //! The line's middle, from the center
     function middle() as Number {
         return radius;
+    }
+
+    //! The line's inner edge, from the center
+    function inner() as Number {
+        return radius - ((penWidth + 1) / 2);
     }
 
     function width() as Number {

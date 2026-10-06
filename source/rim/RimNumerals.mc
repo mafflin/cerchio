@@ -2,7 +2,8 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-//! 01 through 24 against the edge of the glass, 24 at the bottom. Turned to
+//! 01 through 24 against the edge of the glass, or just inside the circle when
+//! it runs round the glass; 24 at the bottom. Turned to
 //! face the middle, the bottom half flipped so it does not read upside down;
 //! a watch without vector fonts gets them upright. Colored with the day, in
 //! the plain color until the sun is known or when not following it. A highlighted numeral is a font
@@ -11,9 +12,6 @@ class RimNumerals {
 
     private const COUNT = Dial.HOURS;
     private const FORMAT = "%02d";
-
-    //! Air between the glass and the digits, as a share of the radius
-    private const GAP_DIVISOR = 32;
 
     //! The system fonts the vector ones are sized off, and fall back to
     private const SYSTEM_FONT = Graphics.FONT_XTINY;
@@ -102,10 +100,11 @@ class RimNumerals {
     }
 
     //! After Dial.setup()
-    function prepare(dc as Dc) as Void {
+    //! outerLimit: the glass, or the circle's inner edge
+    function prepare(dc as Dc, outerLimit as Number) as Void {
         chooseFont(dc);
 
-        outerEdge = Dial.rim - (Dial.rim / GAP_DIVISOR);
+        outerEdge = outerLimit - (Dial.rim / Dial.AIR_DIVISOR);
         inkHeight = Fonts.digitHeightOf(dc, font);
         descentShift = shiftOf(dc, font, inkHeight);
         highlightInk = Fonts.digitHeightOf(dc, highlightFont);
@@ -159,7 +158,7 @@ class RimNumerals {
         return dayColor;
     }
 
-    //! The digits reach the glass by their height, a highlight centered on
+    //! The digits reach the limit by their height, a highlight centered on
     //! the same line. The font box's center lies toward the baseline: inward
     //! for upright numerals, outward for flipped ones.
     private function placeTurned(index as Number) as Void {
@@ -178,9 +177,10 @@ class RimNumerals {
         angles[index] = angleOf(degrees, flipped);
     }
 
-    //! Upright, the digits reach the glass by their width at the sides and
+    //! Upright, the digits reach the limit by their width at the sides and
     //! their height at the top and bottom. The highlight leaves the inner
-    //! edge to the others, so the circle does not move for it.
+    //! edge to the others, so neither the circle nor the seconds hand moves
+    //! for it.
     private function placeUpright(dc as Dc, index as Number) as Void {
         var radians = Dial.radiansOf(Dial.positionOfHour(index));
         var reach = uprightReach(dc, index, font, inkHeight, radians);
@@ -196,7 +196,7 @@ class RimNumerals {
         angles[index] = 0;
     }
 
-    //! How far an upright numeral reaches from its center toward the glass
+    //! How far an upright numeral reaches from its center toward the limit
     private function uprightReach(dc as Dc, index as Number, numeralFont as FontType, ink as Number, radians as Decimal) as Float {
         var halfWidth = dc.getTextWidthInPixels(texts[index], numeralFont) / 2.0;
 

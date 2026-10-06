@@ -24,6 +24,10 @@ module Dial {
     const MIDNIGHT_DEGREES = HALF_TURN;
     const MINUTES_PER_DAY = HOURS * Clock.MINUTES_PER_HOUR;
 
+    //! Air between the numerals and the glass or the circle, as a share of
+    //! the radius
+    const AIR_DIVISOR = 32;
+
     var screenWidth as Number = 0;
     var screenHeight as Number = 0;
     var centerX as Number = 0;

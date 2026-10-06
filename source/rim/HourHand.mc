@@ -7,8 +7,9 @@ import Toybox.Lang;
 class HourHand {
 
     //! How far the pen ends reach past the circle's edges, as a share of the
-    //! radius: half the air between the circle and the numerals
-    private const REACH_DIVISOR = 64;
+    //! radius: half the air between the circle and the numerals. With the
+    //! circle round the glass, the outer end runs off it.
+    private const REACH_DIVISOR = Dial.AIR_DIVISOR * 2;
 
     //! The gaps either side, as a share of the radius
     private const GAP_DIVISOR = 64;

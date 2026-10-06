@@ -13,7 +13,8 @@ built-in complications.
 
 - Goal style: the numeral as far round as your steps, floors or intensity
   minutes goal stands out, larger and in the accent color; Goal Gray sets it
-  against gray numerals
+  against gray numerals, Goal Gray Small adds a smaller time, and Goal Gray
+  Edge moves the circle to the edge of the screen
 - Set on the watch in Garmin's watch face editor: style, data field, goal,
   wind or messages, a color for the time and data, and an accent for the
   seconds hand and goal

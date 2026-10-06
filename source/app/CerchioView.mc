@@ -36,6 +36,9 @@ class CerchioView extends WatchUi.WatchFace {
     //! Asked once, not every update
     private var canSmooth as Boolean = false;
 
+    //! Which way round the rim was last laid out, null before the first
+    private var rimAtEdge as Boolean? = null;
+
     //! AMOLED: asleep, only the time shows
     private var needsBurnInProtection as Boolean = false;
     private var isAwake as Boolean = true;
@@ -76,13 +79,10 @@ class CerchioView extends WatchUi.WatchFace {
         needsBurnInProtection = Clock.settings().requiresBurnInProtection;
 
         Dial.setup(dc);
-        numerals.prepare(dc);
-        dayCircle.prepare(numerals.inner());
-        hourHand.prepare();
-        secondsHand.prepare(dayCircle.width(), numerals.inner());
         faceBuffer.prepare(dc);
         placeFrame(dc);
         loadSettings();
+        prepareRim(dc);
 
         // The editor shows a snapshot; live updates are not worth the power.
         if (!editMode) {
@@ -134,6 +134,8 @@ class CerchioView extends WatchUi.WatchFace {
             return;
         }
 
+        prepareRim(dc);
+
         var face = currentFace();
 
         if (face != null) {
@@ -152,6 +154,7 @@ class CerchioView extends WatchUi.WatchFace {
         }
 
         Clock.read();
+        prepareRim(dc);
 
         var face = currentFace();
 
@@ -179,6 +182,32 @@ class CerchioView extends WatchUi.WatchFace {
     function onExitSleep() as Void {
         isAwake = true;
         WatchUi.requestUpdate();
+    }
+
+    //! The circle inside the numerals, or round the glass with the numerals
+    //! inside it, by the style; laid out again only when that changes. The
+    //! hands size themselves off both.
+    private function prepareRim(dc as Dc) as Void {
+        var atEdge = Styles.hasEdgeCircle(editor.style());
+
+        if (atEdge == rimAtEdge) {
+            return;
+        }
+
+        if (atEdge) {
+            dayCircle.prepareAtEdge();
+            numerals.prepare(dc, dayCircle.inner());
+        } else {
+            numerals.prepare(dc, Dial.rim);
+            dayCircle.prepareInside(numerals.inner());
+        }
+
+        hourHand.prepare();
+        secondsHand.prepare(dayCircle.width(), numerals.inner());
+
+        rimAtEdge = atEdge;
+        faceBuffer.invalidate();
+        secondsHand.forget();
     }
 
     //! The status row above the time mirrors the line the field hangs from

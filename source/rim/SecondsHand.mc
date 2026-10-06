@@ -2,16 +2,16 @@ import Toybox.Graphics;
 import Toybox.Lang;
 
 //! The seconds hand: a line from the glass in to the numerals' inner edge,
-//! clear of the circle. Every position is worked out once per screen, so a
+//! across the numerals, and the circle too when it runs round the glass. Every position is worked out once per screen, so a
 //! tick only looks up a line and its box. In low power mode a partial update
 //! copies the face back over the old box and the new one, then draws.
 class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! Three quarters wider than the hour hand
-    private const WIDTH_NUMERATOR = 7;
-    private const WIDTH_DIVISOR = 4;
+    //! Twice as wide as the hour hand
+    private const WIDTH_NUMERATOR = 2;
+    private const WIDTH_DIVISOR = 1;
 
     //! Past the pen on every side, for its smoothed edges
     private const PADDING = 1;
