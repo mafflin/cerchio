@@ -5,6 +5,7 @@
             <style id="1" label="@Strings.stylePlain" default="true"/>
             <style id="2" label="@Strings.styleGoal"/>
             <style id="3" label="@Strings.styleGoalGray"/>
+            <style id="4" label="@Strings.styleGoalGraySmall"/>
         </styles>
         <!-- An explicit palette rather than allowAny: the editor wants a
              label per color. Every channel is 00, 55, AA or FF - the 64 color MIP palette -

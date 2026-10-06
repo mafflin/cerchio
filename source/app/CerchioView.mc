@@ -94,6 +94,7 @@ class CerchioView extends WatchUi.WatchFace {
     function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
         editor.apply(config, editedType);
         applyColors();
+        timeDisplay.setSmall(Styles.hasSmallTime(editor.style()));
         statusBar.showNotifications(editor.showsNotifications());
         redraw();
     }

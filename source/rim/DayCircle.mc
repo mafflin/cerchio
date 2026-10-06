@@ -11,7 +11,7 @@ class DayCircle {
 
     //! The line's width: a base, plus a share of the radius so the denser
     //! AMOLED glass gets a heavier line
-    private const PEN_BASE = 3;
+    private const PEN_BASE = 2;
     private const PEN_DIVISOR = 54;
 
     //! Air between the numerals and the circle, as a share of the radius
