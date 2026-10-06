@@ -10,10 +10,11 @@ class DayColors {
     private const TWILIGHT_COLOR = Palette.ORANGE;
     private const NIGHT_COLOR = Palette.SKY;
 
+    //! Until the sun is known
+    private const FALLBACK_COLOR = Graphics.COLOR_WHITE;
+
     private var daylight as Daylight;
 
-    //! Until the sun is known
-    private var fallbackColor as Number = Graphics.COLOR_WHITE;
 
     //! On the dial, null when not known
     private var sunrisePosition as Float? = null;
@@ -24,10 +25,6 @@ class DayColors {
 
     function initialize(daylight as Daylight) {
         self.daylight = daylight;
-    }
-
-    function setFallbackColor(fallbackColor as Number) as Void {
-        self.fallbackColor = fallbackColor;
     }
 
     //! Whenever the daylight has read anew
@@ -65,7 +62,7 @@ class DayColors {
         var set = sunsetPosition;
 
         if ((rise == null) || (set == null)) {
-            return fallbackColor;
+            return FALLBACK_COLOR;
         }
 
         if (isBetween(degrees, rise, set)) {

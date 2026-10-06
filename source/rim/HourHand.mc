@@ -13,7 +13,8 @@ class HourHand {
     //! The gaps either side, as a share of the radius
     private const GAP_DIVISOR = 64;
 
-    private var color as Number = Graphics.COLOR_WHITE;
+    private const COLOR = Graphics.COLOR_WHITE;
+
     private var width as Number = 1;
     private var gapLength as Number = 1;
 
@@ -26,10 +27,6 @@ class HourHand {
 
     function initialize(circle as DayCircle) {
         self.circle = circle;
-    }
-
-    function setColor(color as Number) as Void {
-        self.color = color;
     }
 
     //! After the circle is prepared
@@ -50,7 +47,7 @@ class HourHand {
         circle.drawGapsAround(dc, position, gapLength);
 
         dc.setPenWidth(width);
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(COLOR, Graphics.COLOR_TRANSPARENT);
         dc.drawLine(
             Dial.pointX(radians, innerEnd),
             Dial.pointY(radians, innerEnd),

@@ -1,3 +1,4 @@
+import Toybox.Application.WatchFaceConfig;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
@@ -6,7 +7,10 @@ import Toybox.WatchUi;
 //! drawn off screen once a minute; an update copies it and adds the hand.
 class CerchioView extends WatchUi.WatchFace {
 
-    private var background as Number = Graphics.COLOR_BLACK;
+    //! Until the editor picks one
+    private const DEFAULT_COLOR = Graphics.COLOR_WHITE;
+
+    private const BACKGROUND = Graphics.COLOR_BLACK;
 
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
@@ -35,7 +39,7 @@ class CerchioView extends WatchUi.WatchFace {
         dayColors = new DayColors(daylight);
         numerals = new RimNumerals();
         dayCircle = new DayCircle(dayColors);
-        dayCircle.setBackground(background);
+        dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
         secondsHand = new SecondsHand();
         faceBuffer = new FaceBuffer();
@@ -54,6 +58,16 @@ class CerchioView extends WatchUi.WatchFace {
         hourHand.prepare();
         secondsHand.prepare(dayCircle.width(), numerals.inner());
         faceBuffer.prepare(dc);
+        loadSettings();
+    }
+
+    //! Accent: the seconds hand. Data: the rim numerals.
+    function updateConfiguration(config as WatchFaceConfig.Settings) as Void {
+        secondsHand.setColor(colorOf(config.accentColor));
+        numerals.setColor(colorOf(config.complicationColor));
+
+        faceBuffer.invalidate();
+        WatchUi.requestUpdate();
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -111,6 +125,23 @@ class CerchioView extends WatchUi.WatchFace {
     function onExitSleep() as Void {
         isAwake = true;
         WatchUi.requestUpdate();
+    }
+
+    //! Null without watch face configuration support: the defaults stand
+    private function loadSettings() as Void {
+        var settings = WatchFaceConfig.getSettings(null);
+
+        if (settings != null) {
+            updateConfiguration(settings);
+        }
+    }
+
+    private function colorOf(chosen as WatchFaceConfig.Color?) as Number {
+        if ((chosen != null) && (chosen.color != null)) {
+            return chosen.color as Number;
+        }
+
+        return DEFAULT_COLOR;
     }
 
     private function isAlwaysOn() as Boolean {
@@ -185,7 +216,7 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     private function paintBackground(dc as Dc) as Void {
-        dc.setColor(background, background);
+        dc.setColor(BACKGROUND, BACKGROUND);
         dc.clear();
     }
 }
