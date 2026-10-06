@@ -10,13 +10,17 @@ class TimeDisplay {
     //! The largest numeric font, which Garmin sizes per device
     private const FONT = Graphics.FONT_NUMBER_THAI_HOT;
 
-    private const COLOR = Graphics.COLOR_WHITE;
+    private var color as Number = Graphics.COLOR_WHITE;
 
     function initialize() {
     }
 
+    function setColor(color as Number) as Void {
+        self.color = color;
+    }
+
     function draw(dc as Dc) as Void {
-        dc.setColor(COLOR, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             Dial.centerX,
             Dial.centerY,

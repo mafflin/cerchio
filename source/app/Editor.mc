@@ -11,12 +11,12 @@ class Editor {
     //! Until the editor picks one
     private const DEFAULT_COLOR = Graphics.COLOR_WHITE;
 
-    private var numerals as RimNumerals;
-    private var secondsHand as SecondsHand;
     private var field as ComplicationField;
     private var goalProgress as GoalProgress;
 
     private var currentStyle as Number = Styles.DEFAULT;
+    private var currentAccent as Number = DEFAULT_COLOR;
+    private var currentData as Number = DEFAULT_COLOR;
 
     //! The status slot's pick: notifications, or the wind
     private var notificationsPicked as Boolean = false;
@@ -24,15 +24,24 @@ class Editor {
     //! While the editor pulses the field, it draws the field itself
     private var pulsing as Boolean = false;
 
-    function initialize(numerals as RimNumerals, secondsHand as SecondsHand, field as ComplicationField, goalProgress as GoalProgress) {
-        self.numerals = numerals;
-        self.secondsHand = secondsHand;
+    function initialize(field as ComplicationField, goalProgress as GoalProgress) {
         self.field = field;
         self.goalProgress = goalProgress;
     }
 
     function style() as Number {
         return currentStyle;
+    }
+
+    //! The seconds hand and the goal numeral
+    function accentColor() as Number {
+        return currentAccent;
+    }
+
+    //! The time, the status row, the data field, and the rim numerals until
+    //! the sun is known
+    function dataColor() as Number {
+        return currentData;
     }
 
     function isPulsing() as Boolean {
@@ -43,13 +52,11 @@ class Editor {
         return notificationsPicked;
     }
 
-    //! Accent: the seconds hand and the goal numeral. Data: the rim numerals.
-    //! editedType is null while initializing.
+    //! editedType is null while initializing
     function apply(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
         currentStyle = styleOf(config.styleId);
-        secondsHand.setColor(colorOf(config.accentColor));
-        numerals.setHighlightColor(colorOf(config.accentColor));
-        numerals.setColor(colorOf(config.complicationColor));
+        currentAccent = colorOf(config.accentColor);
+        currentData = colorOf(config.complicationColor);
         applyComplications(config.complicationSettings);
 
         // On to another setting: the field is no longer being pulsed.

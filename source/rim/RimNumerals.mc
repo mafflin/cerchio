@@ -4,8 +4,9 @@ import Toybox.Math;
 
 //! 01 through 24 against the edge of the glass, 24 at the bottom. Turned to
 //! face the middle, the bottom half flipped so it does not read upside down;
-//! a watch without vector fonts gets them upright. A highlighted numeral is
-//! a font step larger in the accent color, centered on the others' line.
+//! a watch without vector fonts gets them upright. Colored with the day, in
+//! the data color until the sun is known. A highlighted numeral is a font
+//! step larger in the accent color, centered on the others' line.
 class RimNumerals {
 
     private const COUNT = Dial.HOURS;
@@ -30,6 +31,8 @@ class RimNumerals {
     private var font as FontType = SYSTEM_FONT;
     private var highlightFont as FontType = HIGHLIGHT_SYSTEM_FONT;
     private var isTurned as Boolean = false;
+
+    //! Until the sun is known
     private var color as Number = Graphics.COLOR_WHITE;
     private var highlightColor as Number = Graphics.COLOR_WHITE;
 
@@ -55,7 +58,10 @@ class RimNumerals {
     private var highlightXs as Array<Number>;
     private var highlightYs as Array<Number>;
 
-    function initialize() {
+    private var dayColors as DayColors;
+
+    function initialize(dayColors as DayColors) {
+        self.dayColors = dayColors;
         texts = new [COUNT] as Array<String>;
         angles = new [COUNT] as Array<Number>;
         xs = new [COUNT] as Array<Number>;
@@ -125,13 +131,23 @@ class RimNumerals {
         var x = isHighlight ? highlightXs[index] : xs[index];
         var y = isHighlight ? highlightYs[index] : ys[index];
 
-        dc.setColor(isHighlight ? highlightColor : color, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(isHighlight ? highlightColor : plainColorAt(index), Graphics.COLOR_TRANSPARENT);
 
         if (isTurned) {
             dc.drawAngledText(x, y, numeralFont as VectorFont, texts[index], JUSTIFY, angles[index]);
         } else {
             dc.drawText(x, y, numeralFont, texts[index], JUSTIFY);
         }
+    }
+
+    private function plainColorAt(index as Number) as Number {
+        var dayColor = dayColors.knownColorAt(Dial.positionOfHour(index));
+
+        if (dayColor == null) {
+            return color;
+        }
+
+        return dayColor;
     }
 
     //! The digits reach the glass by their height, a highlight centered on

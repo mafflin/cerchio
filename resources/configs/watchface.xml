@@ -11,8 +11,8 @@
              background is black.
 
              Accent colors the seconds hand and the goal numeral; data colors
-             the rim numerals. The
-             data field is white. -->
+             the time, the status row, the data field, and the rim numerals
+             until the sun is known. -->
         <accentColors>
             <color label="@Strings.ColorWhite" default="true">0xFFFFFF</color>
             <color label="@Strings.ColorGray">0xAAAAAA</color>

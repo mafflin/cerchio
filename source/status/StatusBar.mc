@@ -51,6 +51,12 @@ class StatusBar {
         showNotifications(false);
     }
 
+    function setColor(color as Number) as Void {
+        for (var i = 0; i < icons.size(); i++) {
+            icons[i].setTint(color);
+        }
+    }
+
     //! The status slot: notifications, or the wind
     function showNotifications(shown as Boolean) as Void {
         notifications.setEnabled(shown);

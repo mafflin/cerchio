@@ -54,7 +54,7 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay = new TimeDisplay();
         daylight = new Daylight();
         dayColors = new DayColors(daylight);
-        numerals = new RimNumerals();
+        numerals = new RimNumerals(dayColors);
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
@@ -65,7 +65,7 @@ class CerchioView extends WatchUi.WatchFace {
         activityReading = new ActivityReading();
         goalProgress = new GoalProgress();
         faceBuffer = new FaceBuffer();
-        editor = new Editor(numerals, secondsHand, field, goalProgress);
+        editor = new Editor(field, goalProgress);
 
         partialUpdatesAllowed = (WatchUi.WatchFace has :onPartialUpdate);
     }
@@ -93,6 +93,7 @@ class CerchioView extends WatchUi.WatchFace {
     //! editedType is null while initializing
     function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
         editor.apply(config, editedType);
+        applyColors();
         statusBar.showNotifications(editor.showsNotifications());
         redraw();
     }
@@ -195,6 +196,20 @@ class CerchioView extends WatchUi.WatchFace {
         if (settings != null) {
             updateConfiguration(settings, null);
         }
+    }
+
+    //! Accent: the seconds hand and the goal numeral. Data: the time, the
+    //! status row, the data field, and the rim numerals until the sun is known.
+    private function applyColors() as Void {
+        var accent = editor.accentColor();
+        var data = editor.dataColor();
+
+        secondsHand.setColor(accent);
+        numerals.setHighlightColor(accent);
+        numerals.setColor(data);
+        timeDisplay.setColor(data);
+        statusBar.setColor(data);
+        field.setColor(data);
     }
 
     //! Something on the off screen face has changed

@@ -9,7 +9,6 @@ class ComplicationField extends WatchUi.Drawable {
 
     private const LABEL_FORMAT = "$1$ $2$";
     private const FONT = Graphics.FONT_SMALL;
-    private const COLOR = Graphics.COLOR_WHITE;
 
     //! Fixed, so the tap target does not shift as values change
     private const WIDTH_RATIO = 0.6;
@@ -19,6 +18,7 @@ class ComplicationField extends WatchUi.Drawable {
 
     private var complicationId as Complications.Id;
     private var text as String = "";
+    private var color as Number = Graphics.COLOR_WHITE;
 
     //! defaultType shows until the user picks one
     function initialize(slotId as Number, defaultType as Complications.Type) {
@@ -52,6 +52,10 @@ class ComplicationField extends WatchUi.Drawable {
         self.complicationId = complicationId;
     }
 
+    function setColor(color as Number) as Void {
+        self.color = color;
+    }
+
     function shows(other as Complications.Id) as Boolean {
         return complicationId.equals(other);
     }
@@ -73,7 +77,7 @@ class ComplicationField extends WatchUi.Drawable {
 
     //! Also drawn by the editor while it pulses the field
     function draw(dc as Dc) as Void {
-        dc.setColor(COLOR, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             locX + (width / 2),
             locY,

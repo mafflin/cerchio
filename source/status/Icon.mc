@@ -9,8 +9,6 @@ class Icon {
 
     private const NONE_CHOSEN = -1;
 
-    //! The artwork is white on transparent and tinted as it draws
-    private const TINT = Graphics.COLOR_WHITE;
 
     //! For icons with just the one bitmap
     private var resourceId as ResourceId?;
@@ -26,6 +24,9 @@ class Icon {
 
     private var shown as Boolean = false;
 
+    //! The artwork is white on transparent and tinted as it draws
+    private var plainTint as Number = Graphics.COLOR_WHITE;
+
     //! Off for the status slot's item the editor did not pick
     private var enabled as Boolean = true;
 
@@ -37,6 +38,10 @@ class Icon {
     //! Whether there is anything to report. Overridden per icon.
     function isReporting(settings as System.DeviceSettings) as Boolean {
         return true;
+    }
+
+    function setTint(color as Number) as Void {
+        plainTint = color;
     }
 
     function setEnabled(enabled as Boolean) as Void {
@@ -87,7 +92,7 @@ class Icon {
 
     //! Overridden by the battery and the wind, which say something with color
     protected function tint() as Number {
-        return TINT;
+        return plainTint;
     }
 
     //! One of a set, held until the choice moves
