@@ -11,8 +11,6 @@ class TimeDisplay {
     private const FONT = Graphics.FONT_NUMBER_THAI_HOT;
 
     private var color as Number = Graphics.COLOR_WHITE;
-    private var centerX as Number = 0;
-    private var centerY as Number = 0;
 
     function initialize() {
     }
@@ -21,16 +19,11 @@ class TimeDisplay {
         self.color = color;
     }
 
-    function prepare(dc as Dc) as Void {
-        centerX = dc.getWidth() / 2;
-        centerY = dc.getHeight() / 2;
-    }
-
     function draw(dc as Dc) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
-            centerX,
-            centerY,
+            Dial.centerX,
+            Dial.centerY,
             FONT,
             currentTime(),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
