@@ -10,8 +10,8 @@ class SecondsHand {
     private const COUNT = Dial.SECONDS_PER_TURN;
 
     //! Three quarters wider than the hour hand
-    private const WIDTH_NUMERATOR = 7;
-    private const WIDTH_DIVISOR = 4;
+    private const WIDTH_NUMERATOR = 2;
+    private const WIDTH_DIVISOR = 1;
 
     //! Past the pen on every side, for its smoothed edges
     private const PADDING = 1;
