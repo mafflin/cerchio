@@ -4,17 +4,16 @@
         <styles>
             <style id="1" label="@Strings.stylePlain" default="true"/>
             <style id="2" label="@Strings.styleGoal"/>
-            <style id="3" label="@Strings.styleGoalGray"/>
-            <style id="4" label="@Strings.styleGoalGraySmall"/>
+            <style id="3" label="@Strings.styleGoalRecovery"/>
         </styles>
         <!-- An explicit palette rather than allowAny: the editor wants a
              label per color. Every channel is 00, 55, AA or FF - the 64 color MIP palette -
              so none of these dither on those screens. No black: the
              background is black.
 
-             Accent colors the seconds hand and the goal numeral; data colors
-             the time, the status row, the data field, and the rim numerals
-             until the sun is known. -->
+             Accent colors the seconds hand, the goal dot and the recovery
+             numeral; data colors the time, the status row and the data
+             field. -->
         <accentColors>
             <color label="@Strings.ColorWhite" default="true">0xFFFFFF</color>
             <color label="@Strings.ColorGray">0xAAAAAA</color>
@@ -114,7 +113,7 @@
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- TEMP -->
                 <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- no label -->
             </complication>
-            <!-- The goal numeral's goal; each type needs a case in GoalProgress -->
+            <!-- The goal dot's goal; each type needs a case in GoalProgress -->
             <complication id="2">
                 <type default="true">Complications.COMPLICATION_TYPE_STEPS</type>
                 <type>Complications.COMPLICATION_TYPE_FLOORS_CLIMBED</type>

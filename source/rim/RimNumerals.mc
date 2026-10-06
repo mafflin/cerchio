@@ -4,9 +4,9 @@ import Toybox.Math;
 
 //! 01 through 24 against the edge of the glass, 24 at the bottom. Turned to
 //! face the middle, the bottom half flipped so it does not read upside down;
-//! a watch without vector fonts gets them upright. Colored with the day, in
-//! the plain color until the sun is known or when not following it. A highlighted numeral is a font
-//! step larger in the accent color, centered on the others' line.
+//! a watch without vector fonts gets them upright. Gray; a highlighted
+//! numeral is a font step larger in its own color, centered on the others'
+//! line.
 class RimNumerals {
 
     private const COUNT = Dial.HOURS;
@@ -28,13 +28,12 @@ class RimNumerals {
 
     private const JUSTIFY = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
 
+    private const COLOR = Palette.GRAY;
+
     private var font as FontType = SYSTEM_FONT;
     private var highlightFont as FontType = HIGHLIGHT_SYSTEM_FONT;
     private var isTurned as Boolean = false;
 
-    //! Until the sun is known, and always when not following it
-    private var color as Number = Graphics.COLOR_WHITE;
-    private var followsSun as Boolean = true;
     private var highlightColor as Number = Graphics.COLOR_WHITE;
 
     //! The numeral draw() picks out, null for none
@@ -59,10 +58,7 @@ class RimNumerals {
     private var highlightXs as Array<Number>;
     private var highlightYs as Array<Number>;
 
-    private var dayColors as DayColors;
-
-    function initialize(dayColors as DayColors) {
-        self.dayColors = dayColors;
+    function initialize() {
         texts = new [COUNT] as Array<String>;
         angles = new [COUNT] as Array<Number>;
         xs = new [COUNT] as Array<Number>;
@@ -78,27 +74,12 @@ class RimNumerals {
         }
     }
 
-    function setColor(color as Number) as Void {
-        self.color = color;
-    }
-
-    function setFollowsSun(followsSun as Boolean) as Void {
-        self.followsSun = followsSun;
-    }
-
     function setHighlightColor(highlightColor as Number) as Void {
         self.highlightColor = highlightColor;
     }
 
     function setHighlightIndex(highlightIndex as Number?) as Void {
         self.highlightIndex = highlightIndex;
-    }
-
-    //! The numeral nearest a share of the way round, clockwise from the top
-    function indexAt(share as Float) as Number {
-        var steps = Math.round(share * COUNT).toNumber();
-
-        return ((Dial.MIDNIGHT_DEGREES / Dial.DEGREES_PER_HOUR) + steps) % COUNT;
     }
 
     //! After Dial.setup()
@@ -125,6 +106,11 @@ class RimNumerals {
         return innerEdge;
     }
 
+    //! Midway across the digits, from the center
+    function middle() as Float {
+        return (outerEdge + innerEdge) / 2.0;
+    }
+
     function draw(dc as Dc) as Void {
         for (var index = 0; index < COUNT; index++) {
             drawNumeral(dc, index, index == highlightIndex);
@@ -136,27 +122,13 @@ class RimNumerals {
         var x = isHighlight ? highlightXs[index] : xs[index];
         var y = isHighlight ? highlightYs[index] : ys[index];
 
-        dc.setColor(isHighlight ? highlightColor : plainColorAt(index), Graphics.COLOR_TRANSPARENT);
+        dc.setColor(isHighlight ? highlightColor : COLOR, Graphics.COLOR_TRANSPARENT);
 
         if (isTurned) {
             dc.drawAngledText(x, y, numeralFont as VectorFont, texts[index], JUSTIFY, angles[index]);
         } else {
             dc.drawText(x, y, numeralFont, texts[index], JUSTIFY);
         }
-    }
-
-    private function plainColorAt(index as Number) as Number {
-        if (!followsSun) {
-            return color;
-        }
-
-        var dayColor = dayColors.knownColorAt(Dial.positionOfHour(index));
-
-        if (dayColor == null) {
-            return color;
-        }
-
-        return dayColor;
     }
 
     //! The digits reach the glass by their height, a highlight centered on

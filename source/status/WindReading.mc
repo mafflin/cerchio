@@ -1,4 +1,3 @@
-import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Weather;
 
@@ -16,8 +15,8 @@ class WindReading {
     private const STRONG = 2;
 
     //! A light wind is the ordinary case and keeps its drawer's color
-    private const MODERATE_COLOR = Graphics.COLOR_ORANGE;
-    private const STRONG_COLOR = Graphics.COLOR_RED;
+    private const MODERATE_COLOR = Palette.ORANGE;
+    private const STRONG_COLOR = Palette.RED;
 
     //! Where the wind blows from, north up; null when unknown
     private var currentBearing as Number? = null;

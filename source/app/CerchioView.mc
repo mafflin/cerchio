@@ -15,9 +15,6 @@ class CerchioView extends WatchUi.WatchFace {
 
     private const BACKGROUND = Graphics.COLOR_BLACK;
 
-    //! Half a numeral's step: below it the nearest numeral would be the 12
-    private const GOAL_START_SHARE = 0.5 / Dial.HOURS;
-
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
     private var dayColors as DayColors;
@@ -28,8 +25,10 @@ class CerchioView extends WatchUi.WatchFace {
     private var statusBar as StatusBar;
     private var field as ComplicationField;
     private var secondsHand as SecondsHand;
+    private var recoveryReading as RecoveryReading;
     private var activityReading as ActivityReading;
     private var goalProgress as GoalProgress;
+    private var goalDot as GoalDot;
     private var faceBuffer as FaceBuffer;
     private var editor as Editor;
 
@@ -54,7 +53,7 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay = new TimeDisplay();
         daylight = new Daylight();
         dayColors = new DayColors(daylight);
-        numerals = new RimNumerals(dayColors);
+        numerals = new RimNumerals();
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
@@ -62,8 +61,10 @@ class CerchioView extends WatchUi.WatchFace {
         statusBar = new StatusBar(windReading);
         field = new ComplicationField(SlotId.CENTER, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY);
         secondsHand = new SecondsHand();
+        recoveryReading = new RecoveryReading();
         activityReading = new ActivityReading();
         goalProgress = new GoalProgress();
+        goalDot = new GoalDot();
         faceBuffer = new FaceBuffer();
         editor = new Editor(field, goalProgress);
 
@@ -80,6 +81,7 @@ class CerchioView extends WatchUi.WatchFace {
         dayCircle.prepare(numerals.inner());
         hourHand.prepare();
         secondsHand.prepare(dayCircle.width(), numerals.inner());
+        goalDot.prepare(numerals.middle(), dayCircle.width());
         faceBuffer.prepare(dc);
         placeFrame(dc);
         loadSettings();
@@ -94,7 +96,6 @@ class CerchioView extends WatchUi.WatchFace {
     function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
         editor.apply(config, editedType);
         applyColors();
-        timeDisplay.setSmall(Styles.hasSmallTime(editor.style()));
         statusBar.showNotifications(editor.showsNotifications());
         redraw();
     }
@@ -199,18 +200,14 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the seconds hand and the goal numeral. Data: the time, the
-    //! status row, the data field, and the rim numerals until the sun is known
-    //! - unless the style grays them.
+    //! Accent: the seconds hand, the goal dot, and the recovery numeral within
+    //! a day. Data: the time, the status row and the data field.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
-        var gray = Styles.hasGrayNumerals(editor.style());
 
         secondsHand.setColor(accent);
-        numerals.setHighlightColor(accent);
-        numerals.setColor(gray ? Palette.GRAY : data);
-        numerals.setFollowsSun(!gray);
+        goalDot.setColor(accent);
         timeDisplay.setColor(data);
         statusBar.setColor(data);
         field.setColor(data);
@@ -273,6 +270,7 @@ class CerchioView extends WatchUi.WatchFace {
         refreshReadings();
 
         numerals.draw(dc);
+        drawGoalDot(dc);
         dayCircle.draw(dc);
         hourHand.draw(dc);
         statusBar.draw(dc);
@@ -299,32 +297,49 @@ class CerchioView extends WatchUi.WatchFace {
         }
 
         windReading.refresh();
+        recoveryReading.refresh();
 
         refreshGoal();
+        refreshRecovery();
     }
 
-    //! The goal style picks out the numeral as far round as the goal is done;
-    //! none until it is past the 12, which otherwise reads as done
     private function refreshGoal() as Void {
-        numerals.setHighlightIndex(null);
-
-        if (!Styles.hasGoal(editor.style())) {
-            return;
-        }
-
         var info = activityReading.refresh();
 
         if (info != null) {
             goalProgress.read(info);
         }
 
-        var share = goalProgress.share();
+        goalDot.setShare(goalProgress.share());
+    }
 
-        if ((share == null) || (share < GOAL_START_SHARE)) {
+    private function drawGoalDot(dc as Dc) as Void {
+        if (Styles.hasGoal(editor.style())) {
+            goalDot.draw(dc);
+        }
+    }
+
+    //! The recovery style picks out the numeral of the hours left in the
+    //! accent color; past a day the 24, orange up to two days and red beyond,
+    //! as the wind does. None once recovered.
+    private function refreshRecovery() as Void {
+        var hours = recoveryReading.hours();
+
+        if (!Styles.hasRecovery(editor.style()) || (hours <= 0)) {
+            numerals.setHighlightIndex(null);
             return;
         }
 
-        numerals.setHighlightIndex(numerals.indexAt(share));
+        numerals.setHighlightIndex(Numbers.min(hours, Dial.HOURS) % Dial.HOURS);
+        numerals.setHighlightColor(recoveryColorOf(hours));
+    }
+
+    private function recoveryColorOf(hours as Number) as Number {
+        if (hours <= Dial.HOURS) {
+            return editor.accentColor();
+        }
+
+        return (hours <= (2 * Dial.HOURS)) ? Palette.ORANGE : Palette.RED;
     }
 
     //! Once per dc: the dc between two updates is the system's

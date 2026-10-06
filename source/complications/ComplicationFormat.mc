@@ -53,11 +53,11 @@ module ComplicationFormat {
         var type = complication.getType();
 
         if (isTimeOfDay(type)) {
-            return clockTime(seconds(value));
+            return clockTime(wholeNumber(value));
         }
 
         if (isDuration(type)) {
-            return hours(seconds(value));
+            return hours(wholeNumber(value));
         }
 
         if (type == Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE) {
@@ -93,7 +93,7 @@ module ComplicationFormat {
             || (type == Complications.COMPLICATION_TYPE_SUNSET);
     }
 
-    //! Seconds
+    //! Minutes on the watch, whatever older docs say
     function isDuration(type as Complications.Type?) as Boolean {
         return (type == Complications.COMPLICATION_TYPE_RECOVERY_TIME);
     }
@@ -215,10 +215,14 @@ module ComplicationFormat {
         return pair(CLOCK_FORMAT, hour, minute);
     }
 
-    //! Whole hours, rounded up so the last few minutes still read 1; the RH
-    //! label carries the unit
-    function hours(total as Number) as String {
-        return ((total + Clock.SECONDS_PER_HOUR - 1) / Clock.SECONDS_PER_HOUR).format(LEADING_FORMAT);
+    //! The RH label carries the unit
+    function hours(minutes as Number) as String {
+        return wholeHours(minutes).format(LEADING_FORMAT);
+    }
+
+    //! Rounded up, so the last few minutes still count as 1
+    function wholeHours(minutes as Number) as Number {
+        return (minutes + Clock.MINUTES_PER_HOUR - 1) / Clock.MINUTES_PER_HOUR;
     }
 
     function pair(format as String, leading as Number, trailing as Number) as String {
@@ -274,7 +278,7 @@ module ComplicationFormat {
         return 0.0;
     }
 
-    function seconds(value as Complications.Value) as Number {
+    function wholeNumber(value as Complications.Value) as Number {
         if (value instanceof Lang.Number) {
             return value;
         }

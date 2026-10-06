@@ -5,24 +5,18 @@ module Styles {
     enum Value {
         PLAIN = 1,
         GOAL = 2,
-        GOAL_GRAY = 3,
-        GOAL_GRAY_SMALL = 4
+        GOAL_RECOVERY = 3
     }
 
     const DEFAULT = PLAIN;
 
-    //! A numeral picked out as far round as the goal is done
+    //! The goal dot
     function hasGoal(style as Number) as Boolean {
-        return (style == GOAL) || hasGrayNumerals(style);
+        return (style == GOAL) || hasRecovery(style);
     }
 
-    //! The numerals gray rather than in the day's colors
-    function hasGrayNumerals(style as Number) as Boolean {
-        return (style == GOAL_GRAY) || hasSmallTime(style);
-    }
-
-    //! The time a font step smaller
-    function hasSmallTime(style as Number) as Boolean {
-        return style == GOAL_GRAY_SMALL;
+    //! The numeral of the recovery hours left picked out
+    function hasRecovery(style as Number) as Boolean {
+        return style == GOAL_RECOVERY;
     }
 }

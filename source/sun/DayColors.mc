@@ -58,22 +58,11 @@ class DayColors {
 
     //! The color at a dial position
     function colorAt(degrees as Numeric) as Number {
-        var color = knownColorAt(degrees);
-
-        if (color == null) {
-            return FALLBACK_COLOR;
-        }
-
-        return color;
-    }
-
-    //! The color at a dial position, null until the sun is known
-    function knownColorAt(degrees as Numeric) as Number? {
         var rise = sunrisePosition;
         var set = sunsetPosition;
 
         if ((rise == null) || (set == null)) {
-            return null;
+            return FALLBACK_COLOR;
         }
 
         if (isBetween(degrees, rise, set)) {

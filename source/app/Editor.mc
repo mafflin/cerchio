@@ -33,13 +33,12 @@ class Editor {
         return currentStyle;
     }
 
-    //! The seconds hand and the goal numeral
+    //! The seconds hand, the goal dot and the recovery numeral
     function accentColor() as Number {
         return currentAccent;
     }
 
-    //! The time, the status row, the data field, and the rim numerals until
-    //! the sun is known
+    //! The time, the status row and the data field
     function dataColor() as Number {
         return currentData;
     }
