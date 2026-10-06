@@ -6,10 +6,7 @@ import Toybox.Math;
 //! whenever it has something to report.
 class StatusBar {
 
-    //! The line below the time the row mirrors, as a share of the screen height
-    private const FRAME_RATIO = 0.66;
-
-    //! Lifts the row so it frames the time by eye
+    //! Lifts the row so it and the data field frame the time by eye
     private const LIFT_DIVISOR = 22;
 
     //! Half an icon of air between items, down to MIN_GAP on a round screen
@@ -18,6 +15,9 @@ class StatusBar {
     private const MARGIN = 2;
 
     private var icons as Array<Icon>;
+
+    //! The line below the time the row mirrors
+    private var mirrorY as Number = 0;
 
     //! Settled each draw
     private var rowLeft as Number = 0;
@@ -32,6 +32,11 @@ class StatusBar {
             new Alarm(),
             new Meridiem()
         ] as Array<Icon>;
+    }
+
+    //! Once per layout
+    function mirror(y as Number) as Void {
+        mirrorY = y;
     }
 
     function draw(dc as Dc) as Void {
@@ -77,9 +82,8 @@ class StatusBar {
     //! bottom, lifted a touch
     private function rowCenterY() as Number {
         var screenHeight = Dial.screenHeight;
-        var frame = (screenHeight * FRAME_RATIO).toNumber();
 
-        return screenHeight - frame - (rowHeight / 2) - (screenHeight / LIFT_DIVISOR);
+        return screenHeight - mirrorY - (rowHeight / 2) - (screenHeight / LIFT_DIVISOR);
     }
 
     private function shownWidth() as Number {

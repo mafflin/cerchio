@@ -1,4 +1,5 @@
 import Toybox.Application.WatchFaceConfig;
+import Toybox.Complications;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
@@ -6,6 +7,11 @@ import Toybox.WatchUi;
 //! The watch face: owns the elements. Everything but the seconds hand is
 //! drawn off screen once a minute; an update copies it and adds the hand.
 class CerchioView extends WatchUi.WatchFace {
+
+    //! Shares of the screen height: the line the status row mirrors, and the
+    //! data field's drop below it
+    private const FRAME_RATIO = 0.66;
+    private const FIELD_DROP_RATIO = 0.02;
 
     //! Until the editor picks one
     private const DEFAULT_COLOR = Graphics.COLOR_WHITE;
@@ -19,6 +25,7 @@ class CerchioView extends WatchUi.WatchFace {
     private var dayCircle as DayCircle;
     private var hourHand as HourHand;
     private var statusBar as StatusBar;
+    private var field as ComplicationField;
     private var secondsHand as SecondsHand;
     private var faceBuffer as FaceBuffer;
 
@@ -32,8 +39,16 @@ class CerchioView extends WatchUi.WatchFace {
     //! Whether the system lets the hand move every second in low power mode
     private var partialUpdatesAllowed as Boolean;
 
-    function initialize() {
+    //! Whether the native watch face editor started the face
+    private var editMode as Boolean;
+
+    //! While the editor pulses the field, it draws the field itself
+    private var isPulsed as Boolean = false;
+
+    function initialize(editMode as Boolean) {
         WatchFace.initialize();
+
+        self.editMode = editMode;
 
         timeDisplay = new TimeDisplay();
         daylight = new Daylight();
@@ -43,6 +58,7 @@ class CerchioView extends WatchUi.WatchFace {
         dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
         statusBar = new StatusBar();
+        field = new ComplicationField(SlotId.CENTER, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY);
         secondsHand = new SecondsHand();
         faceBuffer = new FaceBuffer();
 
@@ -60,16 +76,57 @@ class CerchioView extends WatchUi.WatchFace {
         hourHand.prepare();
         secondsHand.prepare(dayCircle.width(), numerals.inner());
         faceBuffer.prepare(dc);
+        placeFrame(dc);
         loadSettings();
+
+        // The editor shows a snapshot; live updates are not worth the power.
+        if (!editMode) {
+            subscribeToComplications();
+        }
     }
 
-    //! Accent: the seconds hand. Data: the rim numerals.
-    function updateConfiguration(config as WatchFaceConfig.Settings) as Void {
+    //! Accent: the seconds hand. Data: the rim numerals. editedType is null
+    //! while initializing.
+    function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
         secondsHand.setColor(colorOf(config.accentColor));
         numerals.setColor(colorOf(config.complicationColor));
+        applyComplications(config.complicationSettings);
 
-        faceBuffer.invalidate();
-        WatchUi.requestUpdate();
+        // On to another setting: the field is no longer being pulsed.
+        if (editedType != WatchUi.WATCH_FACE_CONFIG_TYPE_COMPLICATION) {
+            isPulsed = false;
+        }
+
+        redraw();
+    }
+
+    //! The drawable the editor is about to pulse
+    function getComplication(complication as ComplicationRef) as ComplicationDrawableRef? {
+        if (complication.uniqueIdentifier != SlotId.CENTER) {
+            return null;
+        }
+
+        isPulsed = true;
+        redraw();
+
+        return new WatchUi.ComplicationDrawableRef({
+            :drawable => field,
+            :boundingBox => field.getBoundingBox()
+        });
+    }
+
+    //! The slot under a tap, or null
+    function getTappedComplication(x as Number, y as Number) as Number? {
+        return field.containsPoint(x, y) ? field.getSlotId() : null;
+    }
+
+    function onComplicationChange(complicationId as Complications.Id) as Void {
+        if (!field.shows(complicationId)) {
+            return;
+        }
+
+        field.refresh();
+        redraw();
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -129,12 +186,63 @@ class CerchioView extends WatchUi.WatchFace {
         WatchUi.requestUpdate();
     }
 
+    //! The status row above the time mirrors the line the field hangs from
+    private function placeFrame(dc as Dc) as Void {
+        var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
+        var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();
+
+        field.prepare(dc, Dial.centerX, top + (field.heightIn(dc) / 2));
+        statusBar.mirror(frame);
+    }
+
     //! Null without watch face configuration support: the defaults stand
     private function loadSettings() as Void {
         var settings = WatchFaceConfig.getSettings(null);
 
         if (settings != null) {
-            updateConfiguration(settings);
+            updateConfiguration(settings, null);
+        }
+    }
+
+    //! Something on the off screen face has changed
+    private function redraw() as Void {
+        faceBuffer.invalidate();
+        WatchUi.requestUpdate();
+    }
+
+    private function subscribeToComplications() as Void {
+        Complications.subscribeToUpdates(field.getComplicationId());
+        Complications.registerComplicationChangeCallback(method(:onComplicationChange));
+    }
+
+    private function applyComplications(slots as Array<WatchFaceConfig.ComplicationRef>?) as Void {
+        if (slots == null) {
+            return;
+        }
+
+        for (var i = 0; i < slots.size(); i++) {
+            applySlot(slots[i]);
+        }
+    }
+
+    //! null until picked: the default type stands
+    private function applySlot(slot as WatchFaceConfig.ComplicationRef) as Void {
+        if (slot.uniqueIdentifier != SlotId.CENTER) {
+            return;
+        }
+
+        var complicationId = slot.complicationId;
+
+        if (complicationId != null) {
+            field.setComplicationId(complicationId);
+        }
+
+        field.refresh();
+    }
+
+    private function drawField(dc as Dc) as Void {
+        if (!isPulsed) {
+            field.draw(dc);
         }
     }
 
@@ -189,6 +297,7 @@ class CerchioView extends WatchUi.WatchFace {
         dayCircle.draw(dc);
         hourHand.draw(dc);
         statusBar.draw(dc);
+        drawField(dc);
         timeDisplay.draw(dc);
     }
 

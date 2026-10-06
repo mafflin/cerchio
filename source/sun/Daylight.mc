@@ -105,32 +105,15 @@ class Daylight {
     private function minutesOf(id as Complications.Id) as Number? {
         // Some watches throw on a complication they do not carry.
         try {
-            var seconds = secondsOf(Complications.getComplication(id).value);
+            var value = Complications.getComplication(id).value;
 
-            if (seconds == null) {
+            if (value == null) {
                 return null;
             }
 
-            return seconds / Clock.SECONDS_PER_MINUTE;
+            return ComplicationFormat.seconds(value) / Clock.SECONDS_PER_MINUTE;
         } catch (exception) {
             return null;
         }
-    }
-
-    //! Null if not a number at all
-    private function secondsOf(value as Complications.Value?) as Number? {
-        if (value instanceof Lang.Number) {
-            return value;
-        }
-
-        if (value instanceof Lang.Float) {
-            return value.toNumber();
-        }
-
-        if (value instanceof Lang.Double) {
-            return value.toNumber();
-        }
-
-        return null;
     }
 }
