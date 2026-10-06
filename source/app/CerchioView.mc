@@ -12,6 +12,7 @@ class CerchioView extends WatchUi.WatchFace {
     private var dayColors as DayColors;
     private var numerals as RimNumerals;
     private var dayCircle as DayCircle;
+    private var hourHand as HourHand;
 
     //! Asked once, not every update
     private var canSmooth as Boolean = false;
@@ -29,6 +30,7 @@ class CerchioView extends WatchUi.WatchFace {
         numerals = new RimNumerals();
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(background);
+        hourHand = new HourHand(dayCircle);
     }
 
     //! Size everything for this screen
@@ -39,6 +41,7 @@ class CerchioView extends WatchUi.WatchFace {
         Dial.setup(dc);
         numerals.prepare(dc);
         dayCircle.prepare(numerals.inner());
+        hourHand.prepare();
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -54,6 +57,7 @@ class CerchioView extends WatchUi.WatchFace {
         refreshReadings();
         numerals.draw(dc);
         dayCircle.draw(dc);
+        hourHand.draw(dc);
         timeDisplay.draw(dc);
     }
 

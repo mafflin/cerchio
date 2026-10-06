@@ -31,9 +31,6 @@ class DayCircle {
     private var cutWidth as Number = 1;
     private var cutReach as Number = 1;
 
-    //! Degrees from noon to the middle of either of its cuts
-    private var zenithCutOffset as Float = 0.0;
-
     private var background as Number = Graphics.COLOR_BLACK;
 
     private var dayColors as DayColors;
@@ -53,7 +50,15 @@ class DayCircle {
 
         cutWidth = (Dial.rim - SPLIT_OFFSET) / SPLIT_DIVISOR;
         cutReach = (penWidth / 2) + 1;
-        zenithCutOffset = degreesAlong((penWidth + cutWidth) / 2.0);
+    }
+
+    //! The line's middle, from the center
+    function middle() as Number {
+        return radius;
+    }
+
+    function width() as Number {
+        return penWidth;
     }
 
     function draw(dc as Dc) as Void {
@@ -75,8 +80,18 @@ class DayCircle {
         dc.setColor(background, Graphics.COLOR_TRANSPARENT);
 
         drawCuts(dc, sunrise, sunset);
-        drawCut(dc, zenith - zenithCutOffset);
-        drawCut(dc, zenith + zenithCutOffset);
+        drawGapsAround(dc, zenith, cutWidth);
+    }
+
+    //! Cuts either side of a piece of the line as long as the line is wide
+    function drawGapsAround(dc as Dc, position as Float, gapLength as Number) as Void {
+        var offset = degreesAlong((penWidth + gapLength) / 2.0);
+
+        dc.setPenWidth(gapLength);
+        dc.setColor(background, Graphics.COLOR_TRANSPARENT);
+
+        drawCut(dc, position - offset);
+        drawCut(dc, position + offset);
     }
 
     //! Sunrise round to sunrise, through dusk and dawn when they are known
