@@ -1,11 +1,13 @@
 import Toybox.Lang;
 import Toybox.System;
 
-//! The 12 hour rule, and the one place the time and the device settings are
+//! Clock units and the 12 hour rule, and the one place the time and the device settings are
 //! read: once per update.
 module Clock {
 
     const HOURS_PER_HALF_DAY = 12;
+    const MINUTES_PER_HOUR = 60;
+    const SECONDS_PER_MINUTE = 60;
 
     //! As of the last read(), null before the first
     var time as System.ClockTime? = null;

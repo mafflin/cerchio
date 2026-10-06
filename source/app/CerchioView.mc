@@ -8,7 +8,10 @@ class CerchioView extends WatchUi.WatchFace {
     private var background as Number = Graphics.COLOR_BLACK;
 
     private var timeDisplay as TimeDisplay;
+    private var daylight as Daylight;
+    private var dayColors as DayColors;
     private var numerals as RimNumerals;
+    private var dayCircle as DayCircle;
 
     //! Asked once, not every update
     private var canSmooth as Boolean = false;
@@ -17,7 +20,10 @@ class CerchioView extends WatchUi.WatchFace {
         WatchFace.initialize();
 
         timeDisplay = new TimeDisplay();
+        daylight = new Daylight();
+        dayColors = new DayColors(daylight);
         numerals = new RimNumerals();
+        dayCircle = new DayCircle(dayColors);
     }
 
     //! Size everything for this screen
@@ -26,15 +32,24 @@ class CerchioView extends WatchUi.WatchFace {
 
         Dial.setup(dc);
         numerals.prepare(dc);
+        dayCircle.prepare(numerals.inner());
     }
 
     function onUpdate(dc as Dc) as Void {
         Clock.read();
+        refreshReadings();
         smooth(dc);
         paintBackground(dc);
 
         numerals.draw(dc);
+        dayCircle.draw(dc);
         timeDisplay.draw(dc);
+    }
+
+    //! Everything the draw reads, before anything draws
+    private function refreshReadings() as Void {
+        daylight.refresh();
+        dayColors.refresh();
     }
 
     //! Once per dc: the dc between two updates is the system's

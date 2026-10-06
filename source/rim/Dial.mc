@@ -18,6 +18,7 @@ module Dial {
 
     //! Midnight at the bottom, noon at the top
     const MIDNIGHT_DEGREES = HALF_TURN;
+    const MINUTES_PER_DAY = HOURS * Clock.MINUTES_PER_HOUR;
 
     var centerX as Number = 0;
     var centerY as Number = 0;
@@ -33,6 +34,13 @@ module Dial {
     //! Degrees clockwise from the top
     function positionOfHour(hour as Number) as Number {
         return (MIDNIGHT_DEGREES + (hour * DEGREES_PER_HOUR)) % DEGREES_PER_CIRCLE;
+    }
+
+    //! Degrees clockwise from the top. A float: a minute is a quarter degree.
+    function positionOfMinute(minutes as Number) as Float {
+        var degrees = MIDNIGHT_DEGREES + (minutes.toFloat() * DEGREES_PER_CIRCLE / MINUTES_PER_DAY);
+
+        return (degrees >= DEGREES_PER_CIRCLE) ? (degrees - DEGREES_PER_CIRCLE) : degrees;
     }
 
     //! The pixel at a screen angle and radius. Screen y grows downward.

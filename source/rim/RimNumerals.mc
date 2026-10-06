@@ -30,10 +30,13 @@ class RimNumerals {
     private var color as Number = Graphics.COLOR_WHITE;
 
     //! Resolved in prepare(): how far the digits may reach, how tall they
-    //! are, and how far the font box center sits off the digits' center
+    //! are, and how far the font box center sits below the digits' center
     private var outerEdge as Number = 0;
     private var inkHeight as Number = 0;
-    private var descentShift as Number = 0;
+    private var descentShift as Float = 0.0;
+
+    //! The nearest the digits come to the middle, from the center
+    private var innerEdge as Number = 0;
 
     //! Per numeral, resolved in prepare()
     private var texts as Array<String>;
@@ -64,8 +67,9 @@ class RimNumerals {
         chooseFont(dc);
 
         outerEdge = Dial.rim - (Dial.rim / GAP_DIVISOR);
-        inkHeight = Fonts.inkHeightOf(dc, font);
-        descentShift = (dc.getFontHeight(font) - inkHeight) / 2;
+        inkHeight = Fonts.digitHeightOf(dc, font);
+        descentShift = shiftOf(dc);
+        innerEdge = outerEdge - inkHeight;
 
         for (var index = 0; index < COUNT; index++) {
             if (isTurned) {
@@ -74,6 +78,10 @@ class RimNumerals {
                 placeUpright(dc, index);
             }
         }
+    }
+
+    function inner() as Number {
+        return innerEdge;
     }
 
     function draw(dc as Dc) as Void {
@@ -88,13 +96,13 @@ class RimNumerals {
         }
     }
 
-    //! The digits reach the glass by their height. The empty descent lies
-    //! toward the middle for upright numerals and toward the glass for
+    //! The digits reach the glass by their height. The font box's center
+    //! lies toward the baseline: inward for upright numerals, outward for
     //! flipped ones.
     private function placeTurned(index as Number) as Void {
         var degrees = Dial.positionOfHour(index);
         var flipped = isUpsideDown(degrees);
-        var middle = outerEdge - (inkHeight / 2);
+        var middle = outerEdge - (inkHeight / 2.0);
         var radius = flipped ? (middle + descentShift) : (middle - descentShift);
         var radians = Dial.radiansOf(degrees);
 
@@ -111,9 +119,24 @@ class RimNumerals {
         var reach = (halfWidth * Math.cos(radians).abs()) + ((inkHeight / 2.0) * Math.sin(radians).abs());
         var radius = outerEdge - reach;
 
+        innerEdge = min(innerEdge, Dial.pixel(radius - reach));
+
         xs[index] = Dial.pointX(radians, radius);
-        ys[index] = Dial.pointY(radians, radius) + descentShift;
+        ys[index] = Dial.pointY(radians, radius) + Dial.pixel(descentShift);
         angles[index] = 0;
+    }
+
+    //! Half the descent below the digits, less half the air above them
+    private function shiftOf(dc as Dc) as Float {
+        var ascent = Fonts.ascentOf(dc, font);
+        var descent = dc.getFontHeight(font) - ascent;
+        var air = ascent - inkHeight;
+
+        return (descent - air) / 2.0;
+    }
+
+    private function min(first as Number, second as Number) as Number {
+        return (first < second) ? first : second;
     }
 
     //! The bottom of the glass, past a quarter turn either side of the top
