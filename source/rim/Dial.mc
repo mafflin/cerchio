@@ -12,6 +12,10 @@ module Dial {
     //! Dial zero is at the top; screen zero is at three o'clock, counterclockwise
     const TOP_DEGREES = 90;
 
+    //! Seconds run round the glass once a minute, from the top
+    const SECONDS_PER_TURN = 60;
+    const DEGREES_PER_SECOND = DEGREES_PER_CIRCLE / SECONDS_PER_TURN;
+
     //! A full circle is a day
     const HOURS = 24;
     const DEGREES_PER_HOUR = DEGREES_PER_CIRCLE / HOURS;

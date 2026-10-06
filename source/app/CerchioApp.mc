@@ -15,7 +15,10 @@ class CerchioApp extends Application.AppBase {
     function onStop(state as Dictionary?) as Void {
     }
 
+    //! The delegate carries the power budget notice
     function getInitialView() as [Views] or [Views, InputDelegates] {
-        return [ new CerchioView() ];
+        var view = new CerchioView();
+
+        return [ view, new CerchioDelegate(view) ];
     }
 }
