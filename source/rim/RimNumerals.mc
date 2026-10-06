@@ -4,7 +4,8 @@ import Toybox.Math;
 
 //! 01 through 24 against the edge of the glass, 24 at the bottom. Turned to
 //! face the middle, the bottom half flipped so it does not read upside down;
-//! a watch without vector fonts gets them upright.
+//! a watch without vector fonts gets them upright. A highlighted numeral is
+//! a font step larger in the accent color, centered on the others' line.
 class RimNumerals {
 
     private const COUNT = Dial.HOURS;
@@ -13,8 +14,9 @@ class RimNumerals {
     //! Air between the glass and the digits, as a share of the radius
     private const GAP_DIVISOR = 32;
 
-    //! The system font the vector one is sized off, and falls back to
+    //! The system fonts the vector ones are sized off, and fall back to
     private const SYSTEM_FONT = Graphics.FONT_XTINY;
+    private const HIGHLIGHT_SYSTEM_FONT = Graphics.FONT_TINY;
 
     //! The vector font a touch smaller than the system one
     private const SIZE_NUMERATOR = 4;
@@ -26,29 +28,40 @@ class RimNumerals {
     private const JUSTIFY = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
 
     private var font as FontType = SYSTEM_FONT;
+    private var highlightFont as FontType = HIGHLIGHT_SYSTEM_FONT;
     private var isTurned as Boolean = false;
     private var color as Number = Graphics.COLOR_WHITE;
+    private var highlightColor as Number = Graphics.COLOR_WHITE;
+
+    //! The numeral draw() picks out, null for none
+    private var highlightIndex as Number? = null;
 
     //! Resolved in prepare(): how far the digits may reach, how tall they
     //! are, and how far the font box center sits below the digits' center
     private var outerEdge as Number = 0;
     private var inkHeight as Number = 0;
     private var descentShift as Float = 0.0;
+    private var highlightInk as Number = 0;
+    private var highlightShift as Float = 0.0;
 
     //! The nearest the digits come to the middle, from the center
     private var innerEdge as Number = 0;
 
-    //! Per numeral, resolved in prepare()
+    //! Per numeral, resolved in prepare(), plain and highlighted
     private var texts as Array<String>;
+    private var angles as Array<Number>;
     private var xs as Array<Number>;
     private var ys as Array<Number>;
-    private var angles as Array<Number>;
+    private var highlightXs as Array<Number>;
+    private var highlightYs as Array<Number>;
 
     function initialize() {
         texts = new [COUNT] as Array<String>;
+        angles = new [COUNT] as Array<Number>;
         xs = new [COUNT] as Array<Number>;
         ys = new [COUNT] as Array<Number>;
-        angles = new [COUNT] as Array<Number>;
+        highlightXs = new [COUNT] as Array<Number>;
+        highlightYs = new [COUNT] as Array<Number>;
 
         for (var index = 0; index < COUNT; index++) {
             // Midnight reads as 24, not 0.
@@ -62,13 +75,30 @@ class RimNumerals {
         self.color = color;
     }
 
+    function setHighlightColor(highlightColor as Number) as Void {
+        self.highlightColor = highlightColor;
+    }
+
+    function setHighlightIndex(highlightIndex as Number?) as Void {
+        self.highlightIndex = highlightIndex;
+    }
+
+    //! The numeral nearest a share of the way round, clockwise from the top
+    function indexAt(share as Float) as Number {
+        var steps = Math.round(share * COUNT).toNumber();
+
+        return ((Dial.MIDNIGHT_DEGREES / Dial.DEGREES_PER_HOUR) + steps) % COUNT;
+    }
+
     //! After Dial.setup()
     function prepare(dc as Dc) as Void {
         chooseFont(dc);
 
         outerEdge = Dial.rim - (Dial.rim / GAP_DIVISOR);
         inkHeight = Fonts.digitHeightOf(dc, font);
-        descentShift = shiftOf(dc);
+        descentShift = shiftOf(dc, font, inkHeight);
+        highlightInk = Fonts.digitHeightOf(dc, highlightFont);
+        highlightShift = shiftOf(dc, highlightFont, highlightInk);
         innerEdge = outerEdge - inkHeight;
 
         for (var index = 0; index < COUNT; index++) {
@@ -85,58 +115,76 @@ class RimNumerals {
     }
 
     function draw(dc as Dc) as Void {
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-
         for (var index = 0; index < COUNT; index++) {
-            if (isTurned) {
-                dc.drawAngledText(xs[index], ys[index], font as VectorFont, texts[index], JUSTIFY, angles[index]);
-            } else {
-                dc.drawText(xs[index], ys[index], font, texts[index], JUSTIFY);
-            }
+            drawNumeral(dc, index, index == highlightIndex);
         }
     }
 
-    //! The digits reach the glass by their height. The font box's center
-    //! lies toward the baseline: inward for upright numerals, outward for
-    //! flipped ones.
+    private function drawNumeral(dc as Dc, index as Number, isHighlight as Boolean) as Void {
+        var numeralFont = isHighlight ? highlightFont : font;
+        var x = isHighlight ? highlightXs[index] : xs[index];
+        var y = isHighlight ? highlightYs[index] : ys[index];
+
+        dc.setColor(isHighlight ? highlightColor : color, Graphics.COLOR_TRANSPARENT);
+
+        if (isTurned) {
+            dc.drawAngledText(x, y, numeralFont as VectorFont, texts[index], JUSTIFY, angles[index]);
+        } else {
+            dc.drawText(x, y, numeralFont, texts[index], JUSTIFY);
+        }
+    }
+
+    //! The digits reach the glass by their height, a highlight centered on
+    //! the same line. The font box's center lies toward the baseline: inward
+    //! for upright numerals, outward for flipped ones.
     private function placeTurned(index as Number) as Void {
         var degrees = Dial.positionOfHour(index);
         var flipped = isUpsideDown(degrees);
+        var toward = flipped ? 1 : -1;
         var middle = outerEdge - (inkHeight / 2.0);
-        var radius = flipped ? (middle + descentShift) : (middle - descentShift);
+        var radius = middle + (toward * descentShift);
+        var highlightRadius = middle + (toward * highlightShift);
         var radians = Dial.radiansOf(degrees);
 
         xs[index] = Dial.pointX(radians, radius);
         ys[index] = Dial.pointY(radians, radius);
+        highlightXs[index] = Dial.pointX(radians, highlightRadius);
+        highlightYs[index] = Dial.pointY(radians, highlightRadius);
         angles[index] = angleOf(degrees, flipped);
     }
 
     //! Upright, the digits reach the glass by their width at the sides and
-    //! their height at the top and bottom
+    //! their height at the top and bottom. The highlight leaves the inner
+    //! edge to the others, so the circle does not move for it.
     private function placeUpright(dc as Dc, index as Number) as Void {
         var radians = Dial.radiansOf(Dial.positionOfHour(index));
-        var halfWidth = dc.getTextWidthInPixels(texts[index], font) / 2.0;
-        var reach = (halfWidth * Math.cos(radians).abs()) + ((inkHeight / 2.0) * Math.sin(radians).abs());
+        var reach = uprightReach(dc, index, font, inkHeight, radians);
         var radius = outerEdge - reach;
+        var highlightRadius = outerEdge - uprightReach(dc, index, highlightFont, highlightInk, radians);
 
-        innerEdge = min(innerEdge, Dial.pixel(radius - reach));
+        innerEdge = Numbers.min(innerEdge, Dial.pixel(radius - reach));
 
         xs[index] = Dial.pointX(radians, radius);
         ys[index] = Dial.pointY(radians, radius) + Dial.pixel(descentShift);
+        highlightXs[index] = Dial.pointX(radians, highlightRadius);
+        highlightYs[index] = Dial.pointY(radians, highlightRadius) + Dial.pixel(highlightShift);
         angles[index] = 0;
     }
 
-    //! Half the descent below the digits, less half the air above them
-    private function shiftOf(dc as Dc) as Float {
-        var ascent = Fonts.ascentOf(dc, font);
-        var descent = dc.getFontHeight(font) - ascent;
-        var air = ascent - inkHeight;
+    //! How far an upright numeral reaches from its center toward the glass
+    private function uprightReach(dc as Dc, index as Number, numeralFont as FontType, ink as Number, radians as Decimal) as Float {
+        var halfWidth = dc.getTextWidthInPixels(texts[index], numeralFont) / 2.0;
 
-        return (descent - air) / 2.0;
+        return ((halfWidth * Math.cos(radians).abs()) + ((ink / 2.0) * Math.sin(radians).abs())).toFloat();
     }
 
-    private function min(first as Number, second as Number) as Number {
-        return (first < second) ? first : second;
+    //! Half the descent below the digits, less half the air above them
+    private function shiftOf(dc as Dc, numeralFont as FontType, ink as Number) as Float {
+        var ascent = Fonts.ascentOf(dc, numeralFont);
+        var descent = dc.getFontHeight(numeralFont) - ascent;
+        var air = ascent - ink;
+
+        return (descent - air) / 2.0;
     }
 
     //! The bottom of the glass, past a quarter turn either side of the top
@@ -156,23 +204,31 @@ class RimNumerals {
         return angle % Dial.DEGREES_PER_CIRCLE;
     }
 
-    //! A vector font if the watch can turn text, the system font otherwise
+    //! Vector fonts if the watch can turn text, the system fonts otherwise
     private function chooseFont(dc as Dc) as Void {
         font = SYSTEM_FONT;
+        highlightFont = HIGHLIGHT_SYSTEM_FONT;
         isTurned = false;
 
         if (!(Graphics has :getVectorFont) || !(dc has :drawAngledText)) {
             return;
         }
 
-        var vectorFont = Graphics.getVectorFont({
-            :face => FACES,
-            :size => dc.getFontHeight(SYSTEM_FONT) * SIZE_NUMERATOR / SIZE_DIVISOR
-        });
+        var vectorFont = vectorFontFor(dc, SYSTEM_FONT);
+        var highlightVectorFont = vectorFontFor(dc, HIGHLIGHT_SYSTEM_FONT);
 
-        if (vectorFont != null) {
+        if ((vectorFont != null) && (highlightVectorFont != null)) {
             font = vectorFont;
+            highlightFont = highlightVectorFont;
             isTurned = true;
         }
+    }
+
+    //! A touch smaller than the system font it is sized off
+    private function vectorFontFor(dc as Dc, systemFont as FontType) as VectorFont? {
+        return Graphics.getVectorFont({
+            :face => FACES,
+            :size => dc.getFontHeight(systemFont) * SIZE_NUMERATOR / SIZE_DIVISOR
+        });
     }
 }

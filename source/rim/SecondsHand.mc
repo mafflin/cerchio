@@ -98,10 +98,10 @@ class SecondsHand {
 
     //! The box around both seconds' lines
     private function clipAround(dc as Dc, first as Number, second as Number) as Void {
-        var left = min(lefts[first], lefts[second]);
-        var top = min(tops[first], tops[second]);
-        var right = max(rights[first], rights[second]);
-        var bottom = max(bottoms[first], bottoms[second]);
+        var left = Numbers.min(lefts[first], lefts[second]);
+        var top = Numbers.min(tops[first], tops[second]);
+        var right = Numbers.max(rights[first], rights[second]);
+        var bottom = Numbers.max(bottoms[first], bottoms[second]);
 
         dc.setClip(left, top, right - left, bottom - top);
     }
@@ -121,17 +121,9 @@ class SecondsHand {
     private function boxAround(second as Number) as Void {
         var reach = ((width + 1) / 2) + PADDING;
 
-        lefts[second] = max(min(innerXs[second], outerXs[second]) - reach, 0);
-        tops[second] = max(min(innerYs[second], outerYs[second]) - reach, 0);
-        rights[second] = min(max(innerXs[second], outerXs[second]) + reach + 1, Dial.screenWidth);
-        bottoms[second] = min(max(innerYs[second], outerYs[second]) + reach + 1, Dial.screenHeight);
-    }
-
-    private function min(first as Number, second as Number) as Number {
-        return (first < second) ? first : second;
-    }
-
-    private function max(first as Number, second as Number) as Number {
-        return (first > second) ? first : second;
+        lefts[second] = Numbers.max(Numbers.min(innerXs[second], outerXs[second]) - reach, 0);
+        tops[second] = Numbers.max(Numbers.min(innerYs[second], outerYs[second]) - reach, 0);
+        rights[second] = Numbers.min(Numbers.max(innerXs[second], outerXs[second]) + reach + 1, Dial.screenWidth);
+        bottoms[second] = Numbers.min(Numbers.max(innerYs[second], outerYs[second]) + reach + 1, Dial.screenHeight);
     }
 }

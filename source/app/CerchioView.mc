@@ -13,10 +13,10 @@ class CerchioView extends WatchUi.WatchFace {
     private const FRAME_RATIO = 0.66;
     private const FIELD_DROP_RATIO = 0.02;
 
-    //! Until the editor picks one
-    private const DEFAULT_COLOR = Graphics.COLOR_WHITE;
-
     private const BACKGROUND = Graphics.COLOR_BLACK;
+
+    //! Half a numeral's step: below it the nearest numeral would be the 12
+    private const GOAL_START_SHARE = 0.5 / Dial.HOURS;
 
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
@@ -27,7 +27,10 @@ class CerchioView extends WatchUi.WatchFace {
     private var statusBar as StatusBar;
     private var field as ComplicationField;
     private var secondsHand as SecondsHand;
+    private var activityReading as ActivityReading;
+    private var goalProgress as GoalProgress;
     private var faceBuffer as FaceBuffer;
+    private var editor as Editor;
 
     //! Asked once, not every update
     private var canSmooth as Boolean = false;
@@ -41,9 +44,6 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! Whether the native watch face editor started the face
     private var editMode as Boolean;
-
-    //! While the editor pulses the field, it draws the field itself
-    private var isPulsed as Boolean = false;
 
     function initialize(editMode as Boolean) {
         WatchFace.initialize();
@@ -60,7 +60,10 @@ class CerchioView extends WatchUi.WatchFace {
         statusBar = new StatusBar();
         field = new ComplicationField(SlotId.CENTER, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY);
         secondsHand = new SecondsHand();
+        activityReading = new ActivityReading();
+        goalProgress = new GoalProgress();
         faceBuffer = new FaceBuffer();
+        editor = new Editor(numerals, secondsHand, field, goalProgress);
 
         partialUpdatesAllowed = (WatchUi.WatchFace has :onPartialUpdate);
     }
@@ -85,39 +88,26 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the seconds hand. Data: the rim numerals. editedType is null
-    //! while initializing.
+    //! editedType is null while initializing
     function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
-        secondsHand.setColor(colorOf(config.accentColor));
-        numerals.setColor(colorOf(config.complicationColor));
-        applyComplications(config.complicationSettings);
-
-        // On to another setting: the field is no longer being pulsed.
-        if (editedType != WatchUi.WATCH_FACE_CONFIG_TYPE_COMPLICATION) {
-            isPulsed = false;
-        }
-
+        editor.apply(config, editedType);
         redraw();
     }
 
-    //! The drawable the editor is about to pulse
+    //! The drawable the editor is about to pulse, null for none
     function getComplication(complication as ComplicationRef) as ComplicationDrawableRef? {
-        if (complication.uniqueIdentifier != SlotId.CENTER) {
-            return null;
+        var pulsed = editor.pulse(complication);
+
+        if (pulsed != null) {
+            redraw();
         }
 
-        isPulsed = true;
-        redraw();
-
-        return new WatchUi.ComplicationDrawableRef({
-            :drawable => field,
-            :boundingBox => field.getBoundingBox()
-        });
+        return pulsed;
     }
 
     //! The slot under a tap, or null
     function getTappedComplication(x as Number, y as Number) as Number? {
-        return field.containsPoint(x, y) ? field.getSlotId() : null;
+        return editor.tappedSlot(x, y);
     }
 
     function onComplicationChange(complicationId as Complications.Id) as Void {
@@ -215,43 +205,10 @@ class CerchioView extends WatchUi.WatchFace {
         Complications.registerComplicationChangeCallback(method(:onComplicationChange));
     }
 
-    private function applyComplications(slots as Array<WatchFaceConfig.ComplicationRef>?) as Void {
-        if (slots == null) {
-            return;
-        }
-
-        for (var i = 0; i < slots.size(); i++) {
-            applySlot(slots[i]);
-        }
-    }
-
-    //! null until picked: the default type stands
-    private function applySlot(slot as WatchFaceConfig.ComplicationRef) as Void {
-        if (slot.uniqueIdentifier != SlotId.CENTER) {
-            return;
-        }
-
-        var complicationId = slot.complicationId;
-
-        if (complicationId != null) {
-            field.setComplicationId(complicationId);
-        }
-
-        field.refresh();
-    }
-
     private function drawField(dc as Dc) as Void {
-        if (!isPulsed) {
+        if (!editor.isPulsing()) {
             field.draw(dc);
         }
-    }
-
-    private function colorOf(chosen as WatchFaceConfig.Color?) as Number {
-        if ((chosen != null) && (chosen.color != null)) {
-            return chosen.color as Number;
-        }
-
-        return DEFAULT_COLOR;
     }
 
     private function isAlwaysOn() as Boolean {
@@ -318,6 +275,32 @@ class CerchioView extends WatchUi.WatchFace {
         if (daylight.refresh()) {
             dayColors.refresh();
         }
+
+        refreshGoal();
+    }
+
+    //! The goal style picks out the numeral as far round as the goal is done;
+    //! none until it is past the 12, which otherwise reads as done
+    private function refreshGoal() as Void {
+        numerals.setHighlightIndex(null);
+
+        if (editor.style() != Styles.GOAL) {
+            return;
+        }
+
+        var info = activityReading.refresh();
+
+        if (info != null) {
+            goalProgress.read(info);
+        }
+
+        var share = goalProgress.share();
+
+        if ((share == null) || (share < GOAL_START_SHARE)) {
+            return;
+        }
+
+        numerals.setHighlightIndex(numerals.indexAt(share));
     }
 
     //! Once per dc: the dc between two updates is the system's

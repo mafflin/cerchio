@@ -10,7 +10,9 @@ where the watch allows it.
 something to report. **Below it**, one data field of your choice from 26
 built-in complications.
 
-- Set on the watch in Garmin's watch face editor: data field, a color for the
-  numerals and one for the seconds hand
+- Goal style: the numeral as far round as your steps, floors or intensity
+  minutes goal stands out, larger and in the accent color
+- Set on the watch in Garmin's watch face editor: style, data field, goal,
+  a color for the numerals and an accent for the seconds hand and goal
 - Always-on mode shows just the time
 - Open source under the MIT License: github.com/mafflin/cerchio

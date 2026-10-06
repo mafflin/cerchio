@@ -1,11 +1,17 @@
 <resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <watchface-config>
+        <!-- Ids must match the Styles module in source/app/Styles.mc -->
+        <styles>
+            <style id="1" label="@Strings.stylePlain" default="true"/>
+            <style id="2" label="@Strings.styleGoal"/>
+        </styles>
         <!-- An explicit palette rather than allowAny: the editor wants a
              label per color. Every channel is 00, 55, AA or FF - the 64 color MIP palette -
              so none of these dither on those screens. No black: the
              background is black.
 
-             Accent colors the seconds hand; data colors the rim numerals. The
+             Accent colors the seconds hand and the goal numeral; data colors
+             the rim numerals. The
              data field is white. -->
         <accentColors>
             <color label="@Strings.ColorWhite" default="true">0xFFFFFF</color>
@@ -105,6 +111,12 @@
                 <type>Complications.COMPLICATION_TYPE_SOLAR_INPUT</type>                      <!-- SOL -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- TEMP -->
                 <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- no label -->
+            </complication>
+            <!-- The goal numeral's goal; each type needs a case in GoalProgress -->
+            <complication id="2">
+                <type default="true">Complications.COMPLICATION_TYPE_STEPS</type>
+                <type>Complications.COMPLICATION_TYPE_FLOORS_CLIMBED</type>
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>
             </complication>
         </data>
     </watchface-config>
