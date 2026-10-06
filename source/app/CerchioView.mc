@@ -16,6 +16,10 @@ class CerchioView extends WatchUi.WatchFace {
     //! Asked once, not every update
     private var canSmooth as Boolean = false;
 
+    //! AMOLED: asleep, only the time shows
+    private var needsBurnInProtection as Boolean = false;
+    private var isAwake as Boolean = true;
+
     function initialize() {
         WatchFace.initialize();
 
@@ -30,6 +34,7 @@ class CerchioView extends WatchUi.WatchFace {
     //! Size everything for this screen
     function onLayout(dc as Dc) as Void {
         canSmooth = (dc has :setAntiAlias);
+        needsBurnInProtection = Clock.settings().requiresBurnInProtection;
 
         Dial.setup(dc);
         numerals.prepare(dc);
@@ -38,13 +43,32 @@ class CerchioView extends WatchUi.WatchFace {
 
     function onUpdate(dc as Dc) as Void {
         Clock.read();
-        refreshReadings();
         smooth(dc);
         paintBackground(dc);
 
+        if (isAlwaysOn()) {
+            timeDisplay.draw(dc);
+            return;
+        }
+
+        refreshReadings();
         numerals.draw(dc);
         dayCircle.draw(dc);
         timeDisplay.draw(dc);
+    }
+
+    function onEnterSleep() as Void {
+        isAwake = false;
+        WatchUi.requestUpdate();
+    }
+
+    function onExitSleep() as Void {
+        isAwake = true;
+        WatchUi.requestUpdate();
+    }
+
+    private function isAlwaysOn() as Boolean {
+        return needsBurnInProtection && !isAwake;
     }
 
     //! Everything the draw reads, before anything draws
