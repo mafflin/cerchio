@@ -27,6 +27,7 @@ class CerchioView extends WatchUi.WatchFace {
     private var windReading as WindReading;
     private var statusBar as StatusBar;
     private var field as ComplicationField;
+    private var lowerField as ComplicationField;
     private var secondsHand as SecondsHand;
     private var activityReading as ActivityReading;
     private var goalProgress as GoalProgress;
@@ -61,6 +62,10 @@ class CerchioView extends WatchUi.WatchFace {
         windReading = new WindReading();
         statusBar = new StatusBar(windReading);
         field = new ComplicationField(SlotId.CENTER, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY);
+        lowerField = new ComplicationField(SlotId.LOWER, Complications.COMPLICATION_TYPE_RECOVERY_TIME);
+        lowerField.setLabelShown(false);
+        lowerField.setFont(Graphics.FONT_XTINY);
+        lowerField.setZeroHidden(true);
         secondsHand = new SecondsHand();
         activityReading = new ActivityReading();
         goalProgress = new GoalProgress();
@@ -116,12 +121,21 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     function onComplicationChange(complicationId as Complications.Id) as Void {
-        if (!field.shows(complicationId)) {
-            return;
+        var changed = false;
+
+        if (field.shows(complicationId)) {
+            field.refresh();
+            changed = true;
         }
 
-        field.refresh();
-        redraw();
+        if (lowerField.shows(complicationId)) {
+            lowerField.refresh();
+            changed = true;
+        }
+
+        if (changed) {
+            redraw();
+        }
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -186,7 +200,11 @@ class CerchioView extends WatchUi.WatchFace {
         var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
         var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();
 
-        field.prepare(dc, Dial.centerX, top + (field.heightIn(dc) / 2));
+        var fieldHeight = field.heightIn(dc);
+
+        field.prepare(dc, Dial.centerX, top + (fieldHeight / 2));
+        lowerField.prepare(dc, Dial.centerX, top + fieldHeight + (lowerField.heightIn(dc) / 2));
+        lowerField.refresh();
         statusBar.mirror(frame);
     }
 
@@ -214,6 +232,7 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay.setColor(data);
         statusBar.setColor(data);
         field.setColor(data);
+        lowerField.setColor(data);
     }
 
     //! Something on the off screen face has changed
@@ -224,6 +243,7 @@ class CerchioView extends WatchUi.WatchFace {
 
     private function subscribeToComplications() as Void {
         Complications.subscribeToUpdates(field.getComplicationId());
+        Complications.subscribeToUpdates(lowerField.getComplicationId());
         Complications.registerComplicationChangeCallback(method(:onComplicationChange));
     }
 
@@ -231,6 +251,8 @@ class CerchioView extends WatchUi.WatchFace {
         if (!editor.isPulsing()) {
             field.draw(dc);
         }
+
+        lowerField.draw(dc);
     }
 
     private function isAlwaysOn() as Boolean {

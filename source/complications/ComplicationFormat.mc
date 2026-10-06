@@ -27,6 +27,7 @@ module ComplicationFormat {
     const DISTANCE_FORMAT = "%.1f";
 
     const PERCENT = "%";
+    const HOUR = "h";
 
     const FEET_PER_METER = 3.28084;
     const METER = "m";
@@ -215,10 +216,9 @@ module ComplicationFormat {
         return pair(CLOCK_FORMAT, hour, minute);
     }
 
-    //! Whole hours, rounded up so the last few minutes still read 1; the RH
-    //! label carries the unit
+    //! Whole hours, rounded up so the last few minutes still read 1h
     function hours(total as Number) as String {
-        return ((total + Clock.SECONDS_PER_HOUR - 1) / Clock.SECONDS_PER_HOUR).format(LEADING_FORMAT);
+        return ((total + Clock.SECONDS_PER_HOUR - 1) / Clock.SECONDS_PER_HOUR).format(LEADING_FORMAT) + HOUR;
     }
 
     function pair(format as String, leading as Number, trailing as Number) as String {

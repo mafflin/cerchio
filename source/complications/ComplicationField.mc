@@ -8,7 +8,7 @@ import Toybox.WatchUi;
 class ComplicationField extends WatchUi.Drawable {
 
     private const LABEL_FORMAT = "$1$ $2$";
-    private const FONT = Graphics.FONT_SMALL;
+    private var font as FontType = Graphics.FONT_SMALL;
 
     //! Fixed, so the tap target does not shift as values change
     private const WIDTH_RATIO = 0.6;
@@ -18,6 +18,12 @@ class ComplicationField extends WatchUi.Drawable {
 
     private var complicationId as Complications.Id;
     private var text as String = "";
+
+    //! Off: the value alone, the type's short name left off
+    private var labelShown as Boolean = true;
+
+    //! On: nothing at all while the value is zero
+    private var zeroHidden as Boolean = false;
     private var color as Number = Graphics.COLOR_WHITE;
 
     //! defaultType shows until the user picks one
@@ -37,7 +43,7 @@ class ComplicationField extends WatchUi.Drawable {
     }
 
     function heightIn(dc as Dc) as Number {
-        return dc.getFontHeight(FONT);
+        return dc.getFontHeight(font);
     }
 
     function getSlotId() as Number {
@@ -50,6 +56,19 @@ class ComplicationField extends WatchUi.Drawable {
 
     function setComplicationId(complicationId as Complications.Id) as Void {
         self.complicationId = complicationId;
+    }
+
+    //! Before prepare()
+    function setFont(font as FontType) as Void {
+        self.font = font;
+    }
+
+    function setLabelShown(labelShown as Boolean) as Void {
+        self.labelShown = labelShown;
+    }
+
+    function setZeroHidden(zeroHidden as Boolean) as Void {
+        self.zeroHidden = zeroHidden;
     }
 
     function setColor(color as Number) as Void {
@@ -66,6 +85,11 @@ class ComplicationField extends WatchUi.Drawable {
         try {
             var complication = Complications.getComplication(complicationId);
 
+            if (zeroHidden && isZero(complication.value)) {
+                text = "";
+                return;
+            }
+
             text = labelled(
                 ComplicationLabel.of(complication.getType()),
                 ComplicationFormat.text(complication)
@@ -81,7 +105,7 @@ class ComplicationField extends WatchUi.Drawable {
         dc.drawText(
             locX + (width / 2),
             locY,
-            FONT,
+            font,
             text,
             Graphics.TEXT_JUSTIFY_CENTER
         );
@@ -99,9 +123,14 @@ class ComplicationField extends WatchUi.Drawable {
         return getBoundingBox().includesPoint(x, y);
     }
 
+    //! Null counts too: there is nothing to show either way
+    private function isZero(value as Complications.Value?) as Boolean {
+        return (value == null) || (ComplicationFormat.decimal(value) == 0);
+    }
+
     //! The value behind its label, or alone for a type that needs none
     private function labelled(label as String, value as String) as String {
-        if (label.length() == 0) {
+        if (!labelShown || (label.length() == 0)) {
             return value;
         }
 
