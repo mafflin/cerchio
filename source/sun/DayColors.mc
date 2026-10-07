@@ -27,7 +27,7 @@ class DayColors {
         self.daylight = daylight;
     }
 
-    //! Whenever the daylight has read anew
+    //! Whenever the sun has moved
     function refresh() as Void {
         sunrisePosition = positionOf(daylight.sunrise());
         sunsetPosition = positionOf(daylight.sunset());

@@ -2,7 +2,8 @@ import Toybox.Complications;
 import Toybox.Lang;
 
 //! Today's sunrise and sunset off the complications, solar noon halfway
-//! between, and dawn and dusk either side of noon. Read once a minute.
+//! between, and dawn and dusk either side of noon. Read once a minute,
+//! worked out again only when the sun moves.
 class Daylight {
 
     //! Minutes past midnight, null when not known
@@ -21,14 +22,21 @@ class Daylight {
         minuteGate = new MinuteGate();
     }
 
-    //! true when it read anew
+    //! true when the sun has moved, about once a day
     function refresh() as Boolean {
         if (!minuteGate.opens()) {
             return false;
         }
 
-        sunriseMinute = minutesOf(sunriseId);
-        sunsetMinute = minutesOf(sunsetId);
+        var sunrise = minutesOf(sunriseId);
+        var sunset = minutesOf(sunsetId);
+
+        if ((sunrise == sunriseMinute) && (sunset == sunsetMinute)) {
+            return false;
+        }
+
+        sunriseMinute = sunrise;
+        sunsetMinute = sunset;
         refreshTwilight();
 
         return true;
