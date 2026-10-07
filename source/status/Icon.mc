@@ -73,11 +73,6 @@ class Icon {
     }
 
     function draw(dc as Dc, x as Number, y as Number) as Void {
-        if (!(dc has :drawBitmap2)) {
-            dc.drawBitmap(x, y, bitmap());
-            return;
-        }
-
         dc.drawBitmap2(x, y, bitmap(), { :tintColor => tint() });
     }
 

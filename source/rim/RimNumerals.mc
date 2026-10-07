@@ -87,9 +87,9 @@ class RimNumerals {
         chooseFont(dc);
 
         outerEdge = Dial.rim - (Dial.rim / GAP_DIVISOR);
-        inkHeight = Fonts.digitHeightOf(dc, font);
+        inkHeight = Fonts.digitHeightOf(font);
         descentShift = shiftOf(dc, font, inkHeight);
-        highlightInk = Fonts.digitHeightOf(dc, highlightFont);
+        highlightInk = Fonts.digitHeightOf(highlightFont);
         highlightShift = shiftOf(dc, highlightFont, highlightInk);
         innerEdge = outerEdge - inkHeight;
 
@@ -177,7 +177,7 @@ class RimNumerals {
 
     //! Half the descent below the digits, less half the air above them
     private function shiftOf(dc as Dc, numeralFont as FontType, ink as Number) as Float {
-        var ascent = Fonts.ascentOf(dc, numeralFont);
+        var ascent = Fonts.ascentOf(numeralFont);
         var descent = dc.getFontHeight(numeralFont) - ascent;
         var air = ascent - ink;
 
@@ -201,15 +201,12 @@ class RimNumerals {
         return angle % Dial.DEGREES_PER_CIRCLE;
     }
 
-    //! Vector fonts if the watch can turn text, the system fonts otherwise
+    //! Vector fonts if the watch carries one of the faces, the system fonts
+    //! upright otherwise
     private function chooseFont(dc as Dc) as Void {
         font = SYSTEM_FONT;
         highlightFont = HIGHLIGHT_SYSTEM_FONT;
         isTurned = false;
-
-        if (!(Graphics has :getVectorFont) || !(dc has :drawAngledText)) {
-            return;
-        }
 
         var vectorFont = vectorFontFor(dc, SYSTEM_FONT);
         var highlightVectorFont = vectorFontFor(dc, HIGHLIGHT_SYSTEM_FONT);
