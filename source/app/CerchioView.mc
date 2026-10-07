@@ -157,7 +157,7 @@ class CerchioView extends WatchUi.WatchFace {
             return;
         }
 
-        Clock.read();
+        Clock.readTime();
 
         var face = currentFace();
 
