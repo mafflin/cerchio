@@ -84,17 +84,22 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot.prepare(dayCircle.width());
         faceBuffer.prepare(dc);
         placeFrame(dc);
-        loadSettings();
 
         // The editor shows a snapshot; live updates are not worth the power.
+        // Before the settings: a saved pick then swaps the subscription.
         if (!editMode) {
             subscribeToComplications();
         }
+
+        loadSettings();
     }
 
     //! editedType is null while initializing
     function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
+        var shown = field.getComplicationId();
+
         editor.apply(config, editedType);
+        followField(shown);
         applyColors();
         statusBar.showNotifications(editor.showsNotifications());
         redraw();
@@ -222,6 +227,16 @@ class CerchioView extends WatchUi.WatchFace {
     private function subscribeToComplications() as Void {
         Complications.subscribeToUpdates(field.getComplicationId());
         Complications.registerComplicationChangeCallback(method(:onComplicationChange));
+    }
+
+    //! Live updates follow the pick; none in the editor
+    private function followField(previous as Complications.Id) as Void {
+        if (editMode || field.shows(previous)) {
+            return;
+        }
+
+        Complications.unsubscribeFromUpdates(previous);
+        Complications.subscribeToUpdates(field.getComplicationId());
     }
 
     private function drawField(dc as Dc) as Void {
