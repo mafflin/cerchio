@@ -11,11 +11,12 @@ only when there is something to report; the wind arrow turns orange, then
 red, as it picks up. **Below it**, one data field of your choice from 26
 built-in complications.
 
-- Goal style: a dot on the numerals glides round as your steps, floors or
+- Recovery style: the numeral of the recovery hours left stands out, larger
+  and in the accent color; past a day the 24, orange up to two days and red
+  beyond
+- Recovery Goal style: the recovery numeral, and a half dot at the edge of
+  the glass that glides round from the top as your steps, floors or
   intensity minutes goal is done
-- Goal Recovery style: the goal dot, and the numeral of the recovery hours
-  left stands out, larger and in the accent color; past a day the 24, orange
-  up to two days and red beyond
 - Set on the watch in Garmin's watch face editor: style, data field, goal,
   wind or messages, a color for the time and data, and an accent for the
   seconds hand, goal dot and recovery numeral

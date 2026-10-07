@@ -2,8 +2,8 @@
     <string id="AppName">Cerchio</string>
 
     <string id="stylePlain">Plain</string>
-    <string id="styleGoal">Goal</string>
-    <string id="styleGoalRecovery">Goal Recovery</string>
+    <string id="styleRecovery">Recovery</string>
+    <string id="styleRecoveryGoal">Recovery Goal</string>
 
     <string id="ColorWhite">White</string>
     <string id="ColorGray">Gray</string>

@@ -1,14 +1,12 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! Progress to the goal: a dot on the numerals' line, gliding round from the
-//! top a degree at a time as the goal is done, over any numeral in its way.
+//! Progress to the goal: a dot centered on the glass, so only its inner half
+//! shows, gliding round from the top a degree at a time as the goal is done.
+//! Done is back at the top.
 class GoalDot {
 
     private var color as Number = Graphics.COLOR_WHITE;
-
-    //! Midway across the numerals, from the center
-    private var radius as Float = 0.0;
     private var dotRadius as Number = 1;
 
     //! Whole degrees clockwise from the top, null for none
@@ -17,9 +15,8 @@ class GoalDot {
     function initialize() {
     }
 
-    //! After the numerals are prepared
-    function prepare(radius as Float, dotRadius as Number) as Void {
-        self.radius = radius;
+    //! After Dial.setup()
+    function prepare(dotRadius as Number) as Void {
         self.dotRadius = dotRadius;
     }
 
@@ -27,7 +24,7 @@ class GoalDot {
         self.color = color;
     }
 
-    //! 0 to 1; nothing until the goal is started. Done is back at the top.
+    //! 0 to 1; nothing until the goal is started
     function setShare(share as Float?) as Void {
         if ((share == null) || (share <= 0)) {
             degrees = null;
@@ -38,13 +35,15 @@ class GoalDot {
     }
 
     function draw(dc as Dc) as Void {
-        if (degrees == null) {
+        var position = degrees;
+
+        if (position == null) {
             return;
         }
 
-        var radians = Dial.radiansOf(degrees);
+        var radians = Dial.radiansOf(position);
 
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(Dial.pointX(radians, radius), Dial.pointY(radians, radius), dotRadius);
+        dc.fillCircle(Dial.pointX(radians, Dial.rim), Dial.pointY(radians, Dial.rim), dotRadius);
     }
 }

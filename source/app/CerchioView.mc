@@ -81,7 +81,7 @@ class CerchioView extends WatchUi.WatchFace {
         dayCircle.prepare(numerals.inner());
         hourHand.prepare();
         secondsHand.prepare();
-        goalDot.prepare(numerals.middle(), dayCircle.width());
+        goalDot.prepare(dayCircle.width());
         faceBuffer.prepare(dc);
         placeFrame(dc);
         loadSettings();
