@@ -81,9 +81,9 @@
              exactly these, in this order. The slots are the data fields
              left to right; the middle one defaults to the weekday and date.
              The weather type stands for the wind, which has no type of its
-             own. The comment on each line is the icon ComplicationIcon gives
-             it - the two lists are meant to stay in step, so a type dropped
-             here should lose its case there as well. -->
+             own. The comment on each line is the icon FieldKinds gives it -
+             the two lists are meant to stay in step, so a type dropped here
+             should lose its case there as well. -->
         <data>
             <complication id="1">
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->

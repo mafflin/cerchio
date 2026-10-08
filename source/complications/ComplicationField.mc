@@ -4,7 +4,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 //! A data container below the time: whichever complication the user picked
-//! in the editor, its icon and its value. A Drawable so the editor can pulse
+//! in the editor, its icon and its value as its FieldKind shows them. A Drawable so the editor can pulse
 //! it in place.
 class ComplicationField extends WatchUi.Drawable {
 
@@ -18,9 +18,10 @@ class ComplicationField extends WatchUi.Drawable {
     private var complicationId as Complications.Id;
     private var text as String = "";
 
-    //! The type's icon, null for none; loaded again only when the type moves
-    private var icon as Icon? = null;
-    private var iconType as Complications.Type? = null;
+    //! How the type is shown, made again only when the type moves; null
+    //! while nothing is known
+    private var kind as FieldKind? = null;
+    private var kindType as Complications.Type? = null;
     private var color as Number = Graphics.COLOR_WHITE;
 
     //! defaultType shows until the user picks one
@@ -72,25 +73,27 @@ class ComplicationField extends WatchUi.Drawable {
         var complication = ComplicationReader.read(complicationId);
 
         if (complication == null) {
-            text = "";
-            icon = null;
-            iconType = null;
+            text = ValueFormat.NOTHING;
+            kind = null;
+            kindType = null;
             return;
         }
 
-        text = ComplicationFormat.text(complication);
-        showIconOf(complication.getType());
+        var shown = kindOf(complication.getType());
+        var icon = shown.icon();
 
-        var shownIcon = icon;
+        text = shown.text(complication);
 
-        if (shownIcon != null) {
-            shownIcon.refresh();
+        if (icon != null) {
+            icon.refresh();
         }
     }
 
     //! Also drawn by the editor while it pulses the field
     function draw(dc as Dc) as Void {
-        IconText.draw(dc, (locX + (width / 2)).toNumber(), locY.toNumber(), icon, text, color);
+        var shown = kind;
+
+        IconText.draw(dc, (locX + (width / 2)).toNumber(), locY.toNumber(), (shown != null) ? shown.icon() : null, text, color);
     }
 
     //! What the editor outlines and taps are tested against
@@ -105,12 +108,18 @@ class ComplicationField extends WatchUi.Drawable {
         return getBoundingBox().includesPoint(x, y);
     }
 
-    private function showIconOf(type as Complications.Type?) as Void {
-        if (type == iconType) {
-            return;
+    //! The kind for a type, kept until the type moves
+    private function kindOf(type as Complications.Type?) as FieldKind {
+        var current = kind;
+
+        if ((current != null) && (type == kindType)) {
+            return current;
         }
 
-        iconType = type;
-        icon = ComplicationIcon.iconFor(type);
+        current = FieldKinds.of(type);
+        kind = current;
+        kindType = type;
+
+        return current;
     }
 }

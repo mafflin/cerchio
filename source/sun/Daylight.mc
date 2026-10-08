@@ -112,6 +112,6 @@ class Daylight {
             return null;
         }
 
-        return ComplicationFormat.wholeNumber(value) / Clock.SECONDS_PER_MINUTE;
+        return ValueFormat.wholeNumber(value) / Clock.SECONDS_PER_MINUTE;
     }
 }
