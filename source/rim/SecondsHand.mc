@@ -3,15 +3,20 @@ import Toybox.Lang;
 import Toybox.Math;
 
 //! The seconds hand: an equilateral arrow pointing out, its tip on the
-//! glass. Every position is worked out once per screen, so a tick only
+//! glass, or just inside a circle against it. Every position is worked out once per screen, so a tick only
 //! looks up three corners and their box. In low power mode a partial update
 //! copies the face back over the old box and the new one, then draws.
 class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! The base, in degrees at the glass
+    //! The base, in degrees at the tip: wider inside a circle, where the tip
+    //! sits nearer the middle
     private const WIDTH_DEGREES = 6;
+    private const INSIDE_WIDTH_DEGREES = 8;
+
+    //! Air between the tip and a circle, as a share of the radius
+    private const GAP_DIVISOR = 32;
 
     //! An equilateral triangle's height over its base
     private const EQUILATERAL_HEIGHT = 0.866;
@@ -43,13 +48,22 @@ class SecondsHand {
         self.color = color;
     }
 
-    //! After Dial.setup()
-    function prepare() as Void {
-        var baseWidth = (2 * Dial.rim * Math.sin(Math.toRadians(WIDTH_DEGREES / 2.0))).toFloat();
-        var baseRadius = (Dial.rim - (baseWidth * EQUILATERAL_HEIGHT)).toFloat();
+    //! After Dial.setup(). Null for no circle against the glass: the tip is
+    //! on the glass.
+    function prepare(circleInnerEdge as Number?) as Void {
+        var tipRadius = Dial.rim;
+        var widthDegrees = WIDTH_DEGREES;
+
+        if (circleInnerEdge != null) {
+            tipRadius = circleInnerEdge - (Dial.rim / GAP_DIVISOR);
+            widthDegrees = INSIDE_WIDTH_DEGREES;
+        }
+
+        var baseWidth = (2 * tipRadius * Math.sin(Math.toRadians(widthDegrees / 2.0))).toFloat();
+        var baseRadius = (tipRadius - (baseWidth * EQUILATERAL_HEIGHT)).toFloat();
 
         for (var second = 0; second < COUNT; second++) {
-            place(second, baseRadius, baseWidth / 2);
+            place(second, tipRadius, baseRadius, baseWidth / 2);
         }
 
         drawnSecond = null;
@@ -100,7 +114,7 @@ class SecondsHand {
         dc.setClip(left, top, right - left, bottom - top);
     }
 
-    private function place(second as Number, baseRadius as Float, halfWidth as Float) as Void {
+    private function place(second as Number, tipRadius as Number, baseRadius as Float, halfWidth as Float) as Void {
         var radians = Dial.radiansOf(second * Dial.DEGREES_PER_SECOND);
         var outX = Math.cos(radians);
 
@@ -114,7 +128,7 @@ class SecondsHand {
         var baseY = Dial.centerY + (baseRadius * outY);
 
         corners[second] = [
-            [Dial.pointX(radians, Dial.rim), Dial.pointY(radians, Dial.rim)],
+            [Dial.pointX(radians, tipRadius), Dial.pointY(radians, tipRadius)],
             [Dial.pixel(baseX + acrossX), Dial.pixel(baseY + acrossY)],
             [Dial.pixel(baseX - acrossX), Dial.pixel(baseY - acrossY)]
         ] as Array<[Numeric, Numeric]>;

@@ -2,9 +2,8 @@
     <watchface-config>
         <!-- Ids must match the Styles module in source/app/Styles.mc -->
         <styles>
-            <style id="1" label="@Strings.stylePlain" default="true"/>
-            <style id="2" label="@Strings.styleRecovery"/>
-            <style id="3" label="@Strings.styleRecoveryGoal"/>
+            <style id="1" label="@Strings.styleNumerals" default="true"/>
+            <style id="2" label="@Strings.stylePlain"/>
         </styles>
         <!-- An explicit palette rather than allowAny: the editor wants a
              label per color. Every channel is 00, 55, AA or FF - the 64 color MIP palette -

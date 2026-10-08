@@ -3,20 +3,15 @@ import Toybox.Lang;
 //! The editor's styles. Ids must match the <style> ids in watchface.xml.
 module Styles {
     enum Value {
-        PLAIN = 1,
-        RECOVERY = 2,
-        RECOVERY_GOAL = 3
+        NUMERALS = 1,
+        PLAIN = 2
     }
 
-    const DEFAULT = PLAIN;
+    const DEFAULT = NUMERALS;
 
-    //! The numeral of the recovery hours left picked out
-    function hasRecovery(style as Number) as Boolean {
-        return (style == RECOVERY) || hasGoal(style);
-    }
-
-    //! The goal dot
-    function hasGoal(style as Number) as Boolean {
-        return style == RECOVERY_GOAL;
+    //! The numerals round the glass, the recovery hours left picked out;
+    //! without them the circle moves out to the glass
+    function hasNumerals(style as Number) as Boolean {
+        return style != PLAIN;
     }
 }

@@ -78,10 +78,7 @@ class CerchioView extends WatchUi.WatchFace {
 
         Dial.setup(dc);
         numerals.prepare(dc);
-        dayCircle.prepare(numerals.inner());
-        hourHand.prepare();
-        secondsHand.prepare();
-        goalDot.prepare(dayCircle.width());
+        placeCircle();
         faceBuffer.prepare(dc);
         placeFrame(dc);
 
@@ -99,6 +96,7 @@ class CerchioView extends WatchUi.WatchFace {
         var shown = field.getComplicationId();
 
         editor.apply(config, editedType);
+        placeCircle();
         followField(shown);
         applyColors();
         statusBar.showNotifications(editor.showsNotifications());
@@ -185,6 +183,21 @@ class CerchioView extends WatchUi.WatchFace {
     function onExitSleep() as Void {
         isAwake = true;
         WatchUi.requestUpdate();
+    }
+
+    //! Inside the numerals, or against the glass for a style without them;
+    //! the hour hand follows the circle, and the seconds hand and the goal
+    //! dot keep inside it when it is against the glass
+    private function placeCircle() as Void {
+        var hasNumerals = Styles.hasNumerals(editor.style());
+
+        dayCircle.prepare(hasNumerals ? numerals.inner() : null);
+        hourHand.prepare();
+
+        var circleInnerEdge = hasNumerals ? null : dayCircle.inner();
+
+        secondsHand.prepare(circleInnerEdge);
+        goalDot.prepare(dayCircle.width(), circleInnerEdge);
     }
 
     //! The status row above the time mirrors the line the field hangs from
@@ -284,10 +297,10 @@ class CerchioView extends WatchUi.WatchFace {
         paintBackground(dc);
         refreshReadings();
 
-        numerals.draw(dc);
-        drawGoalDot(dc);
+        drawNumerals(dc);
         dayCircle.draw(dc);
         hourHand.draw(dc);
+        goalDot.draw(dc);
         statusBar.draw(dc);
         drawField(dc);
         timeDisplay.draw(dc);
@@ -328,19 +341,19 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot.setShare(goalProgress.share());
     }
 
-    private function drawGoalDot(dc as Dc) as Void {
-        if (Styles.hasGoal(editor.style())) {
-            goalDot.draw(dc);
+    private function drawNumerals(dc as Dc) as Void {
+        if (Styles.hasNumerals(editor.style())) {
+            numerals.draw(dc);
         }
     }
 
-    //! The recovery style picks out the numeral of the hours left in the
+    //! With the numerals, picks out the numeral of the hours left in the
     //! accent color; past a day the 24, orange up to two days and red beyond,
     //! as the wind does. None once recovered.
     private function refreshRecovery() as Void {
         var hours = recoveryReading.hours();
 
-        if (!Styles.hasRecovery(editor.style()) || (hours <= 0)) {
+        if (!Styles.hasNumerals(editor.style()) || (hours <= 0)) {
             numerals.setHighlightIndex(null);
             return;
         }

@@ -2,8 +2,9 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-//! A circle just inside the numerals in the day's colors, a gap wherever the
-//! color changes; whole in the fallback color until the sun is known. Solar
+//! A circle just inside the numerals, or against the glass without them, in
+//! the day's colors, a gap wherever the color changes; whole in the fallback
+//! color until the sun is known. Solar
 //! noon is a piece of the line as long as the line is wide, split off by a
 //! gap either side. drawArc works in whole degrees, too coarse for a gap, so
 //! the sectors run edge to edge and the gaps are cut across them as lines.
@@ -26,6 +27,9 @@ class DayCircle {
     private var radius as Number = 0;
     private var penWidth as Number = 1;
 
+    //! How far the pen reaches either side of the radius, rounded up
+    private var penReach as Number = 1;
+
     //! Pixels: how wide a cut is, and how far it reaches either side of the
     //! radius to clear the line
     private var cutWidth as Number = 1;
@@ -43,10 +47,12 @@ class DayCircle {
         self.background = background;
     }
 
-    //! The pen reaches half its width past the radius
-    function prepare(numeralsInnerEdge as Number) as Void {
+    //! The pen reaches half its width past the radius. Null for no numerals:
+    //! the line's outer edge is the glass.
+    function prepare(numeralsInnerEdge as Number?) as Void {
         penWidth = PEN_BASE + (Dial.rim / PEN_DIVISOR);
-        radius = numeralsInnerEdge - (Dial.rim / GAP_DIVISOR) - ((penWidth + 1) / 2);
+        penReach = (penWidth + 1) / 2;
+        radius = (numeralsInnerEdge == null) ? (Dial.rim - penReach) : (numeralsInnerEdge - (Dial.rim / GAP_DIVISOR) - penReach);
 
         cutWidth = (Dial.rim - SPLIT_OFFSET) / SPLIT_DIVISOR;
         cutReach = (penWidth / 2) + 1;
@@ -55,6 +61,11 @@ class DayCircle {
     //! The line's middle, from the center
     function middle() as Number {
         return radius;
+    }
+
+    //! The line's inner edge, from the center
+    function inner() as Number {
+        return radius - penReach;
     }
 
     function width() as Number {
