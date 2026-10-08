@@ -38,7 +38,7 @@ class Editor {
         return currentAccent;
     }
 
-    //! The time, the status row and the data field
+    //! The time, the status row, the data field and the sun field
     function dataColor() as Number {
         return currentData;
     }

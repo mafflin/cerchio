@@ -15,9 +15,6 @@ class SecondsHand {
     private const WIDTH_DEGREES = 6;
     private const INSIDE_WIDTH_DEGREES = 8;
 
-    //! Air between the tip and a circle, as a share of the radius
-    private const GAP_DIVISOR = 32;
-
     //! An equilateral triangle's height over its base
     private const EQUILATERAL_HEIGHT = 0.866;
 
@@ -55,7 +52,7 @@ class SecondsHand {
         var widthDegrees = WIDTH_DEGREES;
 
         if (circleInnerEdge != null) {
-            tipRadius = circleInnerEdge - (Dial.rim / GAP_DIVISOR);
+            tipRadius = circleInnerEdge - Dial.air;
             widthDegrees = INSIDE_WIDTH_DEGREES;
         }
 

@@ -6,9 +6,6 @@ import Toybox.Lang;
 //! the top a degree at a time as the goal is done. Done is back at the top.
 class GoalDot {
 
-    //! Air between the dot and a circle, as a share of the radius
-    private const GAP_DIVISOR = 32;
-
     private var color as Number = Graphics.COLOR_WHITE;
     private var dotRadius as Number = 1;
 
@@ -26,7 +23,7 @@ class GoalDot {
     function prepare(dotRadius as Number, circleInnerEdge as Number?) as Void {
         self.dotRadius = dotRadius;
 
-        radius = (circleInnerEdge == null) ? Dial.rim : (circleInnerEdge - (Dial.rim / GAP_DIVISOR) - dotRadius);
+        radius = (circleInnerEdge == null) ? Dial.rim : (circleInnerEdge - Dial.air - dotRadius);
     }
 
     function setColor(color as Number) as Void {

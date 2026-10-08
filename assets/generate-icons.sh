@@ -9,9 +9,10 @@
 # every path is refilled white on the way through: an untinted icon has to be
 # visible on the black background, and a black one would not be. See Icon.paint.
 #
-# Two sizes, 24px in resources/ and 36px in resources-large-icons/, selected
-# by the resourcePath lines in monkey.jungle. The small set is also flattened
-# to hard edges, which the large set is not - see the note above pair().
+# Two sizes, 24px in resources/ and 36px in resources-large-icons/ (the suns
+# 18px and 24px), selected by the resourcePath lines in monkey.jungle. The
+# small set is also flattened to hard edges, which the large set is not - see
+# the note above pair().
 #
 # Needs rsvg-convert (librsvg) and python3.
 
@@ -91,6 +92,16 @@ render meridiem-am.svg "$SMALL/meridiem/am.png" 33 21 "$MERIDIEM_SMALL" flat
 render meridiem-pm.svg "$SMALL/meridiem/pm.png" 33 21 "$MERIDIEM_SMALL" flat
 render meridiem-am.svg "$LARGE/meridiem/am.png" 49 30 "$MERIDIEM_LARGE"
 render meridiem-pm.svg "$LARGE/meridiem/pm.png" 49 30 "$MERIDIEM_LARGE"
+
+# The suns stand beside the digits of the sun field below the data field,
+# FONT_XTINY, so they are smaller than the row: 18px, and 24px on the large
+# screens, where a unit of the 24 unit art is a whole pixel. A ring for the
+# sunrise, a solid sun for the sunset. The ring is the solid sun with a hole
+# of radius 4, which keeps it an even 2px at 18px.
+render sun.svg "$SMALL/sun/sunrise.png" 18 18 "$BOX" flat
+render sun.svg "$LARGE/sun/sunrise.png" 24 24 "$BOX"
+render sun-filled.svg "$SMALL/sun/sunset.png" 18 18 "$BOX" flat
+render sun-filled.svg "$LARGE/sun/sunset.png" 24 24 "$BOX"
 
 # The launcher icon is drawn by the system and never tinted, so it is not
 # flattened either: the system scales it to whatever each device asks for, and

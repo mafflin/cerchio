@@ -8,15 +8,17 @@ import Toybox.WatchUi;
 //! drawn off screen once a minute; an update copies it and adds the hand.
 class CerchioView extends WatchUi.WatchFace {
 
-    //! Shares of the screen height: the line the status row mirrors, and the
-    //! data field's drop below it
+    //! Shares of the screen height: the line the status row mirrors, the
+    //! data field's drop below it, and the sun field's below that
     private const FRAME_RATIO = 0.66;
     private const FIELD_DROP_RATIO = 0.02;
+    private const SUN_DROP_RATIO = 0.02;
 
     private const BACKGROUND = Graphics.COLOR_BLACK;
 
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
+    private var sunField as SunField;
     private var dayColors as DayColors;
     private var numerals as RimNumerals;
     private var dayCircle as DayCircle;
@@ -52,6 +54,7 @@ class CerchioView extends WatchUi.WatchFace {
 
         timeDisplay = new TimeDisplay();
         daylight = new Daylight();
+        sunField = new SunField(daylight);
         dayColors = new DayColors(daylight);
         numerals = new RimNumerals();
         dayCircle = new DayCircle(dayColors);
@@ -200,12 +203,15 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot.prepare(dayCircle.width(), circleInnerEdge);
     }
 
-    //! The status row above the time mirrors the line the field hangs from
+    //! The status row above the time mirrors the line the field hangs from;
+    //! the sun field hangs below the field
     private function placeFrame(dc as Dc) as Void {
         var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
         var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();
+        var fieldHeight = field.heightIn(dc);
 
-        field.prepare(dc, Dial.centerX, top + (field.heightIn(dc) / 2));
+        field.prepare(dc, Dial.centerX, top + (fieldHeight / 2));
+        sunField.prepare(Dial.centerX, top + fieldHeight + (Dial.screenHeight * SUN_DROP_RATIO).toNumber());
         statusBar.mirror(frame);
     }
 
@@ -219,7 +225,8 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     //! Accent: the seconds hand, the goal dot, and the recovery numeral within
-    //! a day. Data: the time, the status row and the data field.
+    //! a day. Data: the time, the status row, the data field and the sun
+    //! field.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
@@ -229,6 +236,7 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay.setColor(data);
         statusBar.setColor(data);
         field.setColor(data);
+        sunField.setColor(data);
     }
 
     //! Something on the off screen face has changed
@@ -303,6 +311,7 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot.draw(dc);
         statusBar.draw(dc);
         drawField(dc);
+        sunField.draw(dc);
         timeDisplay.draw(dc);
     }
 
@@ -323,6 +332,8 @@ class CerchioView extends WatchUi.WatchFace {
         if (daylight.refresh()) {
             dayColors.refresh();
         }
+
+        sunField.refresh();
 
         windReading.refresh();
         recoveryReading.refresh();

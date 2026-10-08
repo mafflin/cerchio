@@ -11,8 +11,8 @@
              background is black.
 
              Accent colors the seconds hand, the goal dot and the recovery
-             numeral; data colors the time, the status row and the data
-             field. -->
+             numeral; data colors the time, the status row, the data
+             field and the sun field. -->
         <accentColors>
             <color label="@Strings.ColorWhite" default="true">0xFFFFFF</color>
             <color label="@Strings.ColorGray">0xAAAAAA</color>

@@ -30,6 +30,11 @@ module Dial {
     var centerY as Number = 0;
     var rim as Number = 0;
 
+    //! The air things on the rim keep from the glass and from each other, as
+    //! a share of the radius
+    const AIR_DIVISOR = 32;
+    var air as Number = 0;
+
     //! Before anything sizes itself off the glass
     function setup(dc as Dc) as Void {
         screenWidth = dc.getWidth();
@@ -37,6 +42,7 @@ module Dial {
         centerX = screenWidth / 2;
         centerY = screenHeight / 2;
         rim = (centerX < centerY) ? centerX : centerY;
+        air = rim / AIR_DIVISOR;
     }
 
     //! Degrees clockwise from the top

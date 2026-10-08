@@ -12,9 +12,6 @@ class RimNumerals {
     private const COUNT = Dial.HOURS;
     private const FORMAT = "%02d";
 
-    //! Air between the glass and the digits, as a share of the radius
-    private const GAP_DIVISOR = 32;
-
     //! The system fonts the vector ones are sized off, and fall back to
     private const SYSTEM_FONT = Graphics.FONT_XTINY;
     private const HIGHLIGHT_SYSTEM_FONT = Graphics.FONT_TINY;
@@ -86,7 +83,7 @@ class RimNumerals {
     function prepare(dc as Dc) as Void {
         chooseFont(dc);
 
-        outerEdge = Dial.rim - (Dial.rim / GAP_DIVISOR);
+        outerEdge = Dial.rim - Dial.air;
         inkHeight = Fonts.digitHeightOf(font);
         descentShift = shiftOf(dc, font, inkHeight);
         highlightInk = Fonts.digitHeightOf(highlightFont);
@@ -104,11 +101,6 @@ class RimNumerals {
 
     function inner() as Number {
         return innerEdge;
-    }
-
-    //! Midway across the digits, from the center
-    function middle() as Float {
-        return (outerEdge + innerEdge) / 2.0;
     }
 
     function draw(dc as Dc) as Void {

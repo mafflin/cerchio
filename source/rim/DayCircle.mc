@@ -15,9 +15,6 @@ class DayCircle {
     private const PEN_BASE = 2;
     private const PEN_DIVISOR = 54;
 
-    //! Air between the numerals and the circle, as a share of the radius
-    private const GAP_DIVISOR = 32;
-
     //! A gap along the circle: a share of the radius past an offset, so it
     //! grows faster than the screen - the small MIP glass needs little, the
     //! dense AMOLED glass more
@@ -52,7 +49,7 @@ class DayCircle {
     function prepare(numeralsInnerEdge as Number?) as Void {
         penWidth = PEN_BASE + (Dial.rim / PEN_DIVISOR);
         penReach = (penWidth + 1) / 2;
-        radius = (numeralsInnerEdge == null) ? (Dial.rim - penReach) : (numeralsInnerEdge - (Dial.rim / GAP_DIVISOR) - penReach);
+        radius = (numeralsInnerEdge == null) ? (Dial.rim - penReach) : (numeralsInnerEdge - Dial.air - penReach);
 
         cutWidth = (Dial.rim - SPLIT_OFFSET) / SPLIT_DIVISOR;
         cutReach = (penWidth / 2) + 1;
