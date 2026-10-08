@@ -4,7 +4,7 @@ import Toybox.System;
 import Toybox.WatchUi;
 
 //! A tinted bitmap: a status bar item, which shows whenever it has something
-//! to report, a data field's icon, or a sun in the sun field.
+//! to report, or a data field's icon.
 class Icon {
 
     private const NONE_CHOSEN = -1;

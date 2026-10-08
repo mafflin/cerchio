@@ -2,7 +2,7 @@ import Toybox.Graphics;
 import Toybox.Lang;
 
 //! An icon and the digits beside it, centered together on a line, in the
-//! icon's tint: the sun field and the data fields. Either may be missing.
+//! icon's tint: a data field. Either may be missing.
 module IconText {
 
     const FONT = Graphics.FONT_XTINY;

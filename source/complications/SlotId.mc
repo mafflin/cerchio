@@ -3,6 +3,8 @@ module SlotId {
     enum Value {
         LEFT = 1,
         CENTER = 2,
-        RIGHT = 3
+        RIGHT = 3,
+        LOWER_LEFT = 4,
+        LOWER_RIGHT = 5
     }
 }

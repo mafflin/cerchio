@@ -56,12 +56,6 @@ module Clock {
         return (minutes + MINUTES_PER_DAY) % MINUTES_PER_DAY;
     }
 
-    //! Minutes forward from one moment of the day to another, across
-    //! midnight too
-    function minutesFrom(from as Number, to as Number) as Number {
-        return wrapMinutes(to - from);
-    }
-
     //! The hour as the wearer reads it, by the 12/24 hour setting
     function displayHour(hour as Number) as Number {
         if (settings().is24Hour) {

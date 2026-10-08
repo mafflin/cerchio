@@ -33,7 +33,7 @@ class Editor {
         return currentAccent;
     }
 
-    //! The time, the status row, the data fields and the sun field
+    //! The time, the status row and the data fields
     function dataColor() as Number {
         return currentData;
     }
@@ -55,9 +55,10 @@ class Editor {
         }
     }
 
-    //! The drawable to pulse; null for a slot that is not a data field
+    //! The drawable to pulse; null for a slot that is not a data field the
+    //! style shows
     function pulse(complication as ComplicationRef) as ComplicationDrawableRef? {
-        var field = fields.fieldFor(complication.uniqueIdentifier);
+        var field = fields.shownFieldFor(complication.uniqueIdentifier);
 
         if (field == null) {
             return null;
