@@ -3,21 +3,28 @@ import Toybox.Lang;
 
 //! Progress to the goal: a dot centered on the glass, so only its inner half
 //! shows, or whole just inside a circle against the glass, gliding round from
-//! the top a degree at a time as the goal is done. Done is back at the top.
+//! the top a degree at a time as the goal is done. Not started and done are
+//! both at the top. A ring until the goal is done, solid once it is.
 class GoalDot {
 
     //! The air between the dot and a circle against the glass, in Dial.air:
     //! twice what the seconds hand keeps, so the dot sits further in
     private const AIR_INSIDE = 2;
 
+    //! The ring's width, as a share of the dot's radius, at least MIN_RING
+    private const RING_DIVISOR = 2;
+    private const MIN_RING = 2;
+
     private var color as Number = Graphics.COLOR_WHITE;
     private var dotRadius as Number = 1;
+    private var ringWidth as Number = 1;
 
     //! The dot's center, from the center
     private var radius as Number = 0;
 
     //! Whole degrees clockwise from the top, null for none
     private var degrees as Number? = null;
+    private var isDone as Boolean = false;
 
     function initialize() {
     }
@@ -26,6 +33,7 @@ class GoalDot {
     //! centered on the glass.
     function prepare(dotRadius as Number, circleInnerEdge as Number?) as Void {
         self.dotRadius = dotRadius;
+        ringWidth = Numbers.max(dotRadius / RING_DIVISOR, MIN_RING);
 
         radius = (circleInnerEdge == null) ? Dial.rim : (circleInnerEdge - (AIR_INSIDE * Dial.air) - dotRadius);
     }
@@ -34,14 +42,15 @@ class GoalDot {
         self.color = color;
     }
 
-    //! 0 to 1; nothing until the goal is started
+    //! 0 to 1; null without a goal, which shows nothing
     function setShare(share as Float?) as Void {
-        if ((share == null) || (share <= 0)) {
+        if (share == null) {
             degrees = null;
             return;
         }
 
         degrees = Dial.pixel(share * Dial.DEGREES_PER_CIRCLE) % Dial.DEGREES_PER_CIRCLE;
+        isDone = (share >= 1.0);
     }
 
     function draw(dc as Dc) as Void {
@@ -52,8 +61,18 @@ class GoalDot {
         }
 
         var radians = Dial.radiansOf(position);
+        var x = Dial.pointX(radians, radius);
+        var y = Dial.pointY(radians, radius);
 
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(Dial.pointX(radians, radius), Dial.pointY(radians, radius), dotRadius);
+
+        if (isDone) {
+            dc.fillCircle(x, y, dotRadius);
+            return;
+        }
+
+        // The pen reaches half its width either side of the radius.
+        dc.setPenWidth(ringWidth);
+        dc.drawCircle(x, y, dotRadius - (ringWidth / 2));
     }
 }

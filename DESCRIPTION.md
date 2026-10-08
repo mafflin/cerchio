@@ -10,7 +10,8 @@ screen, in low power mode too where the watch allows it.
 is something to report. **Below it**, three data fields of your choice, each
 an icon and its value, or the wind as where it blows from and its speed.
 
-- A goal dot glides round from the top as your steps goal is done
+- A goal dot glides round from the top as your steps goal is done, a ring
+  until it is done and solid once it is
 - Numerals style: gray hour numerals round the circle, the one nearest the
   second larger and in the accent color in place of a seconds hand; the
   goal dot a half dot at the edge of the glass
