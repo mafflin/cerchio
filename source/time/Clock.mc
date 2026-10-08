@@ -1,12 +1,14 @@
 import Toybox.Lang;
 import Toybox.System;
 
-//! Clock units and the 12 hour rule, and the one place the time and the device settings are
-//! read: once per update.
+//! Clock units, minutes of the day and the 12 hour rule, and the one place
+//! the time and the device settings are read: once per update.
 module Clock {
 
     const HOURS_PER_HALF_DAY = 12;
+    const HOURS_PER_DAY = 24;
     const MINUTES_PER_HOUR = 60;
+    const MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR;
     const SECONDS_PER_MINUTE = 60;
     const SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 
@@ -40,6 +42,24 @@ module Clock {
         }
 
         return deviceSettings as System.DeviceSettings;
+    }
+
+    //! Minutes past midnight, as of the last read
+    function minuteOfDay() as Number {
+        var clockTime = now();
+
+        return (clockTime.hour * MINUTES_PER_HOUR) + clockTime.min;
+    }
+
+    //! Into a day's minutes, from a day either side
+    function wrapMinutes(minutes as Number) as Number {
+        return (minutes + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+    }
+
+    //! Minutes forward from one moment of the day to another, across
+    //! midnight too
+    function minutesFrom(from as Number, to as Number) as Number {
+        return wrapMinutes(to - from);
     }
 
     //! The hour as the wearer reads it, by the 12/24 hour setting

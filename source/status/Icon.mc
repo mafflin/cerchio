@@ -3,12 +3,11 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
 
-//! One status bar item. No settings: it shows whenever it has something to
-//! report.
+//! A tinted bitmap: a status bar item, which shows whenever it has something
+//! to report, a data field's icon, or a sun in the sun field.
 class Icon {
 
     private const NONE_CHOSEN = -1;
-
 
     //! For icons with just the one bitmap
     private var resourceId as ResourceId?;
@@ -27,9 +26,6 @@ class Icon {
     //! The artwork is white on transparent and tinted as it draws
     private var plainTint as Number = Graphics.COLOR_WHITE;
 
-    //! Off for the status slot's item the editor did not pick
-    private var enabled as Boolean = true;
-
     //! resourceId is null for icons that override bitmap()
     function initialize(resourceId as ResourceId?) {
         self.resourceId = resourceId;
@@ -44,14 +40,15 @@ class Icon {
         plainTint = color;
     }
 
-    function setEnabled(enabled as Boolean) as Void {
-        self.enabled = enabled;
+    //! Alongside the value it stands beside. Overridden by an icon that reads
+    //! something of its own.
+    function refresh() as Void {
     }
 
     //! Settle whether the icon shows this draw. Compared to true: a setting
     //! like alarmCount is null on a watch without the feature.
     function updateShown(settings as System.DeviceSettings) as Boolean {
-        shown = enabled && (isReporting(settings) == true);
+        shown = (isReporting(settings) == true);
 
         return shown;
     }
@@ -85,7 +82,7 @@ class Icon {
         return loaded as BitmapResource;
     }
 
-    //! Overridden by the battery and the wind, which say something with color
+    //! Overridden by the battery, which says something with color
     protected function tint() as Number {
         return plainTint;
     }

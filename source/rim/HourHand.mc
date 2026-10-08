@@ -38,8 +38,7 @@ class HourHand {
     }
 
     function draw(dc as Dc) as Void {
-        var time = Clock.now();
-        var position = Dial.positionOfMinute((time.hour * Clock.MINUTES_PER_HOUR) + time.min);
+        var position = Dial.positionOfMinute(Clock.minuteOfDay());
         var radians = Dial.radiansOf(position);
 
         circle.drawGapsAround(dc, position, gapLength);

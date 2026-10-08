@@ -64,7 +64,6 @@ pair() {
 
 pair alarm.svg alarm/alarm.png
 pair phone.svg phone/phone.png
-pair notifications.svg notifications/notifications.png
 
 for level in 0 10 20 30 40 50 60 70 80 90 100; do
     pair "battery-$level.svg" "battery/battery_$level.png"
@@ -102,6 +101,28 @@ render sun.svg "$SMALL/sun/sunrise.png" 18 18 "$BOX" flat
 render sun.svg "$LARGE/sun/sunrise.png" 24 24 "$BOX"
 render sun-filled.svg "$SMALL/sun/sunset.png" 18 18 "$BOX" flat
 render sun-filled.svg "$LARGE/sun/sunset.png" 24 24 "$BOX"
+
+# The data fields' icons stand beside the same FONT_XTINY digits as the
+# suns, so they take the suns' sizes; the sunrise and sunset fields use the
+# suns themselves. The battery is always the full one.
+#   $1 source svg   $2 name under field/
+field() {
+    render "$1" "$SMALL/field/$2.png" 18 18 "$BOX" flat
+    render "$1" "$LARGE/field/$2.png" 24 24 "$BOX"
+}
+
+field battery-100.svg battery
+field cal.svg calories
+field steps.svg steps
+field timer.svg timer
+field altitude.svg altitude
+field notifications.svg notifications
+field heart.svg heart
+field run.svg run
+field bike.svg bike
+field recovery.svg recovery
+field human.svg human
+field thermometer.svg thermometer
 
 # The launcher icon is drawn by the system and never tinted, so it is not
 # flattened either: the system scales it to whatever each device asks for, and

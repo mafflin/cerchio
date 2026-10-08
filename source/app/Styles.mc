@@ -9,9 +9,15 @@ module Styles {
 
     const DEFAULT = NUMERALS;
 
-    //! The numerals round the glass, the recovery hours left picked out;
-    //! without them the circle moves out to the glass
+    //! The numerals round the glass, the one nearest the second picked out
+    //! in place of a seconds hand; without them the circle moves out to the
+    //! glass
     function hasNumerals(style as Number) as Boolean {
         return style != PLAIN;
+    }
+
+    //! The sun's countdown below the data fields
+    function hasSunField(style as Number) as Boolean {
+        return style == PLAIN;
     }
 }

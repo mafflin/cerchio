@@ -3,10 +3,8 @@ import Toybox.Lang;
 import Toybox.Math;
 
 //! The seconds hand: an equilateral arrow pointing out, its tip on the
-//! glass, or just inside a circle against it. Every position is worked out once per screen, so a tick only
-//! looks up three corners and their box. In low power mode a partial update
-//! copies the face back over the old box and the new one, then draws.
-class SecondsHand {
+//! glass, or just inside a circle against it.
+class SecondsHand extends SecondsMarker {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
@@ -21,28 +19,15 @@ class SecondsHand {
     //! Past the corners on every side, for the smoothed edges
     private const PADDING = 1;
 
-    private var color as Number = Graphics.COLOR_WHITE;
-
-    //! Per second: the tip, the two base corners, and the box they fit in
+    //! Per second: the tip, the two base corners, and the box they fit in,
+    //! left, top, right and bottom
     private var corners as Array<Array<[Numeric, Numeric]> >;
-    private var lefts as Array<Number>;
-    private var tops as Array<Number>;
-    private var rights as Array<Number>;
-    private var bottoms as Array<Number>;
-
-    //! Where it was last drawn, null when off screen
-    private var drawnSecond as Number? = null;
+    private var boxes as Array<Array<Number> >;
 
     function initialize() {
+        SecondsMarker.initialize();
         corners = new [COUNT] as Array<Array<[Numeric, Numeric]> >;
-        lefts = new [COUNT] as Array<Number>;
-        tops = new [COUNT] as Array<Number>;
-        rights = new [COUNT] as Array<Number>;
-        bottoms = new [COUNT] as Array<Number>;
-    }
-
-    function setColor(color as Number) as Void {
-        self.color = color;
+        boxes = new [COUNT] as Array<Array<Number> >;
     }
 
     //! After Dial.setup(). Null for no circle against the glass: the tip is
@@ -63,52 +48,16 @@ class SecondsHand {
             place(second, tipRadius, baseRadius, baseWidth / 2);
         }
 
-        drawnSecond = null;
+        forget();
     }
 
-    //! So the next tick does not lift it off a screen since repainted
-    function forget() as Void {
-        drawnSecond = null;
-    }
-
-    function draw(dc as Dc) as Void {
-        paint(dc, Clock.now().sec);
-    }
-
-    //! Copy the face back over where it was and where it goes, then draw
-    function drawPartial(dc as Dc, face as BufferedBitmap) as Void {
-        var second = Clock.now().sec;
-        var previous = drawnSecond;
-
-        if (second == previous) {
-            return;
-        }
-
-        if (previous == null) {
-            previous = second;
-        }
-
-        clipAround(dc, previous, second);
-        dc.drawBitmap(0, 0, face);
-        paint(dc, second);
-        dc.clearClip();
-    }
-
-    private function paint(dc as Dc, second as Number) as Void {
+    protected function paintAt(dc as Dc, second as Number) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(corners[second]);
-
-        drawnSecond = second;
     }
 
-    //! The box around both seconds' arrows
-    private function clipAround(dc as Dc, first as Number, second as Number) as Void {
-        var left = Numbers.min(lefts[first], lefts[second]);
-        var top = Numbers.min(tops[first], tops[second]);
-        var right = Numbers.max(rights[first], rights[second]);
-        var bottom = Numbers.max(bottoms[first], bottoms[second]);
-
-        dc.setClip(left, top, right - left, bottom - top);
+    protected function boxOf(second as Number) as Array<Number> {
+        return boxes[second];
     }
 
     private function place(second as Number, tipRadius as Number, baseRadius as Float, halfWidth as Float) as Void {
@@ -130,12 +79,11 @@ class SecondsHand {
             [Dial.pixel(baseX - acrossX), Dial.pixel(baseY - acrossY)]
         ] as Array<[Numeric, Numeric]>;
 
-        boxAround(second);
+        boxes[second] = boxAround(corners[second]);
     }
 
     //! Round the corners by the padding, cut down to the screen
-    private function boxAround(second as Number) as Void {
-        var points = corners[second];
+    private function boxAround(points as Array<[Numeric, Numeric]>) as Array<Number> {
         var left = points[0][0].toNumber();
         var top = points[0][1].toNumber();
         var right = left;
@@ -148,9 +96,11 @@ class SecondsHand {
             bottom = Numbers.max(bottom, points[i][1].toNumber());
         }
 
-        lefts[second] = Numbers.max(left - PADDING, 0);
-        tops[second] = Numbers.max(top - PADDING, 0);
-        rights[second] = Numbers.min(right + PADDING + 1, Dial.screenWidth);
-        bottoms[second] = Numbers.min(bottom + PADDING + 1, Dial.screenHeight);
+        return [
+            Numbers.max(left - PADDING, 0),
+            Numbers.max(top - PADDING, 0),
+            Numbers.min(right + PADDING + 1, Dial.screenWidth),
+            Numbers.min(bottom + PADDING + 1, Dial.screenHeight)
+        ];
     }
 }

@@ -1,8 +1,8 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The face but the seconds hand, drawn off screen once a minute: a full
-//! update copies all of it, a partial update only the seconds hand's box.
+//! The face but the seconds, drawn off screen once a minute: a full update
+//! copies all of it, a partial update only the box round the seconds.
 //! The system may take the bitmap back; it is then made anew and redrawn.
 class FaceBuffer {
 

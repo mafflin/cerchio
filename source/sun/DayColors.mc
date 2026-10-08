@@ -15,7 +15,6 @@ class DayColors {
 
     private var daylight as Daylight;
 
-
     //! On the dial, null when not known
     private var sunrisePosition as Float? = null;
     private var sunsetPosition as Float? = null;

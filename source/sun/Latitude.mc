@@ -1,6 +1,6 @@
 import Toybox.Activity;
 import Toybox.Lang;
-import Toybox.Weather;
+import Toybox.Position;
 
 //! Where on earth the watch is, north to south: the weather's location, or
 //! the last fix. Degrees, north positive.
@@ -15,28 +15,21 @@ module Latitude {
 
     //! Null on a watch without weather, or before the phone has sent any
     function weatherLatitude() as Float? {
-        if (!(Toybox has :Weather)) {
-            return null;
-        }
-
-        var conditions = Weather.getCurrentConditions();
+        var conditions = CurrentWeather.conditions();
 
         if (conditions == null) {
             return null;
         }
 
-        var location = conditions.observationLocationPosition;
-
-        if (location == null) {
-            return null;
-        }
-
-        return location.toDegrees()[0].toFloat();
+        return latitudeOf(conditions.observationLocationPosition);
     }
 
     function lastFixLatitude() as Float? {
-        var location = Activity.getActivityInfo().currentLocation;
+        return latitudeOf(Activity.getActivityInfo().currentLocation);
+    }
 
+    //! Null without a location
+    function latitudeOf(location as Position.Location?) as Float? {
         if (location == null) {
             return null;
         }

@@ -3,21 +3,24 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-//! The data container below the time: whichever complication the user
-//! picked in the editor. A Drawable so the editor can pulse it in place.
+//! A data container below the time: whichever complication the user picked
+//! in the editor, its icon and its value. A Drawable so the editor can pulse
+//! it in place.
 class ComplicationField extends WatchUi.Drawable {
 
-    private const LABEL_FORMAT = "$1$ $2$";
-    private const FONT = Graphics.FONT_SMALL;
-
-    //! Fixed, so the tap target does not shift as values change
-    private const WIDTH_RATIO = 0.6;
+    //! Fixed, so the tap target does not shift as values change; three
+    //! across the screen
+    private const WIDTH_RATIO = 0.25;
 
     //! Matches the slot id in watchface.xml
     private var slotId as Number;
 
     private var complicationId as Complications.Id;
     private var text as String = "";
+
+    //! The type's icon, null for none; loaded again only when the type moves
+    private var icon as Icon? = null;
+    private var iconType as Complications.Type? = null;
     private var color as Number = Graphics.COLOR_WHITE;
 
     //! defaultType shows until the user picks one
@@ -30,14 +33,18 @@ class ComplicationField extends WatchUi.Drawable {
 
     //! Once per layout
     function prepare(dc as Dc, centerX as Number, centerY as Number) as Void {
-        width = (dc.getWidth() * WIDTH_RATIO).toNumber();
+        width = widthIn(dc);
         height = heightIn(dc);
         locX = (centerX - (width / 2)).toNumber();
         locY = (centerY - (height / 2)).toNumber();
     }
 
+    function widthIn(dc as Dc) as Number {
+        return (dc.getWidth() * WIDTH_RATIO).toNumber();
+    }
+
     function heightIn(dc as Dc) as Number {
-        return dc.getFontHeight(FONT);
+        return IconText.heightIn(dc);
     }
 
     function getSlotId() as Number {
@@ -62,29 +69,28 @@ class ComplicationField extends WatchUi.Drawable {
 
     //! Read the complication's current value
     function refresh() as Void {
-        // Some watches throw on a complication they do not carry.
-        try {
-            var complication = Complications.getComplication(complicationId);
+        var complication = ComplicationReader.read(complicationId);
 
-            text = labelled(
-                ComplicationLabel.of(complication.getType()),
-                ComplicationFormat.text(complication)
-            );
-        } catch (exception) {
+        if (complication == null) {
             text = "";
+            icon = null;
+            iconType = null;
+            return;
+        }
+
+        text = ComplicationFormat.text(complication);
+        showIconOf(complication.getType());
+
+        var shownIcon = icon;
+
+        if (shownIcon != null) {
+            shownIcon.refresh();
         }
     }
 
     //! Also drawn by the editor while it pulses the field
     function draw(dc as Dc) as Void {
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            locX + (width / 2),
-            locY,
-            FONT,
-            text,
-            Graphics.TEXT_JUSTIFY_CENTER
-        );
+        IconText.draw(dc, (locX + (width / 2)).toNumber(), locY.toNumber(), icon, text, color);
     }
 
     //! What the editor outlines and taps are tested against
@@ -99,12 +105,12 @@ class ComplicationField extends WatchUi.Drawable {
         return getBoundingBox().includesPoint(x, y);
     }
 
-    //! The value behind its label, or alone for a type that needs none
-    private function labelled(label as String, value as String) as String {
-        if (label.length() == 0) {
-            return value;
+    private function showIconOf(type as Complications.Type?) as Void {
+        if (type == iconType) {
+            return;
         }
 
-        return Lang.format(LABEL_FORMAT, [label, value]);
+        iconType = type;
+        icon = ComplicationIcon.iconFor(type);
     }
 }

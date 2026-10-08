@@ -11,7 +11,6 @@
 
     <bitmap id="Alarm" filename="alarm/alarm.png" packingFormat="png" />
     <bitmap id="Phone" filename="phone/phone.png" packingFormat="png" />
-    <bitmap id="Notifications" filename="notifications/notifications.png" packingFormat="png" />
 
     <bitmap id="Battery0" filename="battery/battery_0.png" packingFormat="png" />
     <bitmap id="Battery10" filename="battery/battery_10.png" packingFormat="png" />
@@ -30,4 +29,17 @@
 
     <bitmap id="Sunrise" filename="sun/sunrise.png" packingFormat="png" />
     <bitmap id="Sunset" filename="sun/sunset.png" packingFormat="png" />
+
+    <bitmap id="FieldBattery" filename="field/battery.png" packingFormat="png" />
+    <bitmap id="FieldCalories" filename="field/calories.png" packingFormat="png" />
+    <bitmap id="FieldSteps" filename="field/steps.png" packingFormat="png" />
+    <bitmap id="FieldTimer" filename="field/timer.png" packingFormat="png" />
+    <bitmap id="FieldAltitude" filename="field/altitude.png" packingFormat="png" />
+    <bitmap id="FieldNotifications" filename="field/notifications.png" packingFormat="png" />
+    <bitmap id="FieldHeart" filename="field/heart.png" packingFormat="png" />
+    <bitmap id="FieldRun" filename="field/run.png" packingFormat="png" />
+    <bitmap id="FieldBike" filename="field/bike.png" packingFormat="png" />
+    <bitmap id="FieldRecovery" filename="field/recovery.png" packingFormat="png" />
+    <bitmap id="FieldHuman" filename="field/human.png" packingFormat="png" />
+    <bitmap id="FieldThermometer" filename="field/thermometer.png" packingFormat="png" />
 </drawables>

@@ -5,8 +5,8 @@ import Toybox.System;
 
 //! Turns a complication's raw value into readable text. The system hands
 //! over a number and sometimes a unit, and almost never formats: times come
-//! as seconds, temperature as Celsius, pressure as pascals, distances and
-//! altitude as meters, percentages as bare numbers.
+//! as seconds, temperature as Celsius, distances and altitude as meters,
+//! percentages as bare numbers.
 module ComplicationFormat {
 
     const CLOCK_FORMAT = "$1$:$2$";
@@ -20,22 +20,14 @@ module ComplicationFormat {
 
     const METERS_PER_KILOMETER = 1000.0;
     const METERS_PER_MILE = 1609.344;
-    const KILOMETER = "km";
-    const MILE = "mi";
 
     //! Whole kilometers would hide a short run
     const DISTANCE_FORMAT = "%.1f";
 
     const PERCENT = "%";
+    const HOUR = "h";
 
     const FEET_PER_METER = 3.28084;
-    const METER = "m";
-    const FOOT = "ft";
-
-    const PASCALS_PER_BAR = 100000.0;
-
-    //! A storm to a clear sky is about a twentieth of a bar
-    const BAR_FORMAT = "%.3f";
 
     const FAHRENHEIT_PER_CELSIUS = 1.8;
     const FAHRENHEIT_AT_ZERO = 32.0;
@@ -43,14 +35,25 @@ module ComplicationFormat {
     const NOTHING = "";
     const DEGREE = "°";
 
+    //! Clockwise from north, each the middle of a slice of the circle
+    const COMPASS_POINTS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+
+    //! The weather reports m/s
+    const KMH_PER_MS = 3.6;
+
     function text(complication as Complications.Complication) as String {
+        var type = complication.getType();
+
+        // The weather's value is the conditions; the field shows the wind.
+        if (type == Complications.COMPLICATION_TYPE_CURRENT_WEATHER) {
+            return wind();
+        }
+
         var value = complication.value;
 
         if (value == null) {
             return NOTHING;
         }
-
-        var type = complication.getType();
 
         if (isTimeOfDay(type)) {
             return clockTime(wholeNumber(value));
@@ -68,15 +71,11 @@ module ComplicationFormat {
             return temperature(value);
         }
 
-        if (type == Complications.COMPLICATION_TYPE_SEA_LEVEL_PRESSURE) {
-            return pressure(value);
-        }
-
         if (type == Complications.COMPLICATION_TYPE_ALTITUDE) {
             return altitude(value);
         }
 
-        if (isPercent(type)) {
+        if (type == Complications.COMPLICATION_TYPE_BATTERY) {
             return percent(value);
         }
 
@@ -85,6 +84,31 @@ module ComplicationFormat {
         }
 
         return withUnit(value, complication.unit);
+    }
+
+    //! Where the wind blows from and its speed in whole km/h, beside
+    //! WindArrow: SW12. Either alone when the other is not known.
+    function wind() as String {
+        var conditions = CurrentWeather.conditions();
+
+        if (conditions == null) {
+            return NOTHING;
+        }
+
+        var bearing = conditions.windBearing;
+        var speed = conditions.windSpeed;
+        var point = (bearing != null) ? compassPoint(bearing) : NOTHING;
+
+        return (speed != null) ? (point + rounded(speed * KMH_PER_MS)) : point;
+    }
+
+    //! The nearest of the points to a bearing in degrees
+    function compassPoint(bearing as Number) as String {
+        var count = COMPASS_POINTS.size();
+        var degrees = ((bearing % Dial.DEGREES_PER_CIRCLE) + Dial.DEGREES_PER_CIRCLE) % Dial.DEGREES_PER_CIRCLE;
+        var index = (((degrees * count) + Dial.HALF_TURN) / Dial.DEGREES_PER_CIRCLE) % count;
+
+        return COMPASS_POINTS[index] as String;
     }
 
     //! Seconds since midnight
@@ -98,23 +122,16 @@ module ComplicationFormat {
         return (type == Complications.COMPLICATION_TYPE_RECOVERY_TIME);
     }
 
-    //! Meters whatever the watch shows; whole units, as fine as the
-    //! altimeter knows
+    //! Meters whatever the watch shows, in its unit but without it; whole
+    //! units, as fine as the altimeter knows
     function altitude(value as Complications.Value) as String {
         var height = decimal(value);
 
         if (Clock.settings().elevationUnits == System.UNIT_STATUTE) {
-            return rounded(height * FEET_PER_METER) + FOOT;
+            return rounded(height * FEET_PER_METER);
         }
 
-        return rounded(height) + METER;
-    }
-
-    //! A bare 0 to 100
-    function isPercent(type as Complications.Type?) as Boolean {
-        return (type == Complications.COMPLICATION_TYPE_BATTERY)
-            || (type == Complications.COMPLICATION_TYPE_PULSE_OX)
-            || (type == Complications.COMPLICATION_TYPE_SOLAR_INPUT);
+        return rounded(height);
     }
 
     //! Meters
@@ -123,24 +140,20 @@ module ComplicationFormat {
             || (type == Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE);
     }
 
+    //! A bare 0 to 100
     function percent(value as Complications.Value) as String {
         return whole(value) + PERCENT;
     }
 
+    //! Kilometers or miles by the watch's setting, without the unit
     function distance(value as Complications.Value) as String {
         var meters = decimal(value);
 
         if (Clock.settings().distanceUnits == System.UNIT_STATUTE) {
-            return (meters / METERS_PER_MILE).format(DISTANCE_FORMAT) + MILE;
+            return (meters / METERS_PER_MILE).format(DISTANCE_FORMAT);
         }
 
-        return (meters / METERS_PER_KILOMETER).format(DISTANCE_FORMAT) + KILOMETER;
-    }
-
-    //! In bars; the BAR label carries the unit, and DeviceSettings has no
-    //! pressure unit to follow
-    function pressure(value as Complications.Value) as String {
-        return (decimal(value) / PASCALS_PER_BAR).format(BAR_FORMAT);
+        return (meters / METERS_PER_KILOMETER).format(DISTANCE_FORMAT);
     }
 
     //! Always Celsius, whatever the watch shows; whole degrees
@@ -215,9 +228,8 @@ module ComplicationFormat {
         return pair(CLOCK_FORMAT, hour, minute);
     }
 
-    //! The RH label carries the unit
     function hours(minutes as Number) as String {
-        return wholeHours(minutes).format(LEADING_FORMAT);
+        return wholeHours(minutes).format(LEADING_FORMAT) + HOUR;
     }
 
     //! Rounded up, so the last few minutes still count as 1

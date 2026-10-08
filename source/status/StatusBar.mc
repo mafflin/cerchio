@@ -6,7 +6,7 @@ import Toybox.Math;
 //! whenever it has something to report.
 class StatusBar {
 
-    //! Lifts the row so it and the data field frame the time by eye
+    //! Lifts the row so it and the data fields frame the time by eye
     private const LIFT_DIVISOR = 22;
 
     //! Half an icon of air between items, down to MIN_GAP on a round screen
@@ -15,15 +15,6 @@ class StatusBar {
     private const MARGIN = 2;
 
     private var icons as Array<Icon>;
-
-    //! Always on screen, so its artwork is the row's measure
-    private var battery as Battery;
-
-    //! Has to be told its size
-    private var wind as Wind;
-
-    //! Shares the wind's place: the editor picks one
-    private var notifications as Notifications;
 
     //! The line below the time the row mirrors
     private var mirrorY as Number = 0;
@@ -34,33 +25,19 @@ class StatusBar {
     private var rowHeight as Number = 0;
     private var gap as Number = 0;
 
-    function initialize(windReading as WindReading) {
-        battery = new Battery();
-        wind = new Wind(windReading);
-        notifications = new Notifications();
-
+    function initialize() {
         icons = [
-            battery,
+            new Battery(),
             new Phone(),
             new Alarm(),
-            wind,
-            notifications,
             new Meridiem()
         ] as Array<Icon>;
-
-        showNotifications(false);
     }
 
     function setColor(color as Number) as Void {
         for (var i = 0; i < icons.size(); i++) {
             icons[i].setTint(color);
         }
-    }
-
-    //! The status slot: notifications, or the wind
-    function showNotifications(shown as Boolean) as Void {
-        notifications.setEnabled(shown);
-        wind.setEnabled(!shown);
     }
 
     //! Once per layout
@@ -74,9 +51,6 @@ class StatusBar {
         if (count == 0) {
             return;
         }
-
-        // The wind has no bitmap to measure; it fills the battery's square.
-        wind.setSquare(battery.height());
 
         layOut(count);
         drawIcons(dc);
@@ -152,9 +126,8 @@ class StatusBar {
         }
 
         var room = spare / (count - 1);
-        var fitted = (room < preferred) ? room : preferred;
 
-        return (fitted < MIN_GAP) ? MIN_GAP : fitted;
+        return Numbers.max(Numbers.min(room, preferred), MIN_GAP);
     }
 
     //! The width of the screen at the row's top edge, the far one from the
@@ -170,7 +143,7 @@ class StatusBar {
         var half = Math.sqrt((rim * rim) - (fromMiddle * fromMiddle));
         var chord = (2 * half).toNumber() - (2 * MARGIN);
 
-        return (chord < Dial.screenWidth) ? chord : Dial.screenWidth;
+        return Numbers.min(chord, Dial.screenWidth);
     }
 
     //! How many icons show this draw

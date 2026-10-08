@@ -10,9 +10,9 @@
              so none of these dither on those screens. No black: the
              background is black.
 
-             Accent colors the seconds hand, the goal dot and the recovery
-             numeral; data colors the time, the status row, the data
-             field and the sun field. -->
+             Accent colors the seconds hand or numeral and the goal dot;
+             data colors the time, the status row, the data fields and the
+             sun field. -->
         <accentColors>
             <color label="@Strings.ColorWhite" default="true">0xFFFFFF</color>
             <color label="@Strings.ColorGray">0xAAAAAA</color>
@@ -78,52 +78,72 @@
         <!-- Ids must match the SlotId module in source/complications/SlotId.mc
 
              The types are listed rather than allowAny: the editor offers
-             exactly these, in this order. The weekday and date is the
-             default. The comment on each line is the short name
-             ComplicationLabel gives it - the two lists are meant to stay in
-             step, so a type dropped here should lose its case there as
-             well. -->
+             exactly these, in this order. The slots are the data fields
+             left to right; the middle one defaults to the weekday and date.
+             The weather type stands for the wind, which has no type of its
+             own. The comment on each line is the icon ComplicationIcon gives
+             it - the two lists are meant to stay in step, so a type dropped
+             here should lose its case there as well. -->
         <data>
             <complication id="1">
-                <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- BAT -->
-                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- ST -->
-                <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- CAL -->
-                <type>Complications.COMPLICATION_TYPE_FLOORS_CLIMBED</type>                   <!-- FLR -->
-                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- IM -->
-                <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no label -->
-                <type default="true">Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>  <!-- no label -->
-                <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- RISE -->
-                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- SET -->
-                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- ALT -->
-                <type>Complications.COMPLICATION_TYPE_SEA_LEVEL_PRESSURE</type>               <!-- BAR -->
-                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- MSG -->
-                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- HR -->
-                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- RUN -->
-                <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- BIKE -->
-                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- RH -->
-                <type>Complications.COMPLICATION_TYPE_STRESS</type>                           <!-- STR -->
-                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- BB -->
-                <type>Complications.COMPLICATION_TYPE_VO2MAX_RUN</type>                       <!-- VO2R -->
-                <type>Complications.COMPLICATION_TYPE_VO2MAX_BIKE</type>                      <!-- VO2B -->
-                <type>Complications.COMPLICATION_TYPE_TRAINING_STATUS</type>                  <!-- no label -->
-                <type>Complications.COMPLICATION_TYPE_PULSE_OX</type>                         <!-- SPO2 -->
-                <type>Complications.COMPLICATION_TYPE_RESPIRATION_RATE</type>                 <!-- RESP -->
-                <type>Complications.COMPLICATION_TYPE_SOLAR_INPUT</type>                      <!-- SOL -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- TEMP -->
-                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- no label -->
+                <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
+                <type default="true">Complications.COMPLICATION_TYPE_STEPS</type>             <!-- steps -->
+                <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
+                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
             </complication>
-            <!-- The goal dot's goal; each type needs a case in GoalProgress -->
             <complication id="2">
-                <type default="true">Complications.COMPLICATION_TYPE_STEPS</type>
-                <type>Complications.COMPLICATION_TYPE_FLOORS_CLIMBED</type>
-                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>
+                <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
+                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
+                <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
+                <type default="true">Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>  <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
+                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
             </complication>
-            <!-- The status row's last place: the weather type stands for the
-                 wind, which has no type of its own. The face reads neither
-                 complication - see Editor.applySlot. -->
             <complication id="3">
-                <type default="true">Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>
-                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>
+                <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
+                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
+                <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
+                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type default="true">Complications.COMPLICATION_TYPE_BODY_BATTERY</type>      <!-- human -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
             </complication>
         </data>
     </watchface-config>

@@ -1,5 +1,4 @@
 import Toybox.Application.WatchFaceConfig;
-import Toybox.Complications;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
@@ -11,44 +10,36 @@ class Editor {
     //! Until the editor picks one
     private const DEFAULT_COLOR = Graphics.COLOR_WHITE;
 
-    private var field as ComplicationField;
-    private var goalProgress as GoalProgress;
+    private var fields as DataFields;
 
     private var currentStyle as Number = Styles.DEFAULT;
     private var currentAccent as Number = DEFAULT_COLOR;
     private var currentData as Number = DEFAULT_COLOR;
 
-    //! The status slot's pick: notifications, or the wind
-    private var notificationsPicked as Boolean = false;
+    //! The slot of the field the editor pulses, and so draws itself; null
+    //! for none
+    private var pulsed as Number? = null;
 
-    //! While the editor pulses the field, it draws the field itself
-    private var pulsing as Boolean = false;
-
-    function initialize(field as ComplicationField, goalProgress as GoalProgress) {
-        self.field = field;
-        self.goalProgress = goalProgress;
+    function initialize(fields as DataFields) {
+        self.fields = fields;
     }
 
     function style() as Number {
         return currentStyle;
     }
 
-    //! The seconds hand, the goal dot and the recovery numeral
+    //! The seconds hand or numeral, and the goal dot
     function accentColor() as Number {
         return currentAccent;
     }
 
-    //! The time, the status row, the data field and the sun field
+    //! The time, the status row, the data fields and the sun field
     function dataColor() as Number {
         return currentData;
     }
 
-    function isPulsing() as Boolean {
-        return pulsing;
-    }
-
-    function showsNotifications() as Boolean {
-        return notificationsPicked;
+    function pulsedSlot() as Number? {
+        return pulsed;
     }
 
     //! editedType is null while initializing
@@ -58,20 +49,21 @@ class Editor {
         currentData = colorOf(config.complicationColor);
         applyComplications(config.complicationSettings);
 
-        // On to another setting: the field is no longer being pulsed.
+        // On to another setting: no field is being pulsed.
         if (editedType != WatchUi.WATCH_FACE_CONFIG_TYPE_COMPLICATION) {
-            pulsing = false;
+            pulsed = null;
         }
     }
 
-    //! The drawable to pulse; null for the goal and the status slot, which
-    //! have none
+    //! The drawable to pulse; null for a slot that is not a data field
     function pulse(complication as ComplicationRef) as ComplicationDrawableRef? {
-        if (complication.uniqueIdentifier != SlotId.CENTER) {
+        var field = fields.fieldFor(complication.uniqueIdentifier);
+
+        if (field == null) {
             return null;
         }
 
-        pulsing = true;
+        pulsed = field.getSlotId();
 
         return new WatchUi.ComplicationDrawableRef({
             :drawable => field,
@@ -81,7 +73,7 @@ class Editor {
 
     //! The slot under a tap, or null
     function tappedSlot(x as Number, y as Number) as Number? {
-        return field.containsPoint(x, y) ? field.getSlotId() : null;
+        return fields.slotAt(x, y);
     }
 
     private function styleOf(styleId as Number?) as Number {
@@ -113,24 +105,9 @@ class Editor {
     //! null until picked: the default type stands
     private function applySlot(slot as WatchFaceConfig.ComplicationRef) as Void {
         var complicationId = slot.complicationId;
+        var field = fields.fieldFor(slot.uniqueIdentifier);
 
-        if (slot.uniqueIdentifier == SlotId.STATUS) {
-            if (complicationId != null) {
-                notificationsPicked = (complicationId.getType() == Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT);
-            }
-
-            return;
-        }
-
-        if (slot.uniqueIdentifier == SlotId.GOAL) {
-            if (complicationId != null) {
-                goalProgress.setType(complicationId.getType());
-            }
-
-            return;
-        }
-
-        if (slot.uniqueIdentifier != SlotId.CENTER) {
+        if (field == null) {
             return;
         }
 

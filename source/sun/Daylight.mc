@@ -67,7 +67,7 @@ class Daylight {
             return null;
         }
 
-        return wrap(rise + (length / 2));
+        return Clock.wrapMinutes(rise + (length / 2));
     }
 
     //! Minutes from sunrise to sunset, which may run across midnight
@@ -79,7 +79,7 @@ class Daylight {
             return null;
         }
 
-        return wrap(set - rise);
+        return Clock.wrapMinutes(set - rise);
     }
 
     //! Twilight has to reach past sunrise and sunset, or the latitude is off
@@ -100,28 +100,18 @@ class Daylight {
             return;
         }
 
-        dawnMinute = wrap(noon - fromNoon);
-        duskMinute = wrap(noon + fromNoon);
-    }
-
-    //! Into a day's minutes, from a turn either side
-    private function wrap(minutes as Number) as Number {
-        return (minutes + Dial.MINUTES_PER_DAY) % Dial.MINUTES_PER_DAY;
+        dawnMinute = Clock.wrapMinutes(noon - fromNoon);
+        duskMinute = Clock.wrapMinutes(noon + fromNoon);
     }
 
     //! The complication carries seconds past midnight
     private function minutesOf(id as Complications.Id) as Number? {
-        // Some watches throw on a complication they do not carry.
-        try {
-            var value = Complications.getComplication(id).value;
+        var value = ComplicationReader.valueOf(id);
 
-            if (value == null) {
-                return null;
-            }
-
-            return ComplicationFormat.wholeNumber(value) / Clock.SECONDS_PER_MINUTE;
-        } catch (exception) {
+        if (value == null) {
             return null;
         }
+
+        return ComplicationFormat.wholeNumber(value) / Clock.SECONDS_PER_MINUTE;
     }
 }

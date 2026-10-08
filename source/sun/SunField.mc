@@ -1,18 +1,12 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The sun below the data field. The minutes left through the hour before
+//! The sun below the data fields. The minutes left through the hour before
 //! sunrise or sunset, behind its sun, orange once dawn has come. The sunset's
 //! sun alone, orange, from sunset to dusk; the sunrise's from dawn when dawn
 //! comes earlier than that hour; the sunset's in the data color around solar
 //! noon.
 class SunField {
-
-    private const FONT = Graphics.FONT_XTINY;
-
-    //! The digits' share of the font's ascent, the rest being air above them.
-    //! Measured off a 280px screenshot: 14px digits.
-    private const DIGIT_SHARE = 0.85;
 
     private const COUNTDOWN_MINUTES = Clock.MINUTES_PER_HOUR;
 
@@ -20,9 +14,6 @@ class SunField {
     private const NOON_MINUTES = 30;
 
     private const TWILIGHT_COLOR = Palette.ORANGE;
-
-    //! Air between the icon and the digits, as a share of the icon's width
-    private const GAP_DIVISOR = 8;
 
     private var daylight as Daylight;
     private var sunriseIcon as Icon;
@@ -32,8 +23,7 @@ class SunField {
 
     //! Resolved in prepare()
     private var centerX as Number = 0;
-    private var textTop as Number = 0;
-    private var iconTop as Number = 0;
+    private var top as Number = 0;
 
     //! Set in refresh(); the text empty for the icon alone
     private var shown as Boolean = false;
@@ -48,17 +38,10 @@ class SunField {
         icon = sunriseIcon;
     }
 
-    //! Once per layout, top being where the data field ends
+    //! Once per layout, top being below where the data fields end
     function prepare(centerX as Number, top as Number) as Void {
-        var ascent = Fonts.ascentOf(FONT);
-        var digitHeight = Dial.pixel(ascent * DIGIT_SHARE);
-
         self.centerX = centerX;
-        textTop = top;
-
-        // Centered on the digits, which sit at the bottom of the ascent. Both
-        // suns are the same size, so either places it.
-        iconTop = top + ascent - ((digitHeight + icon.height()) / 2);
+        self.top = top;
     }
 
     function setColor(color as Number) as Void {
@@ -69,8 +52,7 @@ class SunField {
     function refresh() as Void {
         shown = false;
 
-        var now = Clock.now();
-        var minute = (now.hour * Clock.MINUTES_PER_HOUR) + now.min;
+        var minute = Clock.minuteOfDay();
         var sunrise = daylight.sunrise();
         var sunset = daylight.sunset();
         var sunriseLeft = countdownTo(sunrise, minute);
@@ -90,36 +72,16 @@ class SunField {
         }
     }
 
-    //! The icon and the digits, centered together
     function draw(dc as Dc) as Void {
-        if (!shown) {
-            return;
+        if (shown) {
+            IconText.draw(dc, centerX, top, icon, text, color);
         }
-
-        var iconWidth = icon.width();
-        var width = iconWidth;
-
-        if (text.length() > 0) {
-            width += (iconWidth / GAP_DIVISOR) + dc.getTextWidthInPixels(text, FONT);
-        }
-
-        var iconLeft = centerX - (width / 2);
-
-        icon.draw(dc, iconLeft, iconTop);
-
-        if (text.length() == 0) {
-            return;
-        }
-
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(iconLeft + iconWidth + (iconWidth / GAP_DIVISOR), textTop, FONT, text, Graphics.TEXT_JUSTIFY_LEFT);
     }
 
     private function show(icon as Icon, text as String, color as Number) as Void {
         self.icon = icon;
         self.text = text;
         self.color = color;
-        icon.setTint(color);
         shown = true;
     }
 
@@ -130,7 +92,7 @@ class SunField {
             return null;
         }
 
-        var left = minutesFrom(minute, event);
+        var left = Clock.minutesFrom(minute, event);
 
         return ((left > 0) && (left <= COUNTDOWN_MINUTES)) ? left : null;
     }
@@ -142,7 +104,7 @@ class SunField {
             return false;
         }
 
-        return minutesFrom(from, minute) < minutesFrom(from, to);
+        return Clock.minutesFrom(from, minute) < Clock.minutesFrom(from, to);
     }
 
     private function isNearNoon(minute as Number) as Boolean {
@@ -152,13 +114,8 @@ class SunField {
             return false;
         }
 
-        var sinceNoon = minutesFrom(noon, minute);
+        var sinceNoon = Clock.minutesFrom(noon, minute);
 
-        return (sinceNoon <= NOON_MINUTES) || (sinceNoon >= (Dial.MINUTES_PER_DAY - NOON_MINUTES));
-    }
-
-    //! Minutes forward from one moment to another, within a day
-    private function minutesFrom(from as Number, to as Number) as Number {
-        return (to - from + Dial.MINUTES_PER_DAY) % Dial.MINUTES_PER_DAY;
+        return (sinceNoon <= NOON_MINUTES) || (sinceNoon >= (Clock.MINUTES_PER_DAY - NOON_MINUTES));
     }
 }

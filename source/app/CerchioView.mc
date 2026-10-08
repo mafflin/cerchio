@@ -4,15 +4,16 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-//! The watch face: owns the elements. Everything but the seconds hand is
-//! drawn off screen once a minute; an update copies it and adds the hand.
+//! The watch face: owns the elements. Everything but the seconds is drawn
+//! off screen once a minute; an update copies it and adds the seconds hand,
+//! or with the numerals the numeral nearest the second.
 class CerchioView extends WatchUi.WatchFace {
 
     //! Shares of the screen height: the line the status row mirrors, the
-    //! data field's drop below it, and the sun field's below that
+    //! data fields' drop below it, and the sun field's below that
     private const FRAME_RATIO = 0.66;
     private const FIELD_DROP_RATIO = 0.02;
-    private const SUN_DROP_RATIO = 0.02;
+    private const SUN_DROP_RATIO = 0.05;
 
     private const BACKGROUND = Graphics.COLOR_BLACK;
 
@@ -23,12 +24,13 @@ class CerchioView extends WatchUi.WatchFace {
     private var numerals as RimNumerals;
     private var dayCircle as DayCircle;
     private var hourHand as HourHand;
-    private var windReading as WindReading;
     private var statusBar as StatusBar;
-    private var field as ComplicationField;
+    private var fields as DataFields;
     private var secondsHand as SecondsHand;
-    private var recoveryReading as RecoveryReading;
-    private var activityReading as ActivityReading;
+    private var secondsNumeral as SecondsNumeral;
+
+    //! Whichever of the two the style shows
+    private var seconds as SecondsMarker;
     private var goalProgress as GoalProgress;
     private var goalDot as GoalDot;
     private var faceBuffer as FaceBuffer;
@@ -41,7 +43,8 @@ class CerchioView extends WatchUi.WatchFace {
     private var needsBurnInProtection as Boolean = false;
     private var isAwake as Boolean = true;
 
-    //! Whether the system lets the hand move every second in low power mode
+    //! Whether the system lets the seconds move every second in low power
+    //! mode
     private var partialUpdatesAllowed as Boolean;
 
     //! Whether the native watch face editor started the face
@@ -57,19 +60,19 @@ class CerchioView extends WatchUi.WatchFace {
         sunField = new SunField(daylight);
         dayColors = new DayColors(daylight);
         numerals = new RimNumerals();
+        numerals.setBackground(BACKGROUND);
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
-        windReading = new WindReading();
-        statusBar = new StatusBar(windReading);
-        field = new ComplicationField(SlotId.CENTER, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY);
+        statusBar = new StatusBar();
+        fields = new DataFields();
         secondsHand = new SecondsHand();
-        recoveryReading = new RecoveryReading();
-        activityReading = new ActivityReading();
+        secondsNumeral = new SecondsNumeral(numerals);
+        seconds = secondsNumeral;
         goalProgress = new GoalProgress();
         goalDot = new GoalDot();
         faceBuffer = new FaceBuffer();
-        editor = new Editor(field, goalProgress);
+        editor = new Editor(fields);
 
         partialUpdatesAllowed = (WatchUi.WatchFace has :onPartialUpdate);
     }
@@ -96,13 +99,17 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! editedType is null while initializing
     function updateConfiguration(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
-        var shown = field.getComplicationId();
+        var shown = fields.shownIds();
 
         editor.apply(config, editedType);
         placeCircle();
-        followField(shown);
+
+        // Live updates follow the picks; none in the editor.
+        if (!editMode) {
+            fields.follow(shown);
+        }
+
         applyColors();
-        statusBar.showNotifications(editor.showsNotifications());
         redraw();
     }
 
@@ -123,12 +130,9 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     function onComplicationChange(complicationId as Complications.Id) as Void {
-        if (!field.shows(complicationId)) {
-            return;
+        if (fields.refreshShowing(complicationId)) {
+            redraw();
         }
-
-        field.refresh();
-        redraw();
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -149,7 +153,7 @@ class CerchioView extends WatchUi.WatchFace {
             drawFace(dc);
         }
 
-        drawSecondsHand(dc, face != null);
+        drawSeconds(dc, face != null);
     }
 
     //! Once a second in low power mode; has to stay within the power budget
@@ -162,17 +166,17 @@ class CerchioView extends WatchUi.WatchFace {
 
         var face = currentFace();
 
-        // Nothing to put back under the old hand.
+        // Nothing to put back under the old seconds.
         if (face == null) {
             return;
         }
 
         smooth(dc);
-        secondsHand.drawPartial(dc, face);
+        seconds.drawPartial(dc, face);
     }
 
-    //! The hand would freeze once the system stops calling onPartialUpdate,
-    //! so it comes off the screen in low power mode instead
+    //! The seconds would freeze once the system stops calling onPartialUpdate,
+    //! so they come off the screen in low power mode instead
     function turnPartialUpdatesOff() as Void {
         partialUpdatesAllowed = false;
         WatchUi.requestUpdate();
@@ -190,28 +194,31 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! Inside the numerals, or against the glass for a style without them;
     //! the hour hand follows the circle, and the seconds hand and the goal
-    //! dot keep inside it when it is against the glass
+    //! dot keep inside it when it is against the glass. With the numerals,
+    //! the numeral nearest the second stands for the hand.
     private function placeCircle() as Void {
-        var hasNumerals = Styles.hasNumerals(editor.style());
+        var withNumerals = Styles.hasNumerals(editor.style());
 
-        dayCircle.prepare(hasNumerals ? numerals.inner() : null);
+        seconds.forget();
+        seconds = withNumerals ? secondsNumeral : secondsHand;
+
+        dayCircle.prepare(withNumerals ? numerals.inner() : null);
         hourHand.prepare();
 
-        var circleInnerEdge = hasNumerals ? null : dayCircle.inner();
+        var circleInnerEdge = withNumerals ? null : dayCircle.inner();
 
         secondsHand.prepare(circleInnerEdge);
         goalDot.prepare(dayCircle.width(), circleInnerEdge);
     }
 
-    //! The status row above the time mirrors the line the field hangs from;
-    //! the sun field hangs below the field
+    //! The status row above the time mirrors the line the fields hang from,
+    //! side by side, the middle one centered; the sun field hangs below them
     private function placeFrame(dc as Dc) as Void {
         var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
         var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();
-        var fieldHeight = field.heightIn(dc);
 
-        field.prepare(dc, Dial.centerX, top + (fieldHeight / 2));
-        sunField.prepare(Dial.centerX, top + fieldHeight + (Dial.screenHeight * SUN_DROP_RATIO).toNumber());
+        fields.prepare(dc, top);
+        sunField.prepare(Dial.centerX, top + fields.heightIn(dc) + (Dial.screenHeight * SUN_DROP_RATIO).toNumber());
         statusBar.mirror(frame);
     }
 
@@ -224,18 +231,18 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the seconds hand, the goal dot, and the recovery numeral within
-    //! a day. Data: the time, the status row, the data field and the sun
-    //! field.
+    //! Accent: the seconds hand or numeral, and the goal dot. Data: the time,
+    //! the status row, the data fields and the sun field.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
 
         secondsHand.setColor(accent);
+        secondsNumeral.setColor(accent);
         goalDot.setColor(accent);
         timeDisplay.setColor(data);
         statusBar.setColor(data);
-        field.setColor(data);
+        fields.setColor(data);
         sunField.setColor(data);
     }
 
@@ -246,24 +253,8 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     private function subscribeToComplications() as Void {
-        Complications.subscribeToUpdates(field.getComplicationId());
+        fields.subscribe();
         Complications.registerComplicationChangeCallback(method(:onComplicationChange));
-    }
-
-    //! Live updates follow the pick; none in the editor
-    private function followField(previous as Complications.Id) as Void {
-        if (editMode || field.shows(previous)) {
-            return;
-        }
-
-        Complications.unsubscribeFromUpdates(previous);
-        Complications.subscribeToUpdates(field.getComplicationId());
-    }
-
-    private function drawField(dc as Dc) as Void {
-        if (!editor.isPulsing()) {
-            field.draw(dc);
-        }
     }
 
     private function isAlwaysOn() as Boolean {
@@ -277,7 +268,7 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay.draw(dc);
 
         faceBuffer.invalidate();
-        secondsHand.forget();
+        seconds.forget();
     }
 
     //! The off screen face, drawn anew when the minute has moved on; null
@@ -299,7 +290,7 @@ class CerchioView extends WatchUi.WatchFace {
         return face;
     }
 
-    //! Everything but the seconds hand
+    //! Everything but the seconds
     private function drawFace(dc as Dc) as Void {
         smooth(dc);
         paintBackground(dc);
@@ -310,21 +301,23 @@ class CerchioView extends WatchUi.WatchFace {
         hourHand.draw(dc);
         goalDot.draw(dc);
         statusBar.draw(dc);
-        drawField(dc);
-        sunField.draw(dc);
+        fields.draw(dc, editor.pulsedSlot());
+        drawSunField(dc);
         timeDisplay.draw(dc);
     }
 
-    //! Asleep, the hand shows only if a partial update can move it, which
-    //! takes the off screen face to copy back under it
-    private function drawSecondsHand(dc as Dc, hasFace as Boolean) as Void {
-        if (isAwake || (partialUpdatesAllowed && hasFace)) {
-            smooth(dc);
-            secondsHand.draw(dc);
-        } else {
+    //! The hand, or with the numerals the numeral nearest the second. Asleep,
+    //! either shows only if a partial update can move it, which takes the off
+    //! screen face to copy back under it.
+    private function drawSeconds(dc as Dc, hasFace as Boolean) as Void {
+        if (!isAwake && !(partialUpdatesAllowed && hasFace)) {
             // Nothing on screen to lift off next tick.
-            secondsHand.forget();
+            seconds.forget();
+            return;
         }
+
+        smooth(dc);
+        seconds.draw(dc);
     }
 
     //! Everything the draw reads, before anything draws
@@ -334,51 +327,24 @@ class CerchioView extends WatchUi.WatchFace {
         }
 
         sunField.refresh();
-
-        windReading.refresh();
-        recoveryReading.refresh();
-
         refreshGoal();
-        refreshRecovery();
     }
 
     private function refreshGoal() as Void {
-        var info = activityReading.refresh();
-
-        if (info != null) {
-            goalProgress.read(info);
-        }
-
+        goalProgress.refresh();
         goalDot.setShare(goalProgress.share());
+    }
+
+    private function drawSunField(dc as Dc) as Void {
+        if (Styles.hasSunField(editor.style())) {
+            sunField.draw(dc);
+        }
     }
 
     private function drawNumerals(dc as Dc) as Void {
         if (Styles.hasNumerals(editor.style())) {
             numerals.draw(dc);
         }
-    }
-
-    //! With the numerals, picks out the numeral of the hours left in the
-    //! accent color; past a day the 24, orange up to two days and red beyond,
-    //! as the wind does. None once recovered.
-    private function refreshRecovery() as Void {
-        var hours = recoveryReading.hours();
-
-        if (!Styles.hasNumerals(editor.style()) || (hours <= 0)) {
-            numerals.setHighlightIndex(null);
-            return;
-        }
-
-        numerals.setHighlightIndex(Numbers.min(hours, Dial.HOURS) % Dial.HOURS);
-        numerals.setHighlightColor(recoveryColorOf(hours));
-    }
-
-    private function recoveryColorOf(hours as Number) as Number {
-        if (hours <= Dial.HOURS) {
-            return editor.accentColor();
-        }
-
-        return (hours <= (2 * Dial.HOURS)) ? Palette.ORANGE : Palette.RED;
     }
 
     //! Once per dc: the dc between two updates is the system's

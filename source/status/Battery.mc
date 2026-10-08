@@ -1,4 +1,3 @@
-import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
@@ -12,8 +11,8 @@ class Battery extends Icon {
     private const TOP_LEVEL = 10;
 
     //! Both read against the black background
-    private const EMPTY_COLOR = Graphics.COLOR_RED;
-    private const LOW_COLOR = Graphics.COLOR_ORANGE;
+    private const EMPTY_COLOR = Palette.RED;
+    private const LOW_COLOR = Palette.ORANGE;
 
     //! One per level
     private var images as Array<ResourceId> = [
@@ -62,14 +61,6 @@ class Battery extends Icon {
     private function readLevel() as Number {
         var charge = System.getSystemStats().battery.toNumber() / PERCENT_PER_LEVEL;
 
-        if (charge < EMPTY_LEVEL) {
-            return EMPTY_LEVEL;
-        }
-
-        if (charge > TOP_LEVEL) {
-            return TOP_LEVEL;
-        }
-
-        return charge;
+        return Numbers.min(Numbers.max(charge, EMPTY_LEVEL), TOP_LEVEL);
     }
 }

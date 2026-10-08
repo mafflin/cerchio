@@ -4,9 +4,9 @@ import Toybox.Math;
 
 //! 01 through 24 against the edge of the glass, 24 at the bottom. Turned to
 //! face the middle, the bottom half flipped so it does not read upside down;
-//! a watch without vector fonts gets them upright. Gray; a highlighted
-//! numeral is a font step larger in its own color, centered on the others'
-//! line.
+//! a watch without vector fonts gets them upright. Gray; one can be picked
+//! out over the drawn face, a font step larger in its own color, centered on
+//! the others' line, within a box worked out once.
 class RimNumerals {
 
     private const COUNT = Dial.HOURS;
@@ -27,14 +27,15 @@ class RimNumerals {
 
     private const COLOR = Palette.GRAY;
 
+    //! Past the box on every side, for the smoothed edges
+    private const PADDING = 1;
+
     private var font as FontType = SYSTEM_FONT;
     private var highlightFont as FontType = HIGHLIGHT_SYSTEM_FONT;
     private var isTurned as Boolean = false;
 
-    private var highlightColor as Number = Graphics.COLOR_WHITE;
-
-    //! The numeral draw() picks out, null for none
-    private var highlightIndex as Number? = null;
+    //! What a highlight paints its gray numeral over with
+    private var background as Number = Graphics.COLOR_BLACK;
 
     //! Resolved in prepare(): how far the digits may reach, how tall they
     //! are, and how far the font box center sits below the digits' center
@@ -47,13 +48,15 @@ class RimNumerals {
     //! The nearest the digits come to the middle, from the center
     private var innerEdge as Number = 0;
 
-    //! Per numeral, resolved in prepare(), plain and highlighted
+    //! Per numeral, resolved in prepare(), plain and highlighted; a box is
+    //! left, top, right and bottom, cut down to the screen
     private var texts as Array<String>;
     private var angles as Array<Number>;
     private var xs as Array<Number>;
     private var ys as Array<Number>;
     private var highlightXs as Array<Number>;
     private var highlightYs as Array<Number>;
+    private var boxes as Array<Array<Number> >;
 
     function initialize() {
         texts = new [COUNT] as Array<String>;
@@ -62,6 +65,7 @@ class RimNumerals {
         ys = new [COUNT] as Array<Number>;
         highlightXs = new [COUNT] as Array<Number>;
         highlightYs = new [COUNT] as Array<Number>;
+        boxes = new [COUNT] as Array<Array<Number> >;
 
         for (var index = 0; index < COUNT; index++) {
             // Midnight reads as 24, not 0.
@@ -71,12 +75,8 @@ class RimNumerals {
         }
     }
 
-    function setHighlightColor(highlightColor as Number) as Void {
-        self.highlightColor = highlightColor;
-    }
-
-    function setHighlightIndex(highlightIndex as Number?) as Void {
-        self.highlightIndex = highlightIndex;
+    function setBackground(background as Number) as Void {
+        self.background = background;
     }
 
     //! After Dial.setup()
@@ -96,6 +96,8 @@ class RimNumerals {
             } else {
                 placeUpright(dc, index);
             }
+
+            boxes[index] = boxAround(dc, index);
         }
     }
 
@@ -103,18 +105,27 @@ class RimNumerals {
         return innerEdge;
     }
 
+    //! All of them gray
     function draw(dc as Dc) as Void {
         for (var index = 0; index < COUNT; index++) {
-            drawNumeral(dc, index, index == highlightIndex);
+            drawText(dc, index, font, xs[index], ys[index], COLOR);
         }
     }
 
-    private function drawNumeral(dc as Dc, index as Number, isHighlight as Boolean) as Void {
-        var numeralFont = isHighlight ? highlightFont : font;
-        var x = isHighlight ? highlightXs[index] : xs[index];
-        var y = isHighlight ? highlightYs[index] : ys[index];
+    //! Over a face with the numeral drawn gray: the gray one painted over in
+    //! the background, which covers it exactly, then the larger one
+    function drawHighlight(dc as Dc, index as Number, color as Number) as Void {
+        drawText(dc, index, font, xs[index], ys[index], background);
+        drawText(dc, index, highlightFont, highlightXs[index], highlightYs[index], color);
+    }
 
-        dc.setColor(isHighlight ? highlightColor : COLOR, Graphics.COLOR_TRANSPARENT);
+    //! Left, top, right and bottom of where drawHighlight() reaches
+    function boxOf(index as Number) as Array<Number> {
+        return boxes[index];
+    }
+
+    private function drawText(dc as Dc, index as Number, numeralFont as FontType, x as Number, y as Number, color as Number) as Void {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
 
         if (isTurned) {
             dc.drawAngledText(x, y, numeralFont as VectorFont, texts[index], JUSTIFY, angles[index]);
@@ -165,6 +176,32 @@ class RimNumerals {
         var halfWidth = dc.getTextWidthInPixels(texts[index], numeralFont) / 2.0;
 
         return ((halfWidth * Math.cos(radians).abs()) + ((ink / 2.0) * Math.sin(radians).abs())).toFloat();
+    }
+
+    //! The highlight's font box about its center, which takes in the gray
+    //! numeral under it. Turned, it may lie at any angle, so the box takes in
+    //! the circle around it.
+    private function boxAround(dc as Dc, index as Number) as Array<Number> {
+        var width = dc.getTextWidthInPixels(texts[index], highlightFont);
+        var height = dc.getFontHeight(highlightFont);
+        var halfWidth = (width / 2) + PADDING;
+        var halfHeight = (height / 2) + PADDING;
+        var x = highlightXs[index];
+        var y = highlightYs[index];
+
+        if (isTurned) {
+            var half = Math.ceil(Math.sqrt((width * width) + (height * height)) / 2).toNumber() + PADDING;
+
+            halfWidth = half;
+            halfHeight = half;
+        }
+
+        return [
+            Numbers.max(Numbers.min(x, xs[index]) - halfWidth, 0),
+            Numbers.max(Numbers.min(y, ys[index]) - halfHeight, 0),
+            Numbers.min(Numbers.max(x, xs[index]) + halfWidth + 1, Dial.screenWidth),
+            Numbers.min(Numbers.max(y, ys[index]) + halfHeight + 1, Dial.screenHeight)
+        ];
     }
 
     //! Half the descent below the digits, less half the air above them

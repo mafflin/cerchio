@@ -1,8 +1,8 @@
 //! Editor slot ids; must match watchface.xml
 module SlotId {
     enum Value {
-        CENTER = 1,
-        GOAL = 2,
-        STATUS = 3
+        LEFT = 1,
+        CENTER = 2,
+        RIGHT = 3
     }
 }
