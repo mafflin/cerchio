@@ -1,5 +1,5 @@
 <!--
-    The 36px status bar icons and the 24px suns and data field icons, for the
+    The 36px status bar icons and the 32px suns and data field icons, for the
     larger screens.
 
     These ids deliberately repeat resources/drawables/drawables.xml: monkey.jungle

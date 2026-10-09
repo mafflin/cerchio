@@ -8,8 +8,8 @@ import Toybox.WatchUi;
 //! it in place.
 class ComplicationField extends WatchUi.Drawable {
 
-    //! Fixed, so the tap target does not shift as values change; three
-    //! across the screen
+    //! Fixed, so the tap target does not shift as values change; a quarter
+    //! of the screen
     private const WIDTH_RATIO = 0.25;
 
     //! Matches the slot id in watchface.xml
@@ -23,6 +23,11 @@ class ComplicationField extends WatchUi.Drawable {
     private var kind as FieldKind? = null;
     private var kindType as Complications.Type? = null;
     private var color as Number = Graphics.COLOR_WHITE;
+
+    //! Where the icon and value line up: a field either side of the middle
+    //! keeps to the edge of its box nearest the middle, one on it centers
+    private var anchorX as Number = 0;
+    private var justify as Graphics.TextJustification = Graphics.TEXT_JUSTIFY_CENTER;
 
     //! defaultType shows until the user picks one
     function initialize(slotId as Number, defaultType as Complications.Type) {
@@ -38,10 +43,17 @@ class ComplicationField extends WatchUi.Drawable {
         height = heightIn(dc);
         locX = (centerX - (width / 2)).toNumber();
         locY = (centerY - (height / 2)).toNumber();
-    }
 
-    function widthIn(dc as Dc) as Number {
-        return (dc.getWidth() * WIDTH_RATIO).toNumber();
+        if (centerX < Dial.centerX) {
+            anchorX = locX.toNumber() + width.toNumber();
+            justify = Graphics.TEXT_JUSTIFY_RIGHT;
+        } else if (centerX > Dial.centerX) {
+            anchorX = locX.toNumber();
+            justify = Graphics.TEXT_JUSTIFY_LEFT;
+        } else {
+            anchorX = centerX;
+            justify = Graphics.TEXT_JUSTIFY_CENTER;
+        }
     }
 
     function heightIn(dc as Dc) as Number {
@@ -86,7 +98,7 @@ class ComplicationField extends WatchUi.Drawable {
     function draw(dc as Dc) as Void {
         var shown = kind;
 
-        IconText.draw(dc, (locX + (width / 2)).toNumber(), locY.toNumber(), (shown != null) ? shown.icon() : null, text, color);
+        IconText.draw(dc, anchorX, justify, locY.toNumber(), (shown != null) ? shown.icon() : null, text, color);
     }
 
     //! What the editor outlines and taps are tested against
@@ -99,6 +111,10 @@ class ComplicationField extends WatchUi.Drawable {
 
     function containsPoint(x as Number, y as Number) as Boolean {
         return getBoundingBox().includesPoint(x, y);
+    }
+
+    private function widthIn(dc as Dc) as Number {
+        return (dc.getWidth() * WIDTH_RATIO).toNumber();
     }
 
     //! The kind for a type, kept until the type moves

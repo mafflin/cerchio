@@ -7,9 +7,9 @@ on the circle shows the hour, and the seconds go round the edge of the
 screen, in low power mode too where the watch allows it.
 
 **Above the time**, battery, phone, alarm and AM/PM, shown only when there
-is something to report. **Below it**, five data fields of your choice in
-two rows, three and two, each an icon and its value, or the wind as where
-it blows from and its speed.
+is something to report. **Below it**, two data fields of your choice,
+each an icon and its value, or the wind as where it blows from and its
+speed.
 
 - A goal dot glides round from the top as your steps goal is done, a ring
   until it is done and solid once it is

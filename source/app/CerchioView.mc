@@ -9,11 +9,10 @@ import Toybox.WatchUi;
 //! or with the numerals the numeral nearest the second.
 class CerchioView extends WatchUi.WatchFace {
 
-    //! Shares of the screen height: the line the status row mirrors, the
-    //! data fields' drop below it, and the second row's below the first
+    //! Shares of the screen height: the line the status row mirrors, and the
+    //! data fields' drop below it
     private const FRAME_RATIO = 0.66;
     private const FIELD_DROP_RATIO = 0.02;
-    private const SECOND_ROW_DROP_RATIO = 0.05;
 
     private const BACKGROUND = Graphics.COLOR_BLACK;
 
@@ -209,15 +208,12 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot.prepare(dayCircle.width(), circleInnerEdge);
     }
 
-    //! The status row above the time mirrors the line the fields hang from;
-    //! the second row hangs below the first
+    //! The status row above the time mirrors the line the fields hang from
     private function placeFrame(dc as Dc) as Void {
         var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
         var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();
 
-        var secondTop = top + fields.heightIn(dc) + (Dial.screenHeight * SECOND_ROW_DROP_RATIO).toNumber();
-
-        fields.prepare(dc, top, secondTop);
+        fields.prepare(dc, top);
         statusBar.mirror(frame);
     }
 

@@ -2,35 +2,32 @@ import Toybox.Complications;
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The data fields below the time, in two rows centered on the middle:
-//! where they go, what they show, and the live updates that follow it.
+//! The data fields below the time, a pair either side of the middle: where
+//! they go, what they show, and the live updates that follow it.
 class DataFields {
 
-    //! How many fields the first row holds; the rest are the second
-    private const FIRST_ROW = 3;
+    //! Between the two fields' centers, as a share of the screen width: more
+    //! than a field's width, so the pair leaves air between them
+    private const SPACING_RATIO = 0.28;
 
     private var fields as Array<ComplicationField>;
 
     function initialize() {
         fields = [
             new ComplicationField(SlotId.LEFT, Complications.COMPLICATION_TYPE_STEPS),
-            new ComplicationField(SlotId.CENTER, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY),
-            new ComplicationField(SlotId.RIGHT, Complications.COMPLICATION_TYPE_BODY_BATTERY),
-            new ComplicationField(SlotId.LOWER_LEFT, Complications.COMPLICATION_TYPE_SUNRISE),
-            new ComplicationField(SlotId.LOWER_RIGHT, Complications.COMPLICATION_TYPE_SUNSET)
+            new ComplicationField(SlotId.RIGHT, Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY)
         ] as Array<ComplicationField>;
     }
 
-    //! Once per layout: the first row from top, the second from secondTop
-    function prepare(dc as Dc, top as Number, secondTop as Number) as Void {
-        var halfHeight = heightIn(dc) / 2;
+    //! Once per layout: the row from top
+    function prepare(dc as Dc, top as Number) as Void {
+        var centerY = top + (fields[0].heightIn(dc) / 2);
+        var spacing = (dc.getWidth() * SPACING_RATIO).toNumber();
+        var count = fields.size();
 
-        placeRow(dc, 0, FIRST_ROW, top + halfHeight);
-        placeRow(dc, FIRST_ROW, fields.size(), secondTop + halfHeight);
-    }
-
-    function heightIn(dc as Dc) as Number {
-        return fields[0].heightIn(dc);
+        for (var i = 0; i < count; i++) {
+            fields[i].prepare(dc, Dial.centerX + ((((2 * i) - (count - 1)) * spacing) / 2), centerY);
+        }
     }
 
     function setColor(color as Number) as Void {
@@ -111,16 +108,6 @@ class DataFields {
             }
 
             Complications.subscribeToUpdates(fields[i].getComplicationId());
-        }
-    }
-
-    //! Centers a field's width apart, the row centered whatever its count
-    private function placeRow(dc as Dc, from as Number, to as Number, centerY as Number) as Void {
-        var width = fields[0].widthIn(dc);
-        var count = to - from;
-
-        for (var i = 0; i < count; i++) {
-            fields[from + i].prepare(dc, Dial.centerX + ((((2 * i) - (count - 1)) * width) / 2), centerY);
         }
     }
 
