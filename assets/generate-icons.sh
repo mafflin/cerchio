@@ -7,7 +7,7 @@
 #
 # The artwork is black on transparent, and the face tints it at draw time, so
 # every path is refilled white on the way through: an untinted icon has to be
-# visible on the black background, and a black one would not be. See Icon.paint.
+# visible on the black background, and a black one would not be. See Icon.draw.
 #
 # Two sizes, 24px in resources/ and 36px in resources-large-icons/ (the suns
 # and field icons 24px and 32px), selected by the resourcePath lines in

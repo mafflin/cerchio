@@ -1,5 +1,5 @@
 <!--
-    Every icon below is tinted at draw time - Icon.paint hands :tintColor to
+    Every icon below is tinted at draw time - Icon.draw hands :tintColor to
     drawBitmap2 - so each one is packed as PNG. Left alone the resource
     compiler converts a bitmap to the device's native format, which carries a
     palette, and drawBitmap2 rejects a palettized source with "Source must not
