@@ -1,12 +1,15 @@
 import Toybox.Lang;
 
-//! The wind off the weather: bearing, strength in three steps, and the color
-//! for each step.
+//! The wind off the weather: bearing, whether it is calm, strength in three
+//! steps, and the color for each step.
 class WindReading {
 
     //! The limits read as km/h
     private const LIGHT_LIMIT_KMH = 20;
     private const MODERATE_LIMIT_KMH = 40;
+
+    //! Below this the speed rounds to 0 km/h, as the weather field shows it
+    private const CALM_LIMIT_KMH = 0.5;
 
     private const LIGHT = 0;
     private const MODERATE = 1;
@@ -19,6 +22,7 @@ class WindReading {
     //! Where the wind blows from, north up; null when unknown
     private var currentBearing as Number? = null;
 
+    private var calm as Boolean = false;
     private var strength as Number = LIGHT;
 
     //! Once a minute: the phone refills the weather by the hour at best
@@ -35,6 +39,7 @@ class WindReading {
         }
 
         currentBearing = null;
+        calm = false;
         strength = LIGHT;
 
         var conditions = CurrentWeather.conditions();
@@ -49,12 +54,20 @@ class WindReading {
             return;
         }
 
+        var speed = conditions.windSpeed;
+
         currentBearing = bearing;
-        strength = strengthFor(conditions.windSpeed);
+        calm = (speed != null) ? ((speed * CurrentWeather.KMH_PER_MS) < CALM_LIMIT_KMH) : false;
+        strength = strengthFor(speed);
     }
 
     function bearing() as Number? {
         return currentBearing;
+    }
+
+    //! A bearing without a speed is not calm
+    function isCalm() as Boolean {
+        return calm;
     }
 
     //! Orange when moderate, red when strong, the given color otherwise
