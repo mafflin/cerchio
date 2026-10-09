@@ -8,7 +8,7 @@ import Toybox.Lang;
 class GoalDot {
 
     //! The air between the dot and a circle against the glass, in Dial.air:
-    //! what the seconds hand keeps
+    //! what the seconds dot keeps
     private const AIR_INSIDE = 1;
 
     //! The dot's radius against the circle's line width, so it keeps to the

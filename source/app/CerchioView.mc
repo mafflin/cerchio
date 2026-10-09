@@ -5,7 +5,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 //! The watch face: owns the elements. Everything but the seconds is drawn
-//! off screen once a minute; an update copies it and adds the seconds hand.
+//! off screen once a minute; an update copies it and adds the seconds dot.
 class CerchioView extends WatchUi.WatchFace {
 
     //! Shares of the screen height: the line the status row mirrors, and the
@@ -182,9 +182,9 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     //! Inside the numerals, or against the glass for a style without them;
-    //! the hour hand follows the circle. With the numerals, the seconds hand
-    //! runs outside the circle toward the glass and the goal dot sits on the
-    //! glass; without them, both keep inside the circle.
+    //! the hour hand follows the circle. With the numerals, the seconds dot
+    //! runs just outside the circle and the goal dot sits on the glass;
+    //! without them, both keep inside the circle.
     private function placeCircle() as Void {
         var withNumerals = Styles.hasNumerals(editor.style());
 
@@ -218,7 +218,7 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the seconds hand and the goal dot. Data: the time, the status
+    //! Accent: the seconds dot and the goal dot. Data: the time, the status
     //! row and the data fields.
     private function applyColors() as Void {
         var accent = editor.accentColor();

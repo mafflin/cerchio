@@ -10,7 +10,7 @@
              so none of these dither on those screens. No black: the
              background is black.
 
-             Accent colors the seconds hand and the goal dot;
+             Accent colors the seconds dot and the goal dot;
              data colors the time, the status row and the data fields. -->
         <accentColors>
             <color label="@Strings.ColorWhite" default="true">0xFFFFFF</color>

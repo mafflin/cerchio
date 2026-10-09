@@ -28,7 +28,7 @@ class Editor {
         return currentStyle;
     }
 
-    //! The seconds hand and the goal dot
+    //! The seconds dot and the goal dot
     function accentColor() as Number {
         return currentAccent;
     }

@@ -1,8 +1,9 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The seconds hand over the off screen face: a short bar with round ends,
-//! pointing out, just inside the circle or just outside it toward the glass.
+//! The seconds over the off screen face: a dot, just inside the circle or
+//! just outside it toward the glass. Round, so it looks the same at every
+//! second; a bar turned on the pixel grid shows a different shape at each.
 //! Every second's place and box is worked out once per screen, so a tick
 //! only looks them up. In low power mode a partial update copies the face
 //! back over the old box and the new one, then draws.
@@ -10,43 +11,41 @@ class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! The bar's width and its length, end to end, as shares of the radius:
-    //! 11px by 18px on a 260px screen
-    private const WIDTH_DIVISOR = 11;
-    private const LENGTH_DIVISOR = 7;
+    //! The dot's radius, as a share of the glass's: inside the circle 8px on
+    //! a 260px screen, where there is room; outside it 6px, between the
+    //! circle and the glass
+    private const INSIDE_RADIUS_DIVISOR = 16;
+    private const OUTSIDE_RADIUS_DIVISOR = 21;
 
-    //! Past the ends on every side, for the smoothed edges
+    //! Past the dot on every side, for the smoothed edges
     private const PADDING = 1;
 
     private var color as Number = Graphics.COLOR_WHITE;
-    private var penWidth as Number = 1;
+    private var dotRadius as Number = 1;
 
-    //! Per second: the two ends' centers, outer x and y then inner x and y,
-    //! and the box the bar fits in, left, top, right and bottom
-    private var ends as Array<Array<Number> >;
+    //! Per second: the dot's center, x and y, and the box it fits in, left,
+    //! top, right and bottom
+    private var centers as Array<Array<Number> >;
     private var boxes as Array<Array<Number> >;
 
     //! Where it was last drawn, null when off screen
     private var drawnSecond as Number? = null;
 
     function initialize() {
-        ends = new [COUNT] as Array<Array<Number> >;
+        centers = new [COUNT] as Array<Array<Number> >;
         boxes = new [COUNT] as Array<Array<Number> >;
     }
 
-    //! After Dial.setup(): the outer end the air inside the circle
+    //! After Dial.setup(): the dot's outer edge the air inside the circle
     function placeInside(circleInnerEdge as Number) as Void {
-        var outer = circleInnerEdge - Dial.air;
-
-        placeBetween(outer - length(), outer);
+        dotRadius = Dial.rim / INSIDE_RADIUS_DIVISOR;
+        placeAt(circleInnerEdge - Dial.air - dotRadius);
     }
 
-    //! After Dial.setup(): the inner end the air outside the circle, the bar
-    //! reaching out toward the glass
+    //! After Dial.setup(): the dot's inner edge the air outside the circle
     function placeOutside(circleOuterEdge as Number) as Void {
-        var inner = circleOuterEdge + Dial.air;
-
-        placeBetween(inner, inner + length());
+        dotRadius = Dial.rim / OUTSIDE_RADIUS_DIVISOR;
+        placeAt(circleOuterEdge + Dial.air + dotRadius);
     }
 
     function setColor(color as Number) as Void {
@@ -81,30 +80,25 @@ class SecondsHand {
         dc.clearClip();
     }
 
-    private function length() as Number {
-        return Dial.rim / LENGTH_DIVISOR;
-    }
-
-    //! The bar's ink from one radius to the other, every second
-    private function placeBetween(innerEdge as Number, outerEdge as Number) as Void {
-        penWidth = Dial.rim / WIDTH_DIVISOR;
-
-        // The round pen reaches half its width past each end's center.
-        var reach = penWidth / 2;
-
+    //! Every second's center on one radius
+    private function placeAt(radius as Number) as Void {
         for (var second = 0; second < COUNT; second++) {
-            place(second, outerEdge - reach, innerEdge + reach, reach);
+            var radians = Dial.radiansOf(second * Dial.DEGREES_PER_SECOND);
+            var x = Dial.pointX(radians, radius);
+            var y = Dial.pointY(radians, radius);
+
+            centers[second] = [x, y];
+            boxes[second] = boxAround(x, y, dotRadius + PADDING);
         }
 
         forget();
     }
 
     private function paint(dc as Dc, second as Number) as Void {
-        var bar = ends[second];
+        var center = centers[second];
 
-        dc.setPenWidth(penWidth);
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawLine(bar[0], bar[1], bar[2], bar[3]);
+        dc.fillCircle(center[0], center[1], dotRadius);
         drawnSecond = second;
     }
 
@@ -120,26 +114,13 @@ class SecondsHand {
         dc.setClip(left, top, right - left, bottom - top);
     }
 
-    private function place(second as Number, outerRadius as Number, innerRadius as Number, reach as Number) as Void {
-        var radians = Dial.radiansOf(second * Dial.DEGREES_PER_SECOND);
-        var bar = [
-            Dial.pointX(radians, outerRadius),
-            Dial.pointY(radians, outerRadius),
-            Dial.pointX(radians, innerRadius),
-            Dial.pointY(radians, innerRadius)
-        ];
-
-        ends[second] = bar;
-        boxes[second] = boxAround(bar, reach + PADDING);
-    }
-
-    //! The ends grown by the pen's reach, cut down to the screen
-    private function boxAround(bar as Array<Number>, margin as Number) as Array<Number> {
+    //! The center grown by margin, cut down to the screen
+    private function boxAround(x as Number, y as Number, margin as Number) as Array<Number> {
         return [
-            Numbers.max(Numbers.min(bar[0], bar[2]) - margin, 0),
-            Numbers.max(Numbers.min(bar[1], bar[3]) - margin, 0),
-            Numbers.min(Numbers.max(bar[0], bar[2]) + margin + 1, Dial.screenWidth),
-            Numbers.min(Numbers.max(bar[1], bar[3]) + margin + 1, Dial.screenHeight)
+            Numbers.max(x - margin, 0),
+            Numbers.max(y - margin, 0),
+            Numbers.min(x + margin + 1, Dial.screenWidth),
+            Numbers.min(y + margin + 1, Dial.screenHeight)
         ];
     }
 }

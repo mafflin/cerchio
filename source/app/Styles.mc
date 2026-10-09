@@ -9,7 +9,7 @@ module Styles {
 
     const DEFAULT = NUMERALS;
 
-    //! The numerals round the glass, the seconds hand running over them;
+    //! The numerals round the glass, the seconds dot running over them;
     //! without them the circle moves out to the glass
     function hasNumerals(style as Number) as Boolean {
         return style == NUMERALS;
