@@ -11,11 +11,10 @@ class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! The dot's radius, as a share of the glass's: inside the circle 8px on
-    //! a 260px screen, where there is room; outside it 6px, between the
-    //! circle and the glass
-    private const INSIDE_RADIUS_DIVISOR = 16;
-    private const OUTSIDE_RADIUS_DIVISOR = 21;
+    //! The dot's radius, as a share of the glass's: 6px on a 260px screen,
+    //! small enough to fit between the circle and the glass, and kept on
+    //! either side of it
+    private const RADIUS_DIVISOR = 21;
 
     //! Past the dot on every side, for the smoothed edges
     private const PADDING = 1;
@@ -38,13 +37,13 @@ class SecondsHand {
 
     //! After Dial.setup(): the dot's outer edge the air inside the circle
     function placeInside(circleInnerEdge as Number) as Void {
-        dotRadius = Dial.rim / INSIDE_RADIUS_DIVISOR;
+        dotRadius = Dial.rim / RADIUS_DIVISOR;
         placeAt(circleInnerEdge - Dial.air - dotRadius);
     }
 
     //! After Dial.setup(): the dot's inner edge the air outside the circle
     function placeOutside(circleOuterEdge as Number) as Void {
-        dotRadius = Dial.rim / OUTSIDE_RADIUS_DIVISOR;
+        dotRadius = Dial.rim / RADIUS_DIVISOR;
         placeAt(circleOuterEdge + Dial.air + dotRadius);
     }
 
