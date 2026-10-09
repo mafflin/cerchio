@@ -55,10 +55,9 @@ class Editor {
         }
     }
 
-    //! The drawable to pulse; null for a slot that is not a data field the
-    //! style shows
+    //! The drawable to pulse; null for a slot that is not a data field
     function pulse(complication as ComplicationRef) as ComplicationDrawableRef? {
-        var field = fields.shownFieldFor(complication.uniqueIdentifier);
+        var field = fields.fieldFor(complication.uniqueIdentifier);
 
         if (field == null) {
             return null;

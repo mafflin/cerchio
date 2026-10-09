@@ -2,19 +2,14 @@ import Toybox.Complications;
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The data fields below the time, in rows centered on the middle: where
-//! they go, what they show, and the live updates that follow it. The second
-//! row shows only in the style that has it, but keeps its picks and their
-//! updates all the same.
+//! The data fields below the time, in two rows centered on the middle:
+//! where they go, what they show, and the live updates that follow it.
 class DataFields {
 
     //! How many fields the first row holds; the rest are the second
     private const FIRST_ROW = 3;
 
     private var fields as Array<ComplicationField>;
-
-    //! The first row, or both
-    private var shownCount as Number = FIRST_ROW;
 
     function initialize() {
         fields = [
@@ -34,10 +29,6 @@ class DataFields {
         placeRow(dc, FIRST_ROW, fields.size(), secondTop + halfHeight);
     }
 
-    function setSecondRowShown(shown as Boolean) as Void {
-        shownCount = shown ? fields.size() : FIRST_ROW;
-    }
-
     function heightIn(dc as Dc) as Number {
         return fields[0].heightIn(dc);
     }
@@ -51,7 +42,7 @@ class DataFields {
     //! All but the one in skippedSlot, which the editor draws while it pulses
     //! it; null for none
     function draw(dc as Dc, skippedSlot as Number?) as Void {
-        for (var i = 0; i < shownCount; i++) {
+        for (var i = 0; i < fields.size(); i++) {
             if (fields[i].getSlotId() != skippedSlot) {
                 fields[i].draw(dc);
             }
@@ -65,16 +56,9 @@ class DataFields {
         return (index != null) ? fields[index] : null;
     }
 
-    //! As fieldFor(), but null for a field the style does not show
-    function shownFieldFor(slotId as Number?) as ComplicationField? {
-        var index = indexOf(slotId);
-
-        return ((index != null) && (index < shownCount)) ? fields[index] : null;
-    }
-
-    //! The shown slot under a point, or null
+    //! The slot under a point, or null
     function slotAt(x as Number, y as Number) as Number? {
-        for (var i = 0; i < shownCount; i++) {
+        for (var i = 0; i < fields.size(); i++) {
             if (fields[i].containsPoint(x, y)) {
                 return fields[i].getSlotId();
             }

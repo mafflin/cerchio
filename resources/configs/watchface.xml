@@ -78,7 +78,7 @@
 
              The types are listed rather than allowAny: the editor offers
              exactly these, in this order. The slots are the data fields
-             left to right, Plain's second row last; the middle one defaults
+             left to right, the second row last; the middle one defaults
              to the weekday and date.
              The weather type stands for the wind, which has no type of its
              own. The comment on each line is the icon FieldKinds gives it -
@@ -145,7 +145,7 @@
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>
-            <!-- Plain's second row, left and right -->
+            <!-- The second row, left and right -->
             <complication id="4">
                 <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->

@@ -101,7 +101,6 @@ class CerchioView extends WatchUi.WatchFace {
 
         editor.apply(config, editedType);
         placeCircle();
-        fields.setSecondRowShown(Styles.hasSecondFieldRow(editor.style()));
 
         // Live updates follow the picks; none in the editor.
         if (!editMode) {
@@ -211,7 +210,7 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     //! The status row above the time mirrors the line the fields hang from;
-    //! a second row, where the style has one, hangs below them
+    //! the second row hangs below the first
     private function placeFrame(dc as Dc) as Void {
         var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
         var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();

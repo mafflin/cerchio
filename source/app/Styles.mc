@@ -15,9 +15,4 @@ module Styles {
     function hasNumerals(style as Number) as Boolean {
         return style == NUMERALS;
     }
-
-    //! A second row of data fields below the first
-    function hasSecondFieldRow(style as Number) as Boolean {
-        return style == PLAIN;
-    }
 }
