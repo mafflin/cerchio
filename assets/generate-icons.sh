@@ -123,7 +123,19 @@ field bike.svg bike
 field recovery.svg recovery
 field human.svg human
 field thermometer.svg thermometer
-field fan.svg fan
+
+# The weather field's conditions, one icon to a group of them, and a moon or
+# a bare cloud for the ones with a sun at night - WeatherIcon picks. These
+# are Material Design Icons (pictogrammers.com/library/mdi, Apache 2.0),
+# @mdi/svg 7.4.47, renamed without their weather- prefix.
+for name in \
+    sunny night partly-cloudy night-partly-cloudy cloudy \
+    rainy pouring partly-rainy snowy snowy-heavy partly-snowy \
+    snowy-rainy partly-snowy-rainy lightning-rainy lightning partly-lightning \
+    hail windy windy-variant fog hazy dust smoke volcano snowflake \
+    tornado hurricane hurricane-outline cloud-question unknown; do
+    field "weather/$name.svg" "weather/$name"
+done
 
 # The launcher icon is drawn by the system and never tinted, so it is not
 # flattened either: the system scales it to whatever each device asks for, and

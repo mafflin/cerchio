@@ -20,7 +20,7 @@ module FieldKinds {
             case Complications.COMPLICATION_TYPE_BODY_BATTERY:         return new FieldKind(Rez.Drawables.FieldHuman);
             case Complications.COMPLICATION_TYPE_CALORIES:             return new FieldKind(Rez.Drawables.FieldCalories);
             case Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE:  return new TemperatureKind(Rez.Drawables.FieldThermometer);
-            case Complications.COMPLICATION_TYPE_CURRENT_WEATHER:      return new WindKind(Rez.Drawables.FieldFan);
+            case Complications.COMPLICATION_TYPE_CURRENT_WEATHER:      return new WeatherKind();
             case Complications.COMPLICATION_TYPE_HEART_RATE:           return new FieldKind(Rez.Drawables.FieldHeart);
             case Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE: return new HighLowKind(Rez.Drawables.FieldThermometer);
             case Complications.COMPLICATION_TYPE_INTENSITY_MINUTES:    return new FieldKind(Rez.Drawables.FieldTimer);

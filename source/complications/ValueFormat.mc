@@ -1,6 +1,7 @@
 import Toybox.Complications;
 import Toybox.Lang;
 import Toybox.Math;
+import Toybox.System;
 
 //! What every kind of field formats with. The system hands over a number
 //! and sometimes a unit, and almost never formats: see the FieldKind
@@ -15,6 +16,9 @@ module ValueFormat {
     const TRAILING_FORMAT = "%02d";
 
     const DECIMAL_FORMAT = "%.1f";
+
+    const FAHRENHEIT_PER_CELSIUS = 1.8;
+    const FAHRENHEIT_AT_ZERO = 32.0;
     const VALUE_UNIT_FORMAT = "$1$$2$";
 
     //! The value with whatever unit the system supplied, if it is a string
@@ -47,6 +51,18 @@ module ValueFormat {
 
     function whole(value as Complications.Value) as String {
         return rounded(decimal(value));
+    }
+
+    //! Whole degrees in the watch's unit, from Celsius, which the system
+    //! always reports, with a degree mark
+    function temperature(celsius as Float) as String {
+        var degrees = celsius;
+
+        if (Clock.settings().temperatureUnits == System.UNIT_STATUTE) {
+            degrees = (degrees * FAHRENHEIT_PER_CELSIUS) + FAHRENHEIT_AT_ZERO;
+        }
+
+        return rounded(degrees) + DEGREE;
     }
 
     function rounded(amount as Float) as String {

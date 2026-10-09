@@ -4,8 +4,7 @@ import Toybox.Lang;
 //! for each step.
 class WindReading {
 
-    //! The API reports m/s; the limits read as km/h
-    private const KMH_PER_MS = 3.6;
+    //! The limits read as km/h
     private const LIGHT_LIMIT_KMH = 20;
     private const MODERATE_LIMIT_KMH = 40;
 
@@ -77,7 +76,7 @@ class WindReading {
             return LIGHT;
         }
 
-        var kmh = speed * KMH_PER_MS;
+        var kmh = speed * CurrentWeather.KMH_PER_MS;
 
         if (kmh <= LIGHT_LIMIT_KMH) {
             return LIGHT;
