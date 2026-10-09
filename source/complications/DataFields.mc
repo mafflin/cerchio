@@ -2,15 +2,18 @@ import Toybox.Complications;
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The data fields below the time, a pair either side of the middle: where
-//! they go, what they show, and the live updates that follow it.
+//! The data fields below the time, side by side and centered as one, so the
+//! row stays under the time whatever each shows: where they go, what they
+//! show, and the live updates that follow it.
 class DataFields {
 
-    //! Between the two fields' centers, as a share of the screen width: more
-    //! than a field's width, so the pair leaves air between them
-    private const SPACING_RATIO = 0.28;
+    //! Between one field's value and the next field's icon, as a share of
+    //! the screen width
+    private const GAP_RATIO = 0.03;
 
     private var fields as Array<ComplicationField>;
+
+    private var gap as Number = 0;
 
     function initialize() {
         fields = [
@@ -22,11 +25,11 @@ class DataFields {
     //! Once per layout: the row from top
     function prepare(dc as Dc, top as Number) as Void {
         var centerY = top + (fields[0].heightIn(dc) / 2);
-        var spacing = (dc.getWidth() * SPACING_RATIO).toNumber();
-        var count = fields.size();
 
-        for (var i = 0; i < count; i++) {
-            fields[i].prepare(dc, Dial.centerX + ((((2 * i) - (count - 1)) * spacing) / 2), centerY);
+        gap = (dc.getWidth() * GAP_RATIO).toNumber();
+
+        for (var i = 0; i < fields.size(); i++) {
+            fields[i].prepare(dc, centerY);
         }
     }
 
@@ -37,8 +40,10 @@ class DataFields {
     }
 
     //! All but the one in skippedSlot, which the editor draws while it pulses
-    //! it; null for none
+    //! it; null for none. Every field is placed, that one too.
     function draw(dc as Dc, skippedSlot as Number?) as Void {
+        placeContents(dc);
+
         for (var i = 0; i < fields.size(); i++) {
             if (fields[i].getSlotId() != skippedSlot) {
                 fields[i].draw(dc);
@@ -117,6 +122,37 @@ class DataFields {
             }
 
             Complications.subscribeToUpdates(fields[i].getComplicationId());
+        }
+    }
+
+    //! Side by side, a gap between those that show anything, centered as one
+    private function placeContents(dc as Dc) as Void {
+        var count = fields.size();
+        var widths = new [count] as Array<Number>;
+        var total = 0;
+        var shown = 0;
+
+        for (var i = 0; i < count; i++) {
+            widths[i] = fields[i].contentWidth(dc);
+
+            if (widths[i] > 0) {
+                total += widths[i];
+                shown++;
+            }
+        }
+
+        if (shown > 1) {
+            total += gap * (shown - 1);
+        }
+
+        var left = Dial.centerX - (total / 2);
+
+        for (var i = 0; i < count; i++) {
+            fields[i].placeContent(left, widths[i]);
+
+            if (widths[i] > 0) {
+                left += widths[i] + gap;
+            }
         }
     }
 

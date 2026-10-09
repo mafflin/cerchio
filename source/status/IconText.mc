@@ -18,22 +18,17 @@ module IconText {
         return dc.getFontHeight(FONT);
     }
 
-    //! The icon and digits as one group, its left edge, middle or right edge
-    //! at x by justify. top is the top of the digits' font box; the icon is
-    //! centered on the digits, which sit at the bottom of the ascent.
-    function draw(dc as Dc, x as Number, justify as Graphics.TextJustification, top as Number, icon as Icon?, text as String, color as Number) as Void {
-        var hasText = text.length() > 0;
-        var iconWidth = 0;
-        var gap = 0;
+    //! The icon, the air after it and the digits, side by side
+    function widthOf(dc as Dc, icon as Icon?, text as String) as Number {
+        var textWidth = (text.length() > 0) ? dc.getTextWidthInPixels(text, FONT) : 0;
 
-        if (icon != null) {
-            iconWidth = icon.width();
-            gap = hasText ? (iconWidth / GAP_DIVISOR) : 0;
-        }
+        return iconSpan(icon, text) + textWidth;
+    }
 
-        var textWidth = hasText ? dc.getTextWidthInPixels(text, FONT) : 0;
-        var left = leftOf(x, justify, iconWidth + gap + textWidth);
-
+    //! The icon and digits as one group from its left edge. top is the top
+    //! of the digits' font box; the icon is centered on the digits, which sit
+    //! at the bottom of the ascent.
+    function draw(dc as Dc, left as Number, top as Number, icon as Icon?, text as String, color as Number) as Void {
         if (icon != null) {
             var ascent = Fonts.ascentOf(FONT);
             var digitHeight = Dial.pixel(ascent * DIGIT_SHARE);
@@ -42,22 +37,21 @@ module IconText {
             icon.draw(dc, left, top + ascent - ((digitHeight + icon.height()) / 2));
         }
 
-        if (hasText) {
+        if (text.length() > 0) {
             dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(left + iconWidth + gap, top, FONT, text, Graphics.TEXT_JUSTIFY_LEFT);
+            dc.drawText(left + iconSpan(icon, text), top, FONT, text, Graphics.TEXT_JUSTIFY_LEFT);
         }
     }
 
-    //! The group's left edge
-    function leftOf(x as Number, justify as Graphics.TextJustification, width as Number) as Number {
-        if (justify == Graphics.TEXT_JUSTIFY_RIGHT) {
-            return x - width;
+    //! The icon and the air after it, where the digits start; no air without
+    //! digits
+    function iconSpan(icon as Icon?, text as String) as Number {
+        if (icon == null) {
+            return 0;
         }
 
-        if (justify == Graphics.TEXT_JUSTIFY_CENTER) {
-            return x - (width / 2);
-        }
+        var iconWidth = icon.width();
 
-        return x;
+        return (text.length() > 0) ? (iconWidth + (iconWidth / GAP_DIVISOR)) : iconWidth;
     }
 }
