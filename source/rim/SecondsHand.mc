@@ -1,106 +1,84 @@
 import Toybox.Graphics;
 import Toybox.Lang;
-import Toybox.Math;
 
-//! The seconds hand: an equilateral arrow pointing out, its tip on the
-//! glass, or just inside a circle against it.
+//! The seconds hand: a short bar with round ends pointing out, its outer end
+//! on the glass, or just inside a circle against it.
 class SecondsHand extends SecondsMarker {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! The base, in degrees at the tip: wider inside a circle, where the tip
-    //! sits nearer the middle
-    private const WIDTH_DEGREES = 6;
-    private const INSIDE_WIDTH_DEGREES = 8;
+    //! The bar's width and its length, end to end, as shares of the radius:
+    //! 10px by 16px on a 260px screen
+    private const WIDTH_DIVISOR = 13;
+    private const LENGTH_DIVISOR = 8;
 
-    //! An equilateral triangle's height over its base
-    private const EQUILATERAL_HEIGHT = 0.866;
-
-    //! Past the corners on every side, for the smoothed edges
+    //! Past the ends on every side, for the smoothed edges
     private const PADDING = 1;
 
-    //! Per second: the tip, the two base corners, and the box they fit in,
-    //! left, top, right and bottom
-    private var corners as Array<Array<[Numeric, Numeric]> >;
+    private var penWidth as Number = 1;
+
+    //! Per second: the two ends' centers, outer x and y then inner x and y,
+    //! and the box the bar fits in, left, top, right and bottom
+    private var ends as Array<Array<Number> >;
     private var boxes as Array<Array<Number> >;
 
     function initialize() {
         SecondsMarker.initialize();
-        corners = new [COUNT] as Array<Array<[Numeric, Numeric]> >;
+        ends = new [COUNT] as Array<Array<Number> >;
         boxes = new [COUNT] as Array<Array<Number> >;
     }
 
-    //! After Dial.setup(). Null for no circle against the glass: the tip is
-    //! on the glass.
+    //! After Dial.setup(). Null for no circle against the glass: the outer
+    //! end is on the glass.
     function prepare(circleInnerEdge as Number?) as Void {
-        var tipRadius = Dial.rim;
-        var widthDegrees = WIDTH_DEGREES;
+        var tipRadius = (circleInnerEdge != null) ? (circleInnerEdge - Dial.air) : Dial.rim;
 
-        if (circleInnerEdge != null) {
-            tipRadius = circleInnerEdge - Dial.air;
-            widthDegrees = INSIDE_WIDTH_DEGREES;
-        }
+        penWidth = Dial.rim / WIDTH_DIVISOR;
 
-        var baseWidth = (2 * tipRadius * Math.sin(Math.toRadians(widthDegrees / 2.0))).toFloat();
-        var baseRadius = (tipRadius - (baseWidth * EQUILATERAL_HEIGHT)).toFloat();
+        // The round pen reaches half its width past each end's center.
+        var reach = penWidth / 2;
+        var outerRadius = tipRadius - reach;
+        var innerRadius = tipRadius - (Dial.rim / LENGTH_DIVISOR) + reach;
 
         for (var second = 0; second < COUNT; second++) {
-            place(second, tipRadius, baseRadius, baseWidth / 2);
+            place(second, outerRadius, innerRadius, reach);
         }
 
         forget();
     }
 
     protected function paintAt(dc as Dc, second as Number) as Void {
+        var bar = ends[second];
+
+        dc.setPenWidth(penWidth);
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.fillPolygon(corners[second]);
+        dc.drawLine(bar[0], bar[1], bar[2], bar[3]);
     }
 
     protected function boxOf(second as Number) as Array<Number> {
         return boxes[second];
     }
 
-    private function place(second as Number, tipRadius as Number, baseRadius as Float, halfWidth as Float) as Void {
+    private function place(second as Number, outerRadius as Number, innerRadius as Number, reach as Number) as Void {
         var radians = Dial.radiansOf(second * Dial.DEGREES_PER_SECOND);
-        var outX = Math.cos(radians);
+        var bar = [
+            Dial.pointX(radians, outerRadius),
+            Dial.pointY(radians, outerRadius),
+            Dial.pointX(radians, innerRadius),
+            Dial.pointY(radians, innerRadius)
+        ];
 
-        // Screen y grows downward.
-        var outY = -Math.sin(radians);
-
-        // Across is out turned a quarter.
-        var acrossX = -outY * halfWidth;
-        var acrossY = outX * halfWidth;
-        var baseX = Dial.centerX + (baseRadius * outX);
-        var baseY = Dial.centerY + (baseRadius * outY);
-
-        corners[second] = [
-            [Dial.pointX(radians, tipRadius), Dial.pointY(radians, tipRadius)],
-            [Dial.pixel(baseX + acrossX), Dial.pixel(baseY + acrossY)],
-            [Dial.pixel(baseX - acrossX), Dial.pixel(baseY - acrossY)]
-        ] as Array<[Numeric, Numeric]>;
-
-        boxes[second] = boxAround(corners[second]);
+        ends[second] = bar;
+        boxes[second] = boxAround(bar, reach + PADDING);
     }
 
-    //! Round the corners by the padding, cut down to the screen
-    private function boxAround(points as Array<[Numeric, Numeric]>) as Array<Number> {
-        var left = points[0][0].toNumber();
-        var top = points[0][1].toNumber();
-        var right = left;
-        var bottom = top;
-
-        for (var i = 1; i < points.size(); i++) {
-            left = Numbers.min(left, points[i][0].toNumber());
-            top = Numbers.min(top, points[i][1].toNumber());
-            right = Numbers.max(right, points[i][0].toNumber());
-            bottom = Numbers.max(bottom, points[i][1].toNumber());
-        }
-
+    //! The ends grown by the pen's reach, cut down to the screen
+    private function boxAround(bar as Array<Number>, margin as Number) as Array<Number> {
         return [
-            Numbers.max(left - PADDING, 0),
-            Numbers.max(top - PADDING, 0),
-            Numbers.min(right + PADDING + 1, Dial.screenWidth),
-            Numbers.min(bottom + PADDING + 1, Dial.screenHeight)
+            Numbers.max(Numbers.min(bar[0], bar[2]) - margin, 0),
+            Numbers.max(Numbers.min(bar[1], bar[3]) - margin, 0),
+            Numbers.min(Numbers.max(bar[0], bar[2]) + margin + 1, Dial.screenWidth),
+            Numbers.min(Numbers.max(bar[1], bar[3]) + margin + 1, Dial.screenHeight)
         ];
     }
 }
