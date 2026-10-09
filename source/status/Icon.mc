@@ -40,11 +40,6 @@ class Icon {
         plainTint = color;
     }
 
-    //! Alongside the value it stands beside. Overridden by an icon that reads
-    //! something of its own.
-    function refresh() as Void {
-    }
-
     //! Settle whether the icon shows this draw. Compared to true: a setting
     //! like alarmCount is null on a watch without the feature.
     function updateShown(settings as System.DeviceSettings) as Boolean {

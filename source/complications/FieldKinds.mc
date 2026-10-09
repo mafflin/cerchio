@@ -30,7 +30,7 @@ module FieldKinds {
             case Complications.COMPLICATION_TYPE_BODY_BATTERY:         return new FieldKind(Rez.Drawables.FieldHuman);
             case Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE:  return new TemperatureKind(Rez.Drawables.FieldThermometer);
             case Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE: return new HighLowKind(Rez.Drawables.FieldThermometer);
-            case Complications.COMPLICATION_TYPE_CURRENT_WEATHER:      return new WindKind();
+            case Complications.COMPLICATION_TYPE_CURRENT_WEATHER:      return new WindKind(Rez.Drawables.FieldFan);
         }
 
         // The dates, COMPLICATION_TYPE_INVALID, and anything a later system

@@ -123,6 +123,7 @@ field bike.svg bike
 field recovery.svg recovery
 field human.svg human
 field thermometer.svg thermometer
+field fan.svg fan
 
 # The launcher icon is drawn by the system and never tinted, so it is not
 # flattened either: the system scales it to whatever each device asks for, and

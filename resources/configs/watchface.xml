@@ -103,7 +103,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
                 <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
             </complication>
             <complication id="2">
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
@@ -123,7 +123,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
                 <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
             </complication>
             <complication id="3">
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
@@ -143,7 +143,7 @@
                 <type default="true">Complications.COMPLICATION_TYPE_BODY_BATTERY</type>      <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
                 <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
             </complication>
             <!-- Plain's second row, left and right -->
             <complication id="4">
@@ -164,7 +164,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
                 <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
             </complication>
             <complication id="5">
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
@@ -184,7 +184,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
                 <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- the wind arrow -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
             </complication>
         </data>
     </watchface-config>

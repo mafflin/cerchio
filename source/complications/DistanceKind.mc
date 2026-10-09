@@ -16,6 +16,14 @@ class DistanceKind extends FieldKind {
         FieldKind.initialize(resourceId);
     }
 
+    //! Zero when the system has no value: a week without a run comes as
+    //! nothing, not as 0, while one without a ride comes as 0
+    function text(complication as Complications.Complication) as String {
+        var value = complication.value;
+
+        return format((value != null) ? value : 0, complication);
+    }
+
     protected function format(value as Complications.Value, complication as Complications.Complication) as String {
         var meters = ValueFormat.decimal(value);
         var perUnit = (Clock.settings().distanceUnits == System.UNIT_STATUTE) ? METERS_PER_MILE : METERS_PER_KILOMETER;

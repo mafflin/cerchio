@@ -47,4 +47,5 @@
     <bitmap id="FieldRecovery" filename="field/recovery.png" packingFormat="png" />
     <bitmap id="FieldHuman" filename="field/human.png" packingFormat="png" />
     <bitmap id="FieldThermometer" filename="field/thermometer.png" packingFormat="png" />
+    <bitmap id="FieldFan" filename="field/fan.png" packingFormat="png" />
 </drawables>

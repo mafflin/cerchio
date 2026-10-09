@@ -79,14 +79,7 @@ class ComplicationField extends WatchUi.Drawable {
             return;
         }
 
-        var shown = kindOf(complication.getType());
-        var icon = shown.icon();
-
-        text = shown.text(complication);
-
-        if (icon != null) {
-            icon.refresh();
-        }
+        text = kindOf(complication.getType()).text(complication);
     }
 
     //! Also drawn by the editor while it pulses the field

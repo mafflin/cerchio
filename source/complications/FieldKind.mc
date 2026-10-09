@@ -7,7 +7,7 @@ import Toybox.Lang;
 //! picks one per type.
 class FieldKind {
 
-    protected var fieldIcon as Icon?;
+    private var fieldIcon as Icon?;
 
     //! resourceId null for no icon
     function initialize(resourceId as ResourceId?) {
