@@ -16,9 +16,9 @@ through dawn and dusk.
 
 - A goal dot glides round from the top as your steps goal is done, a ring
   until it is done and solid once it is
-- Numerals style: gray hour numerals round the circle, the one nearest the
-  second larger and in the accent color in place of a seconds hand; the
-  goal dot a half dot at the edge of the glass
+- Numerals style: gray hour numerals round the circle, a seconds hand
+  running out over them from just outside it, and the goal dot a half dot
+  at the edge of the glass
 - Plain style: no numerals, the circle out against the edge of the glass
   with a seconds hand and a whole goal dot just inside it
 - Set on the watch in Garmin's watch face editor: style, data fields, a

@@ -65,6 +65,11 @@ class DayCircle {
         return radius - penReach;
     }
 
+    //! The line's outer edge, from the center
+    function outer() as Number {
+        return radius + penReach;
+    }
+
     function width() as Number {
         return penWidth;
     }

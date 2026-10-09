@@ -5,8 +5,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 //! The watch face: owns the elements. Everything but the seconds is drawn
-//! off screen once a minute; an update copies it and adds the seconds hand,
-//! or with the numerals the numeral nearest the second.
+//! off screen once a minute; an update copies it and adds the seconds hand.
 class CerchioView extends WatchUi.WatchFace {
 
     //! Shares of the screen height: the line the status row mirrors, and the
@@ -25,10 +24,6 @@ class CerchioView extends WatchUi.WatchFace {
     private var statusBar as StatusBar;
     private var fields as DataFields;
     private var secondsHand as SecondsHand;
-    private var secondsNumeral as SecondsNumeral;
-
-    //! Whichever of the two the style shows
-    private var seconds as SecondsMarker;
     private var goalProgress as GoalProgress;
     private var goalDot as GoalDot;
     private var faceBuffer as FaceBuffer;
@@ -57,15 +52,12 @@ class CerchioView extends WatchUi.WatchFace {
         daylight = Sun.daylight();
         dayColors = new DayColors(daylight);
         numerals = new RimNumerals();
-        numerals.setBackground(BACKGROUND);
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
         hourHand = new HourHand(dayCircle);
         statusBar = new StatusBar();
         fields = new DataFields();
         secondsHand = new SecondsHand();
-        secondsNumeral = new SecondsNumeral(numerals);
-        seconds = secondsNumeral;
         goalProgress = new GoalProgress();
         goalDot = new GoalDot();
         faceBuffer = new FaceBuffer();
@@ -169,7 +161,7 @@ class CerchioView extends WatchUi.WatchFace {
         }
 
         smooth(dc);
-        seconds.drawPartial(dc, face);
+        secondsHand.drawPartial(dc, face);
     }
 
     //! The seconds would freeze once the system stops calling onPartialUpdate,
@@ -190,22 +182,22 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     //! Inside the numerals, or against the glass for a style without them;
-    //! the hour hand follows the circle, and the seconds hand and the goal
-    //! dot keep inside it when it is against the glass. With the numerals,
-    //! the numeral nearest the second stands for the hand.
+    //! the hour hand follows the circle. With the numerals, the seconds hand
+    //! runs outside the circle toward the glass and the goal dot sits on the
+    //! glass; without them, both keep inside the circle.
     private function placeCircle() as Void {
         var withNumerals = Styles.hasNumerals(editor.style());
-
-        seconds.forget();
-        seconds = withNumerals ? secondsNumeral : secondsHand;
 
         dayCircle.prepare(withNumerals ? numerals.inner() : null);
         hourHand.prepare();
 
-        var circleInnerEdge = withNumerals ? null : dayCircle.inner();
+        if (withNumerals) {
+            secondsHand.placeOutside(dayCircle.outer());
+        } else {
+            secondsHand.placeInside(dayCircle.inner());
+        }
 
-        secondsHand.prepare(circleInnerEdge);
-        goalDot.prepare(dayCircle.width(), circleInnerEdge);
+        goalDot.prepare(dayCircle.width(), withNumerals ? null : dayCircle.inner());
     }
 
     //! The status row above the time mirrors the line the fields hang from
@@ -226,14 +218,13 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the seconds hand or numeral, and the goal dot. Data: the time,
-    //! the status row and the data fields.
+    //! Accent: the seconds hand and the goal dot. Data: the time, the status
+    //! row and the data fields.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
 
         secondsHand.setColor(accent);
-        secondsNumeral.setColor(accent);
         goalDot.setColor(accent);
         timeDisplay.setColor(data);
         statusBar.setColor(data);
@@ -262,7 +253,7 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay.draw(dc);
 
         faceBuffer.invalidate();
-        seconds.forget();
+        secondsHand.forget();
     }
 
     //! The off screen face, drawn anew when the minute has moved on; null
@@ -299,18 +290,17 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay.draw(dc);
     }
 
-    //! The hand, or with the numerals the numeral nearest the second. Asleep,
-    //! either shows only if a partial update can move it, which takes the off
-    //! screen face to copy back under it.
+    //! Asleep, the hand shows only if a partial update can move it, which
+    //! takes the off screen face to copy back under it.
     private function drawSeconds(dc as Dc, hasFace as Boolean) as Void {
         if (!isAwake && !(partialUpdatesAllowed && hasFace)) {
             // Nothing on screen to lift off next tick.
-            seconds.forget();
+            secondsHand.forget();
             return;
         }
 
         smooth(dc);
-        seconds.draw(dc);
+        secondsHand.draw(dc);
     }
 
     //! Everything the draw reads, before anything draws
