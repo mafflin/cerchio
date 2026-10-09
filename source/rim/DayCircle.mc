@@ -132,17 +132,38 @@ class DayCircle {
         drawCut(dc, sunrise);
         drawCut(dc, sunset);
 
-        if ((dawn != null) && (dusk != null)) {
+        // Met at midnight, in a white night: no night between them, and no
+        // change of color.
+        if ((dawn != null) && (dusk != null) && (dawn != dusk)) {
             drawCut(dc, dawn);
             drawCut(dc, dusk);
         }
     }
 
     //! Clockwise between two color changes, in the color at the first. Both
-    //! ends rounded, so neighbors meet on the same whole degree.
+    //! ends rounded, so neighbors meet on the same whole degree. Ends on the
+    //! same degree are not left to drawArc: a sliver is left out, and all
+    //! but a sliver of the circle is drawn whole.
     private function drawSector(dc as Dc, from as Float, to as Float) as Void {
+        var start = screenDegrees(from);
+        var end = screenDegrees(to);
+
         dc.setColor(dayColors.colorAt(from), Graphics.COLOR_TRANSPARENT);
-        dc.drawArc(Dial.centerX, Dial.centerY, radius, Graphics.ARC_CLOCKWISE, screenDegrees(from), screenDegrees(to));
+
+        if (start != end) {
+            dc.drawArc(Dial.centerX, Dial.centerY, radius, Graphics.ARC_CLOCKWISE, start, end);
+            return;
+        }
+
+        var span = to - from;
+
+        if (span < 0) {
+            span += Dial.DEGREES_PER_CIRCLE;
+        }
+
+        if (span > Dial.HALF_TURN) {
+            dc.drawCircle(Dial.centerX, Dial.centerY, radius);
+        }
     }
 
     //! Across the line at a dial position, in the background color

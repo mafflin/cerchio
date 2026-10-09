@@ -29,11 +29,15 @@ module Twilight {
     //! The earth turns a degree in four minutes
     const MINUTES_PER_DEGREE = 4.0;
 
+    //! Noon round to midnight
+    const HALF_DAY_DEGREES = 180.0;
+
     //! Leap years ignored: a day off moves the sun under half a degree
     const DAYS_BEFORE_MONTH = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
     //! From dawn to solar noon, and from noon to dusk. Null without a
-    //! latitude, or when the sun never sinks or never climbs that far.
+    //! latitude, or when the sun never climbs that far; half a day when it
+    //! never sinks that far, a white night: dawn and dusk meet at midnight.
     function minutesFromNoon(dayLength as Number) as Number? {
         var sunDeclination = declination();
         var latitude = latitudeOf(dayLength, sunDeclination);
@@ -87,12 +91,18 @@ module Twilight {
         return (latitude.abs() <= (Math.PI / 2)) ? latitude : (middle - spread);
     }
 
-    //! Degrees the earth turns from noon until the sun is down to ALTITUDE
+    //! Degrees the earth turns from noon until the sun is down to ALTITUDE;
+    //! all the way round to midnight when it never gets that low, null when
+    //! it never climbs that high
     function hourAngleOf(latitude as Decimal, sunDeclination as Decimal) as Decimal? {
         var cosine = (Math.sin(Math.toRadians(ALTITUDE)) - (Math.sin(latitude) * Math.sin(sunDeclination)))
             / (Math.cos(latitude) * Math.cos(sunDeclination));
 
-        if ((cosine < -1) || (cosine > 1)) {
+        if (cosine < -1) {
+            return HALF_DAY_DEGREES;
+        }
+
+        if (cosine > 1) {
             return null;
         }
 
