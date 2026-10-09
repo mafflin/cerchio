@@ -86,105 +86,105 @@
              should lose its case there as well. -->
         <data>
             <complication id="1">
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
-                <type default="true">Complications.COMPLICATION_TYPE_STEPS</type>             <!-- steps -->
+                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
-                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type default="true">Complications.COMPLICATION_TYPE_STEPS</type>             <!-- steps -->
                 <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
                 <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
-                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
-                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
-                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
-                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
-                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
-                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>
             <complication id="2">
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
-                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
+                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
-                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type default="true">Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>  <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
                 <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
                 <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
-                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
-                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
-                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
-                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
-                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
-                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>
             <complication id="3">
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
-                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
+                <type default="true">Complications.COMPLICATION_TYPE_BODY_BATTERY</type>      <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
-                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
                 <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
                 <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
-                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
-                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
-                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
-                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
-                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
-                <type default="true">Complications.COMPLICATION_TYPE_BODY_BATTERY</type>      <!-- human -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>
             <!-- Plain's second row, left and right -->
             <complication id="4">
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
-                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
+                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
-                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
                 <type default="true">Complications.COMPLICATION_TYPE_SUNRISE</type>           <!-- sunrise -->
                 <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
-                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
-                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
-                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
-                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
-                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
-                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>
             <complication id="5">
+                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
                 <type>Complications.COMPLICATION_TYPE_BATTERY</type>                          <!-- battery -->
-                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
+                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
-                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
+                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
+                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
+                <type>Complications.COMPLICATION_TYPE_INTENSITY_MINUTES</type>                <!-- timer -->
+                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
+                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
+                <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
                 <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
                 <type default="true">Complications.COMPLICATION_TYPE_SUNSET</type>            <!-- sunset -->
-                <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
-                <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
-                <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
-                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
-                <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
-                <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_HIGH_LOW_TEMPERATURE</type>             <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>
         </data>
     </watchface-config>
