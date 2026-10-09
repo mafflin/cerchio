@@ -64,7 +64,7 @@ class DayColors {
             return FALLBACK_COLOR;
         }
 
-        if (isBetween(degrees, rise, set)) {
+        if (Numbers.isBetween(degrees, rise, set)) {
             return DAY_COLOR;
         }
 
@@ -81,15 +81,7 @@ class DayColors {
             return false;
         }
 
-        return isBetween(degrees, dawn, rise) || isBetween(degrees, set, dusk);
-    }
-
-    //! Clockwise from one position, up to but not including the other; the
-    //! span may run across the dial's zero
-    private function isBetween(degrees as Numeric, from as Float, to as Float) as Boolean {
-        return (from <= to)
-            ? ((degrees >= from) && (degrees < to))
-            : ((degrees >= from) || (degrees < to));
+        return Numbers.isBetween(degrees, dawn, rise) || Numbers.isBetween(degrees, set, dusk);
     }
 
     private function positionOf(minute as Number?) as Float? {

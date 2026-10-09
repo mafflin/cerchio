@@ -18,6 +18,18 @@ class FieldKind {
         return fieldIcon;
     }
 
+    //! The color to draw in, given the data color. Overridden by a kind that
+    //! says something with color.
+    function tint(color as Number) as Number {
+        return color;
+    }
+
+    //! Whether the value moves with the time as well as with the system's
+    //! updates, and so is read again every minute. Overridden.
+    function followsClock() as Boolean {
+        return false;
+    }
+
     //! Empty when the system has no value
     function text(complication as Complications.Complication) as String {
         var value = complication.value;

@@ -92,19 +92,19 @@ render meridiem-pm.svg "$SMALL/meridiem/pm.png" 33 21 "$MERIDIEM_SMALL" flat
 render meridiem-am.svg "$LARGE/meridiem/am.png" 49 30 "$MERIDIEM_LARGE"
 render meridiem-pm.svg "$LARGE/meridiem/pm.png" 49 30 "$MERIDIEM_LARGE"
 
-# The suns stand beside the digits of the sunrise and sunset fields,
-# FONT_TINY: 24px, where a unit of the 24 unit art is a whole pixel, and
-# 32px on the large screens, a touch taller than the digits either way. A
-# ring for the sunrise, a solid sun for the sunset. The ring is the solid sun
-# with a hole of radius 4, an even 2px at 24px.
-render sun.svg "$SMALL/sun/sunrise.png" 24 24 "$BOX" flat
-render sun.svg "$LARGE/sun/sunrise.png" 32 32 "$BOX"
-render sun-filled.svg "$SMALL/sun/sunset.png" 24 24 "$BOX" flat
-render sun-filled.svg "$LARGE/sun/sunset.png" 32 32 "$BOX"
+# The suns stand beside the digits of the sun field, FONT_TINY: 24px, where
+# a unit of the 24 unit art is a whole pixel, and 32px on the large screens,
+# a touch taller than the digits either way. A half sun on a horizon line
+# for both, over two lines for the sunrise, shown while the sun is down, and
+# an arrow down for the sunset, shown while it is up.
+render weather-sunrise.svg "$SMALL/sun/sunrise.png" 24 24 "$BOX" flat
+render weather-sunrise.svg "$LARGE/sun/sunrise.png" 32 32 "$BOX"
+render weather-sunset.svg "$SMALL/sun/sunset.png" 24 24 "$BOX" flat
+render weather-sunset.svg "$LARGE/sun/sunset.png" 32 32 "$BOX"
 
 # The data fields' icons stand beside the same FONT_TINY digits as the
-# suns, so they take the suns' sizes; the sunrise and sunset fields use the
-# suns themselves. The battery is always the full one.
+# suns, so they take the suns' sizes; the sun field uses the suns
+# themselves. The battery is always the full one.
 #   $1 source svg   $2 name under field/
 field() {
     render "$1" "$SMALL/field/$2.png" 24 24 "$BOX" flat

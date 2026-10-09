@@ -58,6 +58,33 @@ class Daylight {
         return duskMinute;
     }
 
+    //! Between sunrise and sunset; null while either is not known
+    function isUpAt(minute as Number) as Boolean? {
+        var rise = sunriseMinute;
+        var set = sunsetMinute;
+
+        if ((rise == null) || (set == null)) {
+            return null;
+        }
+
+        return Numbers.isBetween(minute, rise, set);
+    }
+
+    //! From dawn to sunrise, or sunset to dusk; false while they are not
+    //! known
+    function isTwilightAt(minute as Number) as Boolean {
+        var rise = sunriseMinute;
+        var set = sunsetMinute;
+        var dawn = dawnMinute;
+        var dusk = duskMinute;
+
+        if ((rise == null) || (set == null) || (dawn == null) || (dusk == null)) {
+            return false;
+        }
+
+        return Numbers.isBetween(minute, dawn, rise) || Numbers.isBetween(minute, set, dusk);
+    }
+
     //! Solar noon, halfway from sunrise to sunset; null with either unknown
     function zenith() as Number? {
         var rise = sunriseMinute;

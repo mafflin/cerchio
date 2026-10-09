@@ -89,6 +89,15 @@ class DataFields {
         return changed;
     }
 
+    //! Once a minute: the fields whose value moves with the time
+    function refreshClocked() as Void {
+        for (var i = 0; i < fields.size(); i++) {
+            if (fields[i].followsClock()) {
+                fields[i].refresh();
+            }
+        }
+    }
+
     function subscribe() as Void {
         for (var i = 0; i < fields.size(); i++) {
             Complications.subscribeToUpdates(fields[i].getComplicationId());

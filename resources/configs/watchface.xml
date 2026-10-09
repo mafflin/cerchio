@@ -81,9 +81,10 @@
              left and right; the right one defaults to the weekday and
              date.
              The weather type stands for the wind, which has no type of its
-             own. The comment on each line is the icon FieldKinds gives it -
-             the two lists are meant to stay in step, so a type dropped here
-             should lose its case there as well. -->
+             own, and the sunset for the sun's next turn, sunset or
+             sunrise. The comment on each line is the icon FieldKinds
+             gives it - the two lists are meant to stay in step, so a type
+             dropped here should lose its case there as well. -->
         <data>
             <complication id="1">
                 <type>Complications.COMPLICATION_TYPE_ALTITUDE</type>                         <!-- altitude -->
@@ -100,8 +101,7 @@
                 <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
                 <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
                 <type default="true">Complications.COMPLICATION_TYPE_STEPS</type>             <!-- steps -->
-                <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
-                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
+                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset or sunrise -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>
@@ -120,8 +120,7 @@
                 <type>Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT</type>               <!-- notifications -->
                 <type>Complications.COMPLICATION_TYPE_RECOVERY_TIME</type>                    <!-- recovery -->
                 <type>Complications.COMPLICATION_TYPE_STEPS</type>                            <!-- steps -->
-                <type>Complications.COMPLICATION_TYPE_SUNRISE</type>                          <!-- sunrise -->
-                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset -->
+                <type>Complications.COMPLICATION_TYPE_SUNSET</type>                           <!-- sunset or sunrise -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_BIKE_DISTANCE</type>             <!-- bike -->
                 <type>Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE</type>              <!-- run -->
             </complication>

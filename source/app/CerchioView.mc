@@ -54,7 +54,7 @@ class CerchioView extends WatchUi.WatchFace {
         self.editMode = editMode;
 
         timeDisplay = new TimeDisplay();
-        daylight = new Daylight();
+        daylight = Sun.daylight();
         dayColors = new DayColors(daylight);
         numerals = new RimNumerals();
         numerals.setBackground(BACKGROUND);
@@ -318,6 +318,8 @@ class CerchioView extends WatchUi.WatchFace {
         if (daylight.refresh()) {
             dayColors.refresh();
         }
+
+        fields.refreshClocked();
 
         refreshGoal();
     }

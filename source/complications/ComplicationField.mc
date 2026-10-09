@@ -80,6 +80,12 @@ class ComplicationField extends WatchUi.Drawable {
         return complicationId.equals(other);
     }
 
+    function followsClock() as Boolean {
+        var shown = kind;
+
+        return (shown != null) && shown.followsClock();
+    }
+
     //! Read the complication's current value
     function refresh() as Void {
         var complication = ComplicationReader.read(complicationId);
@@ -98,7 +104,12 @@ class ComplicationField extends WatchUi.Drawable {
     function draw(dc as Dc) as Void {
         var shown = kind;
 
-        IconText.draw(dc, anchorX, justify, locY.toNumber(), (shown != null) ? shown.icon() : null, text, color);
+        if (shown == null) {
+            IconText.draw(dc, anchorX, justify, locY.toNumber(), null, text, color);
+            return;
+        }
+
+        IconText.draw(dc, anchorX, justify, locY.toNumber(), shown.icon(), text, shown.tint(color));
     }
 
     //! What the editor outlines and taps are tested against
