@@ -1,11 +1,11 @@
 import Toybox.Complications;
 import Toybox.Lang;
 
-//! The weather stands for the wind: where it blows from and its speed in
-//! whole km/h, SW12, beside a fan. Either alone when the other is not known,
-//! and a dash when neither is. The weather's own value, the conditions, goes
-//! unread.
-class WindKind extends FieldKind {
+//! The weather: an icon for the conditions, beside where the wind blows from
+//! and its speed in whole km/h, SW12. Either of the two alone when the other
+//! is not known, and a dash when neither is. The complication's own value
+//! goes unread; all of it comes off the weather itself.
+class WeatherKind extends FieldKind {
 
     //! Neither the bearing nor the speed: the field still shows
     private const UNKNOWN = "--";
@@ -16,12 +16,21 @@ class WindKind extends FieldKind {
     //! The weather reports m/s
     private const KMH_PER_MS = 3.6;
 
-    function initialize(resourceId as ResourceId?) {
-        FieldKind.initialize(resourceId);
+    private var conditionIcon as WeatherIcon;
+
+    function initialize() {
+        FieldKind.initialize(null);
+        conditionIcon = new WeatherIcon();
+    }
+
+    function icon() as Icon? {
+        return conditionIcon;
     }
 
     function text(complication as Complications.Complication) as String {
         var conditions = CurrentWeather.conditions();
+
+        conditionIcon.setCondition((conditions != null) ? conditions.condition : null);
 
         if (conditions == null) {
             return UNKNOWN;

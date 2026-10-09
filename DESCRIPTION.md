@@ -9,7 +9,7 @@ screen, in low power mode too where the watch allows it.
 **Above the time**, battery, phone, alarm and AM/PM, shown only when there
 is something to report. **Below it**, data fields of your choice, three in
 the Numerals style and five in Plain, each an icon and its value, or the
-wind as where it blows from and its speed.
+weather and the wind.
 
 - A goal dot glides round from the top as your steps goal is done, a ring
   until it is done and solid once it is
