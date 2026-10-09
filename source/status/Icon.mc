@@ -7,19 +7,13 @@ import Toybox.WatchUi;
 //! to report, or a data field's icon.
 class Icon {
 
-    private const NONE_CHOSEN = -1;
-
     //! For icons with just the one bitmap
     private var resourceId as ResourceId?;
 
     private var loaded as BitmapResource? = null;
 
     //! For icons that pick from a set
-    private var chosenIndex as Number = NONE_CHOSEN;
-
-    //! Asked of the bitmap once: loading is not free
-    private var measuredWidth as Number? = null;
-    private var measuredHeight as Number? = null;
+    private var chosenId as ResourceId? = null;
 
     private var shown as Boolean = false;
 
@@ -52,16 +46,13 @@ class Icon {
         return shown;
     }
 
+    //! Of the bitmap it would draw now, which a set's members need not share
     function width() as Number {
-        measure();
-
-        return measuredWidth as Number;
+        return bitmap().getWidth();
     }
 
     function height() as Number {
-        measure();
-
-        return measuredHeight as Number;
+        return bitmap().getHeight();
     }
 
     function draw(dc as Dc, x as Number, y as Number) as Void {
@@ -84,22 +75,16 @@ class Icon {
 
     //! One of a set, held until the choice moves
     protected function choose(images as Array<ResourceId>, index as Number) as BitmapResource {
-        if (index != chosenIndex) {
-            chosenIndex = index;
-            loaded = WatchUi.loadResource(images[index]) as BitmapResource;
+        return chooseResource(images[index]);
+    }
+
+    //! As choose(), for a set picked by the resource itself
+    protected function chooseResource(resourceId as ResourceId) as BitmapResource {
+        if (resourceId != chosenId) {
+            chosenId = resourceId;
+            loaded = WatchUi.loadResource(resourceId) as BitmapResource;
         }
 
         return loaded as BitmapResource;
-    }
-
-    private function measure() as Void {
-        if (measuredWidth != null) {
-            return;
-        }
-
-        var image = bitmap();
-
-        measuredWidth = image.getWidth();
-        measuredHeight = image.getHeight();
     }
 }

@@ -1,7 +1,7 @@
 import Toybox.Lang;
 import Toybox.Weather;
 
-//! The weather the phone last sent, for the wind field and the latitude
+//! The weather the phone last sent, for the weather field and the latitude
 module CurrentWeather {
 
     //! Null on a watch without weather, or before the phone has sent any

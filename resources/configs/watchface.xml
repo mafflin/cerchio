@@ -80,8 +80,9 @@
              exactly these, in this order. The slots are the data fields
              left to right, Plain's second row last; the middle one defaults
              to the weekday and date.
-             The weather type stands for the wind, which has no type of its
-             own. The comment on each line is the icon FieldKinds gives it -
+             The weather type shows the wind, which has no type of its own,
+             beside an icon for the conditions that WeatherIcon picks. The
+             comment on each line is the icon FieldKinds gives it -
              the two lists are meant to stay in step, so a type dropped here
              should lose its case there as well. -->
         <data>
@@ -91,7 +92,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- conditions -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
@@ -111,7 +112,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- conditions -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type default="true">Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>  <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
@@ -131,7 +132,7 @@
                 <type default="true">Complications.COMPLICATION_TYPE_BODY_BATTERY</type>      <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- conditions -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
@@ -152,7 +153,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- conditions -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
@@ -172,7 +173,7 @@
                 <type>Complications.COMPLICATION_TYPE_BODY_BATTERY</type>                     <!-- human -->
                 <type>Complications.COMPLICATION_TYPE_CALORIES</type>                         <!-- calories -->
                 <type>Complications.COMPLICATION_TYPE_CURRENT_TEMPERATURE</type>              <!-- thermometer -->
-                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- fan -->
+                <type>Complications.COMPLICATION_TYPE_CURRENT_WEATHER</type>                  <!-- conditions -->
                 <type>Complications.COMPLICATION_TYPE_DATE</type>                             <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_WEEKDAY_MONTHDAY</type>                 <!-- no icon -->
                 <type>Complications.COMPLICATION_TYPE_HEART_RATE</type>                       <!-- heart -->
