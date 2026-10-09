@@ -18,9 +18,9 @@ class FieldKind {
         return fieldIcon;
     }
 
-    //! The color to draw in, given the data color. Overridden by a kind that
-    //! says something with color.
-    function tint(color as Number) as Number {
+    //! The icon's color, given the data color the value keeps. Overridden by
+    //! a kind that says something with color.
+    function iconTint(color as Number) as Number {
         return color;
     }
 

@@ -3,7 +3,8 @@ import Toybox.Lang;
 
 //! The sun's next turn as H:MM by the 12/24 hour setting: the sunset while
 //! the sun is up, beside a setting sun, and the sunrise while it is down,
-//! beside a rising one; in the dial's twilight color through dawn and dusk.
+//! beside a rising one; the sun in the dial's twilight color through dawn
+//! and dusk.
 //! The sunset complication stands for it; the times are the dial's. Until
 //! they are known, the sunset as the system gives it.
 class SunKind extends FieldKind {
@@ -29,7 +30,7 @@ class SunKind extends FieldKind {
         return isUp ? settingIcon : risingIcon;
     }
 
-    function tint(color as Number) as Number {
+    function iconTint(color as Number) as Number {
         return isTwilight ? TWILIGHT_COLOR : color;
     }
 

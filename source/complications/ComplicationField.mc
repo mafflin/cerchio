@@ -107,11 +107,11 @@ class ComplicationField extends WatchUi.Drawable {
         var shown = kind;
 
         if (shown == null) {
-            IconText.draw(dc, contentLeft, locY.toNumber(), null, text, color);
+            IconText.draw(dc, contentLeft, locY.toNumber(), null, text, color, color);
             return;
         }
 
-        IconText.draw(dc, contentLeft, locY.toNumber(), shown.icon(), text, shown.tint(color));
+        IconText.draw(dc, contentLeft, locY.toNumber(), shown.icon(), text, color, shown.iconTint(color));
     }
 
     //! What the editor outlines and taps are tested against

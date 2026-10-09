@@ -1,8 +1,8 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! An icon and the digits beside it, together on a line, in the icon's
-//! tint: a data field. Either may be missing.
+//! An icon and the digits beside it, together on a line: a data field.
+//! Either may be missing.
 module IconText {
 
     const FONT = Graphics.FONT_TINY;
@@ -25,15 +25,16 @@ module IconText {
         return iconSpan(icon, text) + textWidth;
     }
 
-    //! The icon and digits as one group from its left edge. top is the top
-    //! of the digits' font box; the icon is centered on the digits, which sit
-    //! at the bottom of the ascent.
-    function draw(dc as Dc, left as Number, top as Number, icon as Icon?, text as String, color as Number) as Void {
+    //! The icon and digits as one group from its left edge, the digits in
+    //! color and the icon in iconColor. top is the top of the digits' font
+    //! box; the icon is centered on the digits, which sit at the bottom of
+    //! the ascent.
+    function draw(dc as Dc, left as Number, top as Number, icon as Icon?, text as String, color as Number, iconColor as Number) as Void {
         if (icon != null) {
             var ascent = Fonts.ascentOf(FONT);
             var digitHeight = Dial.pixel(ascent * DIGIT_SHARE);
 
-            icon.setTint(color);
+            icon.setTint(iconColor);
             icon.draw(dc, left, top + ascent - ((digitHeight + icon.height()) / 2));
         }
 
