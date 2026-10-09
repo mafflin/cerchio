@@ -16,6 +16,12 @@ class StatusBar {
 
     private var icons as Array<Icon>;
 
+    //! Always on screen, so its artwork is the row's measure
+    private var battery as Battery;
+
+    //! Has no bitmap, so has to be told its size
+    private var wind as Wind;
+
     //! The line below the time the row mirrors
     private var mirrorY as Number = 0;
 
@@ -26,10 +32,14 @@ class StatusBar {
     private var gap as Number = 0;
 
     function initialize() {
+        battery = new Battery();
+        wind = new Wind();
+
         icons = [
-            new Battery(),
+            battery,
             new Phone(),
             new Alarm(),
+            wind,
             new Meridiem()
         ] as Array<Icon>;
     }
@@ -51,6 +61,9 @@ class StatusBar {
         if (count == 0) {
             return;
         }
+
+        // The wind fills the battery's square.
+        wind.setSquare(battery.height());
 
         layOut(count);
         drawIcons(dc);

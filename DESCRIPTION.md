@@ -6,8 +6,9 @@ dawn and dusk, sky blue at night, with a small mark at solar noon. A line
 on the circle shows the hour, and the seconds go round the edge of the
 screen, in low power mode too where the watch allows it.
 
-**Above the time**, battery, phone, alarm and AM/PM, shown only when there
-is something to report. **Below it**, two data fields of your choice,
+**Above the time**, battery, phone, alarm, the wind as a dot on a compass
+ring where it blows, orange when moderate and red when strong, and AM/PM,
+shown only when there is something to report. **Below it**, two data fields of your choice,
 each an icon and its value: the wind as where it blows from and its speed,
 and the sun as its next sunset or sunrise, in orange through dawn and dusk.
 
