@@ -8,9 +8,9 @@ class SecondsHand extends SecondsMarker {
     private const COUNT = Dial.SECONDS_PER_TURN;
 
     //! The bar's width and its length, end to end, as shares of the radius:
-    //! 10px by 16px on a 260px screen
-    private const WIDTH_DIVISOR = 13;
-    private const LENGTH_DIVISOR = 8;
+    //! 11px by 18px on a 260px screen
+    private const WIDTH_DIVISOR = 11;
+    private const LENGTH_DIVISOR = 7;
 
     //! Past the ends on every side, for the smoothed edges
     private const PADDING = 1;
