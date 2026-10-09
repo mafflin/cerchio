@@ -4,6 +4,8 @@ import Toybox.Lang;
 //! The face but the seconds, drawn off screen once a minute: a full update
 //! copies all of it, a partial update only the box round the seconds.
 //! The system may take the bitmap back; it is then made anew and redrawn.
+//! Out of date, it is what the screen last got, so still right to copy
+//! back under the seconds.
 class FaceBuffer {
 
     private const NO_MINUTE = -1;
@@ -12,8 +14,11 @@ class FaceBuffer {
     private var screenHeight as Number = 0;
     private var reference as BufferedBitmapReference? = null;
 
-    //! The minute it was last drawn for
+    //! The Clock.minuteOfDay() it was last drawn for
     private var drawnMinute as Number = NO_MINUTE;
+
+    //! Whether the bitmap holds a face at all, however old
+    private var hasFace as Boolean = false;
 
     function initialize() {
     }
@@ -22,6 +27,7 @@ class FaceBuffer {
         screenWidth = dc.getWidth();
         screenHeight = dc.getHeight();
         reference = null;
+        hasFace = false;
         invalidate();
     }
 
@@ -36,6 +42,19 @@ class FaceBuffer {
 
     function markDrawn(minute as Number) as Void {
         drawnMinute = minute;
+        hasFace = true;
+    }
+
+    //! The face as last drawn, however old, neither made nor drawn here: a
+    //! partial update cannot afford either. Null when there is none.
+    function lastDrawn() as BufferedBitmap? {
+        var current = reference;
+
+        if ((current == null) || !hasFace) {
+            return null;
+        }
+
+        return current.get() as BufferedBitmap?;
     }
 
     //! Null when the graphics pool has no room for it
@@ -52,6 +71,7 @@ class FaceBuffer {
 
         // Lost or never made: whatever it held is gone.
         invalidate();
+        hasFace = false;
         reference = Graphics.createBufferedBitmap({ :width => screenWidth, :height => screenHeight });
 
         return (reference as BufferedBitmapReference).get() as BufferedBitmap?;

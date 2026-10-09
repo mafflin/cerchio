@@ -15,6 +15,10 @@ class DataFields {
 
     private var gap as Number = 0;
 
+    //! What the last draw covered, left, top, right and bottom; null for
+    //! nothing
+    private var drawnBox as Array<Number>? = null;
+
     function initialize() {
         fields = [
             new ComplicationField(SlotId.LEFT, Complications.COMPLICATION_TYPE_STEPS),
@@ -43,12 +47,32 @@ class DataFields {
     //! it; null for none. Every field is placed, that one too.
     function draw(dc as Dc, skippedSlot as Number?) as Void {
         placeContents(dc);
+        drawPlaced(dc, skippedSlot);
+        drawnBox = contentBox();
+    }
 
-        for (var i = 0; i < fields.size(); i++) {
-            if (fields[i].getSlotId() != skippedSlot) {
-                fields[i].draw(dc);
-            }
+    //! The row alone, drawn again over the face it was drawn on: what the
+    //! last draw covered is painted background, then the row drawn anew.
+    //! Nothing else on the face may lie in the row's box. Returns the box
+    //! that changed, null for none.
+    function redraw(dc as Dc, skippedSlot as Number?, background as Number) as Array<Number>? {
+        placeContents(dc);
+
+        var box = union(drawnBox, contentBox());
+
+        if (box == null) {
+            return null;
         }
+
+        dc.setClip(box[0], box[1], box[2] - box[0], box[3] - box[1]);
+        dc.setColor(background, background);
+        dc.fillRectangle(box[0], box[1], box[2] - box[0], box[3] - box[1]);
+        drawPlaced(dc, skippedSlot);
+        dc.clearClip();
+
+        drawnBox = contentBox();
+
+        return box;
     }
 
     //! The field in a slot, null for any other slot
@@ -154,6 +178,44 @@ class DataFields {
                 left += widths[i] + gap;
             }
         }
+    }
+
+    //! As placed: all but the one in skippedSlot
+    private function drawPlaced(dc as Dc, skippedSlot as Number?) as Void {
+        for (var i = 0; i < fields.size(); i++) {
+            if (fields[i].getSlotId() != skippedSlot) {
+                fields[i].draw(dc);
+            }
+        }
+    }
+
+    //! Every field's icon and value as placed, one box; null for nothing
+    private function contentBox() as Array<Number>? {
+        var box = null as Array<Number>?;
+
+        for (var i = 0; i < fields.size(); i++) {
+            box = union(box, fields[i].contentBox());
+        }
+
+        return box;
+    }
+
+    //! The box round both, either of which may be null
+    private function union(first as Array<Number>?, second as Array<Number>?) as Array<Number>? {
+        if (first == null) {
+            return second;
+        }
+
+        if (second == null) {
+            return first;
+        }
+
+        return [
+            Numbers.min(first[0], second[0]),
+            Numbers.min(first[1], second[1]),
+            Numbers.max(first[2], second[2]),
+            Numbers.max(first[3], second[3])
+        ];
     }
 
     private function indexOf(slotId as Number?) as Number? {

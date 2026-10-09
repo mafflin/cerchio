@@ -13,6 +13,9 @@ class ComplicationField extends WatchUi.Drawable {
     //! screen, centered on what the field shows
     private const WIDTH_RATIO = 0.25;
 
+    //! Past the icon and value on every side, for the smoothed edges
+    private const PADDING = 2;
+
     //! Matches the slot id in watchface.xml
     private var slotId as Number;
 
@@ -25,8 +28,10 @@ class ComplicationField extends WatchUi.Drawable {
     private var kindType as Complications.Type? = null;
     private var color as Number = Graphics.COLOR_WHITE;
 
-    //! Where the icon and value start, as of the last placement
+    //! Where the icon and value start, and how wide they are, as of the last
+    //! placement
     private var contentLeft as Number = 0;
+    private var placedWidth as Number = 0;
 
     //! defaultType shows until the user picks one
     function initialize(slotId as Number, defaultType as Complications.Type) {
@@ -55,6 +60,7 @@ class ComplicationField extends WatchUi.Drawable {
     //! The icon and value from left, the tap target centered on them
     function placeContent(left as Number, contentWidth as Number) as Void {
         contentLeft = left;
+        placedWidth = contentWidth;
         locX = left + (contentWidth / 2) - (width.toNumber() / 2);
     }
 
@@ -112,6 +118,28 @@ class ComplicationField extends WatchUi.Drawable {
         }
 
         IconText.draw(dc, contentLeft, locY.toNumber(), shown.icon(), text, color, shown.iconTint(color));
+    }
+
+    //! The pixels the icon and value cover as last placed, left, top, right
+    //! and bottom; null for nothing
+    function contentBox() as Array<Number>? {
+        if (placedWidth <= 0) {
+            return null;
+        }
+
+        var top = locY.toNumber();
+        var bottom = top + height.toNumber();
+        var shown = kind;
+        var icon = (shown != null) ? shown.icon() : null;
+
+        if (icon != null) {
+            var iconTop = IconText.iconTop(top, icon);
+
+            top = Numbers.min(top, iconTop);
+            bottom = Numbers.max(bottom, iconTop + icon.height());
+        }
+
+        return [contentLeft - PADDING, top - PADDING, contentLeft + placedWidth + PADDING, bottom + PADDING];
     }
 
     //! What the editor outlines and taps are tested against

@@ -31,17 +31,22 @@ module IconText {
     //! the ascent.
     function draw(dc as Dc, left as Number, top as Number, icon as Icon?, text as String, color as Number, iconColor as Number) as Void {
         if (icon != null) {
-            var ascent = Fonts.ascentOf(FONT);
-            var digitHeight = Dial.pixel(ascent * DIGIT_SHARE);
-
             icon.setTint(iconColor);
-            icon.draw(dc, left, top + ascent - ((digitHeight + icon.height()) / 2));
+            icon.draw(dc, left, iconTop(top, icon));
         }
 
         if (text.length() > 0) {
             dc.setColor(color, Graphics.COLOR_TRANSPARENT);
             dc.drawText(left + iconSpan(icon, text), top, FONT, text, Graphics.TEXT_JUSTIFY_LEFT);
         }
+    }
+
+    //! Where the icon's top goes, for digits whose font box starts at top
+    function iconTop(top as Number, icon as Icon) as Number {
+        var ascent = Fonts.ascentOf(FONT);
+        var digitHeight = Dial.pixel(ascent * DIGIT_SHARE);
+
+        return top + ascent - ((digitHeight + icon.height()) / 2);
     }
 
     //! The icon and the air after it, where the digits start; no air without

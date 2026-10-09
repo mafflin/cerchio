@@ -43,6 +43,10 @@ class CerchioView extends WatchUi.WatchFace {
     //! Whether the native watch face editor started the face
     private var editMode as Boolean;
 
+    //! A data field has a new value the off screen face does not show yet;
+    //! only the row is drawn again for it
+    private var rowStale as Boolean = false;
+
     function initialize(editMode as Boolean) {
         WatchFace.initialize();
 
@@ -120,7 +124,8 @@ class CerchioView extends WatchUi.WatchFace {
 
     function onComplicationChange(complicationId as Complications.Id) as Void {
         if (fields.refreshShowing(complicationId)) {
-            redraw();
+            rowStale = true;
+            WatchUi.requestUpdate();
         }
     }
 
@@ -153,7 +158,10 @@ class CerchioView extends WatchUi.WatchFace {
 
         Clock.readTime();
 
-        var face = currentFace();
+        // As last drawn, not drawn again: a whole face would eat the budget,
+        // and asleep the next full update is up to a minute off. A new data
+        // field value redraws only the row.
+        var face = faceBuffer.lastDrawn();
 
         // Nothing to put back under the old seconds.
         if (face == null) {
@@ -161,6 +169,11 @@ class CerchioView extends WatchUi.WatchFace {
         }
 
         smooth(dc);
+
+        if (rowStale) {
+            copyRow(dc, face);
+        }
+
         secondsHand.drawPartial(dc, face);
     }
 
@@ -265,18 +278,45 @@ class CerchioView extends WatchUi.WatchFace {
             return null;
         }
 
-        var minute = Clock.now().min;
+        var minute = Clock.minuteOfDay();
 
         if (!faceBuffer.isCurrent(minute)) {
             drawFace(face.getDc());
             faceBuffer.markDrawn(minute);
+        } else if (rowStale) {
+            redrawRow(face);
         }
 
         return face;
     }
 
+    //! The data fields alone, drawn again on the off screen face; the box
+    //! that changed, null for none
+    private function redrawRow(face as BufferedBitmap) as Array<Number>? {
+        var faceDc = face.getDc();
+
+        rowStale = false;
+        smooth(faceDc);
+
+        return fields.redraw(faceDc, editor.pulsedSlot(), BACKGROUND);
+    }
+
+    //! The row drawn again off screen, and copied to the screen
+    private function copyRow(dc as Dc, face as BufferedBitmap) as Void {
+        var box = redrawRow(face);
+
+        if (box == null) {
+            return;
+        }
+
+        dc.setClip(box[0], box[1], box[2] - box[0], box[3] - box[1]);
+        dc.drawBitmap(0, 0, face);
+        dc.clearClip();
+    }
+
     //! Everything but the seconds
     private function drawFace(dc as Dc) as Void {
+        rowStale = false;
         smooth(dc);
         paintBackground(dc);
         refreshReadings();
