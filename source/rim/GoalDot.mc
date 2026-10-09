@@ -8,8 +8,12 @@ import Toybox.Lang;
 class GoalDot {
 
     //! The air between the dot and a circle against the glass, in Dial.air:
-    //! twice what the seconds hand keeps, so the dot sits further in
-    private const AIR_INSIDE = 2;
+    //! what the seconds hand keeps
+    private const AIR_INSIDE = 1;
+
+    //! The dot's radius against the circle's line width, so it keeps to the
+    //! line's weight on every screen
+    private const SIZE_RATIO = 1.25;
 
     //! The ring's width, as a share of the dot's radius, at least MIN_RING
     private const RING_DIVISOR = 2;
@@ -31,8 +35,8 @@ class GoalDot {
 
     //! After Dial.setup(). Null for no circle against the glass: the dot is
     //! centered on the glass.
-    function prepare(dotRadius as Number, circleInnerEdge as Number?) as Void {
-        self.dotRadius = dotRadius;
+    function prepare(circleWidth as Number, circleInnerEdge as Number?) as Void {
+        dotRadius = Dial.pixel(circleWidth * SIZE_RATIO);
         ringWidth = Numbers.max(dotRadius / RING_DIVISOR, MIN_RING);
 
         radius = (circleInnerEdge == null) ? Dial.rim : (circleInnerEdge - (AIR_INSIDE * Dial.air) - dotRadius);
