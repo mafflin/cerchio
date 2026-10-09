@@ -20,6 +20,8 @@ class CerchioView extends WatchUi.WatchFace {
     private var dayColors as DayColors;
     private var numerals as RimNumerals;
     private var dayCircle as DayCircle;
+    private var rimMark as RimMark;
+    private var noonMark as NoonMark;
     private var hourHand as HourHand;
     private var statusBar as StatusBar;
     private var fields as DataFields;
@@ -58,7 +60,9 @@ class CerchioView extends WatchUi.WatchFace {
         numerals = new RimNumerals();
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
-        hourHand = new HourHand(dayCircle);
+        rimMark = new RimMark(dayCircle);
+        noonMark = new NoonMark(rimMark, dayColors);
+        hourHand = new HourHand(rimMark);
         statusBar = new StatusBar();
         fields = new DataFields();
         secondsHand = new SecondsHand();
@@ -195,14 +199,14 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     //! Inside the numerals, or against the glass for a style without them;
-    //! the hour hand follows the circle. With the numerals, the seconds dot
-    //! runs just outside the circle and the goal dot sits on the glass;
-    //! without them, both keep inside the circle.
+    //! the hour hand and the noon mark follow the circle. With the numerals,
+    //! the seconds dot runs just outside the circle and the goal dot sits on
+    //! the glass; without them, both keep inside the circle.
     private function placeCircle() as Void {
         var withNumerals = Styles.hasNumerals(editor.style());
 
         dayCircle.prepare(withNumerals ? numerals.inner() : null);
-        hourHand.prepare();
+        rimMark.prepare();
 
         if (withNumerals) {
             secondsHand.placeOutside(dayCircle.outer());
@@ -323,6 +327,7 @@ class CerchioView extends WatchUi.WatchFace {
 
         drawNumerals(dc);
         dayCircle.draw(dc);
+        noonMark.draw(dc);
         hourHand.draw(dc);
         goalDot.draw(dc);
         statusBar.draw(dc);

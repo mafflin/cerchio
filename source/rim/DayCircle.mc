@@ -4,10 +4,9 @@ import Toybox.Math;
 
 //! A circle just inside the numerals, or against the glass without them, in
 //! the day's colors, a gap wherever the color changes; whole in the fallback
-//! color until the sun is known. Solar
-//! noon is a piece of the line as long as the line is wide, split off by a
-//! gap either side. drawArc works in whole degrees, too coarse for a gap, so
-//! the sectors run edge to edge and the gaps are cut across them as lines.
+//! color until the sun is known. drawArc works in whole degrees, too coarse
+//! for a gap, so the sectors run edge to edge and the gaps are cut across
+//! them as lines.
 class DayCircle {
 
     //! The line's width: a base, plus a share of the radius so the denser
@@ -77,11 +76,10 @@ class DayCircle {
     function draw(dc as Dc) as Void {
         var sunrise = dayColors.sunrise();
         var sunset = dayColors.sunset();
-        var zenith = dayColors.zenith();
 
         dc.setPenWidth(penWidth);
 
-        if ((sunrise == null) || (sunset == null) || (zenith == null)) {
+        if ((sunrise == null) || (sunset == null)) {
             dc.setColor(dayColors.colorAt(0), Graphics.COLOR_TRANSPARENT);
             dc.drawCircle(Dial.centerX, Dial.centerY, radius);
             return;
@@ -93,7 +91,6 @@ class DayCircle {
         dc.setColor(background, Graphics.COLOR_TRANSPARENT);
 
         drawCuts(dc, sunrise, sunset);
-        drawGapsAround(dc, zenith, cutWidth);
     }
 
     //! Cuts either side of a piece of the line as long as the line is wide

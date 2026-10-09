@@ -35,6 +35,11 @@ class DayColors {
         duskPosition = positionOf(daylight.dusk());
     }
 
+    //! From sunrise to sunset
+    function dayColor() as Number {
+        return DAY_COLOR;
+    }
+
     function sunrise() as Float? {
         return sunrisePosition;
     }
