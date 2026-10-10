@@ -7,7 +7,7 @@ import Toybox.Lang;
 class DayColors {
 
     private const DAY_COLOR = Palette.AMBER;
-    private const TWILIGHT_COLOR = Palette.ORANGE;
+    private const TWILIGHT_COLOR = Palette.TWILIGHT;
     private const NIGHT_COLOR = Palette.SKY;
 
     //! Until the sun is known
