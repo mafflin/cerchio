@@ -1,15 +1,11 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! Progress to the goal: a dot centered on the glass, so only its inner half
-//! shows, or whole just inside a circle against the glass, gliding round from
-//! the top a degree at a time as the goal is done. Not started and done are
-//! both at the top. A ring until the goal is done, solid once it is.
+//! Progress to the goal: a dot just inside the circle against the glass,
+//! gliding round from the top a degree at a time as the goal is done. Not
+//! started and done are both at the top. A ring until the goal is done,
+//! solid once it is.
 class GoalDot {
-
-    //! The air between the dot and a circle against the glass, in Dial.air:
-    //! what the seconds dot keeps
-    private const AIR_INSIDE = 1;
 
     //! The dot's radius against the circle's line width, so it keeps to the
     //! line's weight on every screen
@@ -33,13 +29,12 @@ class GoalDot {
     function initialize() {
     }
 
-    //! After Dial.setup(). Null for no circle against the glass: the dot is
-    //! centered on the glass.
-    function prepare(circleWidth as Number, circleInnerEdge as Number?) as Void {
+    //! After Dial.setup(): the air inside the circle the seconds dot keeps
+    function prepare(circleWidth as Number, circleInnerEdge as Number) as Void {
         dotRadius = Dial.pixel(circleWidth * SIZE_RATIO);
         ringWidth = Numbers.max(dotRadius / RING_DIVISOR, MIN_RING);
 
-        radius = (circleInnerEdge == null) ? Dial.rim : (circleInnerEdge - (AIR_INSIDE * Dial.air) - dotRadius);
+        radius = circleInnerEdge - Dial.air - dotRadius;
     }
 
     function setColor(color as Number) as Void {

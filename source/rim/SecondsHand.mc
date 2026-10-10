@@ -1,19 +1,16 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The seconds over the off screen face: a dot, just inside the circle or
-//! just outside it toward the glass. Round, so it looks the same at every
-//! second; a bar turned on the pixel grid shows a different shape at each.
-//! Every second's place and box is worked out once per screen, so a tick
+//! The seconds over the off screen face: a dot just inside the circle.
+//! Round, so it looks the same at every second; a bar turned on the pixel
+//! grid shows a different shape at each. Every second's place and box is worked out once per screen, so a tick
 //! only looks them up. In low power mode a partial update copies the face
 //! back over the old box and the new one, then draws.
 class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! The dot's radius, as a share of the glass's: 6px on a 260px screen,
-    //! small enough to fit between the circle and the glass, and kept on
-    //! either side of it
+    //! The dot's radius, as a share of the glass's: 6px on a 260px screen
     private const RADIUS_DIVISOR = 21;
 
     //! Past the dot on every side, for the smoothed edges
@@ -36,15 +33,9 @@ class SecondsHand {
     }
 
     //! After Dial.setup(): the dot's outer edge the air inside the circle
-    function placeInside(circleInnerEdge as Number) as Void {
+    function place(circleInnerEdge as Number) as Void {
         dotRadius = Dial.rim / RADIUS_DIVISOR;
         placeAt(circleInnerEdge - Dial.air - dotRadius);
-    }
-
-    //! After Dial.setup(): the dot's inner edge the air outside the circle
-    function placeOutside(circleOuterEdge as Number) as Void {
-        dotRadius = Dial.rim / RADIUS_DIVISOR;
-        placeAt(circleOuterEdge + Dial.air + dotRadius);
     }
 
     function setColor(color as Number) as Void {

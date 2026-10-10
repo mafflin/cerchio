@@ -2,11 +2,10 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-//! A circle just inside the numerals, or against the glass without them, in
-//! the day's colors, a gap wherever the color changes; whole in the fallback
-//! color until the sun is known. drawArc works in whole degrees, too coarse
-//! for a gap, so the sectors run edge to edge and the gaps are cut across
-//! them as lines.
+//! A circle against the glass in the day's colors, a gap wherever the color
+//! changes; whole in the fallback color until the sun is known. drawArc
+//! works in whole degrees, too coarse for a gap, so the sectors run edge to
+//! edge and the gaps are cut across them as lines.
 class DayCircle {
 
     //! The line's width: a base, plus a share of the radius so the denser
@@ -43,12 +42,12 @@ class DayCircle {
         self.background = background;
     }
 
-    //! The pen reaches half its width past the radius. Null for no numerals:
-    //! the line's outer edge is the glass.
-    function prepare(numeralsInnerEdge as Number?) as Void {
+    //! The pen reaches half its width past the radius: the line's outer edge
+    //! is the glass.
+    function prepare() as Void {
         penWidth = PEN_BASE + (Dial.rim / PEN_DIVISOR);
         penReach = (penWidth + 1) / 2;
-        radius = (numeralsInnerEdge == null) ? (Dial.rim - penReach) : (numeralsInnerEdge - Dial.air - penReach);
+        radius = Dial.rim - penReach;
 
         cutWidth = (Dial.rim - SPLIT_OFFSET) / SPLIT_DIVISOR;
         cutReach = (penWidth / 2) + 1;
@@ -62,11 +61,6 @@ class DayCircle {
     //! The line's inner edge, from the center
     function inner() as Number {
         return radius - penReach;
-    }
-
-    //! The line's outer edge, from the center
-    function outer() as Number {
-        return radius + penReach;
     }
 
     function width() as Number {

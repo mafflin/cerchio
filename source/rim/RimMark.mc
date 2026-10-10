@@ -26,7 +26,7 @@ class RimMark {
     //! After the circle is prepared
     function prepare() as Void {
         // Past the circle's edges by half the air it keeps from its
-        // neighbors; against the glass, the glass cuts off the outer end.
+        // neighbors; the glass cuts off the outer end.
         var reach = Dial.air / 2;
 
         width = circle.width() * WIDTH_FACTOR;

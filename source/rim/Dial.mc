@@ -7,7 +7,6 @@ module Dial {
 
     const DEGREES_PER_CIRCLE = 360;
     const HALF_TURN = DEGREES_PER_CIRCLE / 2;
-    const QUARTER_TURN = DEGREES_PER_CIRCLE / 4;
 
     //! Dial zero is at the top; screen zero is at three o'clock, counterclockwise
     const TOP_DEGREES = 90;
@@ -15,10 +14,6 @@ module Dial {
     //! Seconds run round the glass once a minute, from the top
     const SECONDS_PER_TURN = 60;
     const DEGREES_PER_SECOND = DEGREES_PER_CIRCLE / SECONDS_PER_TURN;
-
-    //! A full circle is a day
-    const HOURS = 24;
-    const DEGREES_PER_HOUR = DEGREES_PER_CIRCLE / HOURS;
 
     //! Midnight at the bottom, noon at the top
     const MIDNIGHT_DEGREES = HALF_TURN;
@@ -29,8 +24,8 @@ module Dial {
     var centerY as Number = 0;
     var rim as Number = 0;
 
-    //! The air things on the rim keep from the glass and from each other, as
-    //! a share of the radius
+    //! The air things on the rim keep from each other, as a share of the
+    //! radius
     const AIR_DIVISOR = 32;
     var air as Number = 0;
 
@@ -42,11 +37,6 @@ module Dial {
         centerY = screenHeight / 2;
         rim = Numbers.min(centerX, centerY);
         air = rim / AIR_DIVISOR;
-    }
-
-    //! Degrees clockwise from the top
-    function positionOfHour(hour as Number) as Number {
-        return (MIDNIGHT_DEGREES + (hour * DEGREES_PER_HOUR)) % DEGREES_PER_CIRCLE;
     }
 
     //! Degrees clockwise from the top. A float: a minute is a quarter degree.

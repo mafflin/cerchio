@@ -16,13 +16,7 @@ through dawn and dusk.
 
 - A goal dot glides round from the top as your steps goal is done, a ring
   until it is done and solid once it is
-- Numerals style: gray hour numerals round the circle, a seconds dot
-  running over them just outside it, and the goal dot a half dot at the
-  edge of the glass
-- Plain style: no numerals, the circle out against the edge of the glass
-  with a larger seconds dot and a whole goal dot just inside it
-- Set on the watch in Garmin's watch face editor: style, data fields, a
-  color for the time and data, and an accent for the seconds and the goal
-  dot
+- Set on the watch in Garmin's watch face editor: data fields, a color
+  for the time and data, and an accent for the seconds and the goal dot
 - Always-on mode shows just the time
 - Open source under the MIT License: github.com/mafflin/cerchio

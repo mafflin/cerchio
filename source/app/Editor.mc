@@ -12,7 +12,6 @@ class Editor {
 
     private var fields as DataFields;
 
-    private var currentStyle as Number = Styles.DEFAULT;
     private var currentAccent as Number = DEFAULT_COLOR;
     private var currentData as Number = DEFAULT_COLOR;
 
@@ -22,10 +21,6 @@ class Editor {
 
     function initialize(fields as DataFields) {
         self.fields = fields;
-    }
-
-    function style() as Number {
-        return currentStyle;
     }
 
     //! The seconds dot and the goal dot
@@ -44,7 +39,6 @@ class Editor {
 
     //! editedType is null while initializing
     function apply(config as WatchFaceConfig.Settings, editedType as WatchFaceConfigType?) as Void {
-        currentStyle = styleOf(config.styleId);
         currentAccent = colorOf(config.accentColor);
         currentData = colorOf(config.complicationColor);
         applyComplications(config.complicationSettings);
@@ -74,14 +68,6 @@ class Editor {
     //! The slot under a tap, or null
     function tappedSlot(x as Number, y as Number) as Number? {
         return fields.slotAt(x, y);
-    }
-
-    private function styleOf(styleId as Number?) as Number {
-        if (styleId == null) {
-            return Styles.DEFAULT;
-        }
-
-        return styleId;
     }
 
     private function colorOf(chosen as WatchFaceConfig.Color?) as Number {

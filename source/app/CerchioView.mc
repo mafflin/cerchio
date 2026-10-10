@@ -18,7 +18,6 @@ class CerchioView extends WatchUi.WatchFace {
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
     private var dayColors as DayColors;
-    private var numerals as RimNumerals;
     private var dayCircle as DayCircle;
     private var rimMark as RimMark;
     private var noonMark as NoonMark;
@@ -31,16 +30,13 @@ class CerchioView extends WatchUi.WatchFace {
     private var faceBuffer as FaceBuffer;
     private var editor as Editor;
 
-    //! Asked once, not every update
-    private var canSmooth as Boolean = false;
-
     //! AMOLED: asleep, only the time shows
     private var needsBurnInProtection as Boolean = false;
     private var isAwake as Boolean = true;
 
     //! Whether the system lets the seconds move every second in low power
-    //! mode
-    private var partialUpdatesAllowed as Boolean;
+    //! mode; no longer once the power budget is exceeded
+    private var partialUpdatesAllowed as Boolean = true;
 
     //! Whether the native watch face editor started the face
     private var editMode as Boolean;
@@ -57,7 +53,6 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay = new TimeDisplay();
         daylight = Sun.daylight();
         dayColors = new DayColors(daylight);
-        numerals = new RimNumerals();
         dayCircle = new DayCircle(dayColors);
         dayCircle.setBackground(BACKGROUND);
         rimMark = new RimMark(dayCircle);
@@ -70,18 +65,20 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot = new GoalDot();
         faceBuffer = new FaceBuffer();
         editor = new Editor(fields);
-
-        partialUpdatesAllowed = (WatchUi.WatchFace has :onPartialUpdate);
     }
 
     //! Size everything for this screen
     function onLayout(dc as Dc) as Void {
-        canSmooth = (dc has :setAntiAlias);
         needsBurnInProtection = Clock.settings().requiresBurnInProtection;
 
         Dial.setup(dc);
-        numerals.prepare(dc);
-        placeCircle();
+
+        // The circle against the glass; the rest on the rim sized off it
+        dayCircle.prepare();
+        rimMark.prepare();
+        secondsHand.place(dayCircle.inner());
+        goalDot.prepare(dayCircle.width(), dayCircle.inner());
+
         faceBuffer.prepare(dc);
         placeFrame(dc);
 
@@ -99,7 +96,6 @@ class CerchioView extends WatchUi.WatchFace {
         var shown = fields.shownIds();
 
         editor.apply(config, editedType);
-        placeCircle();
 
         // Live updates follow the picks; none in the editor.
         if (!editMode) {
@@ -196,25 +192,6 @@ class CerchioView extends WatchUi.WatchFace {
     function onExitSleep() as Void {
         isAwake = true;
         WatchUi.requestUpdate();
-    }
-
-    //! Inside the numerals, or against the glass for a style without them;
-    //! the hour hand and the noon mark follow the circle. With the numerals,
-    //! the seconds dot runs just outside the circle and the goal dot sits on
-    //! the glass; without them, both keep inside the circle.
-    private function placeCircle() as Void {
-        var withNumerals = Styles.hasNumerals(editor.style());
-
-        dayCircle.prepare(withNumerals ? numerals.inner() : null);
-        rimMark.prepare();
-
-        if (withNumerals) {
-            secondsHand.placeOutside(dayCircle.outer());
-        } else {
-            secondsHand.placeInside(dayCircle.inner());
-        }
-
-        goalDot.prepare(dayCircle.width(), withNumerals ? null : dayCircle.inner());
     }
 
     //! The status row above the time mirrors the line the fields hang from
@@ -325,7 +302,6 @@ class CerchioView extends WatchUi.WatchFace {
         paintBackground(dc);
         refreshReadings();
 
-        drawNumerals(dc);
         dayCircle.draw(dc);
         noonMark.draw(dc);
         hourHand.draw(dc);
@@ -364,17 +340,9 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot.setShare(goalProgress.share());
     }
 
-    private function drawNumerals(dc as Dc) as Void {
-        if (Styles.hasNumerals(editor.style())) {
-            numerals.draw(dc);
-        }
-    }
-
     //! Once per dc: the dc between two updates is the system's
     private function smooth(dc as Dc) as Void {
-        if (canSmooth) {
-            dc.setAntiAlias(true);
-        }
+        dc.setAntiAlias(true);
     }
 
     private function paintBackground(dc as Dc) as Void {
