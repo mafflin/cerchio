@@ -48,16 +48,11 @@ module Dial {
 
     //! The pixel at a screen angle and radius. Screen y grows downward.
     function pointX(radians as Decimal, radius as Numeric) as Number {
-        return pixel(centerX + (radius * Math.cos(radians)));
+        return Numbers.round(centerX + (radius * Math.cos(radians)));
     }
 
     function pointY(radians as Decimal, radius as Numeric) as Number {
-        return pixel(centerY - (radius * Math.sin(radians)));
-    }
-
-    //! Rounded, not truncated: truncation drags every point the same way
-    function pixel(value as Decimal) as Number {
-        return Math.round(value).toNumber();
+        return Numbers.round(centerY - (radius * Math.sin(radians)));
     }
 
     //! A dial value as a screen angle in radians

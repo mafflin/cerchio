@@ -44,7 +44,7 @@ module IconText {
     //! Where the icon's top goes, for digits whose font box starts at top
     function iconTop(top as Number, icon as Icon) as Number {
         var ascent = Graphics.getFontAscent(FONT);
-        var digitHeight = Dial.pixel(ascent * DIGIT_SHARE);
+        var digitHeight = Numbers.round(ascent * DIGIT_SHARE);
 
         return top + ascent - ((digitHeight + icon.height()) / 2);
     }

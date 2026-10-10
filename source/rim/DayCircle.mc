@@ -169,7 +169,7 @@ class DayCircle {
 
     //! drawArc's whole degrees, counterclockwise from three o'clock
     private function screenDegrees(position as Float) as Number {
-        return Dial.pixel(Dial.TOP_DEGREES - position);
+        return Numbers.round(Dial.TOP_DEGREES - position);
     }
 
     //! The degrees a length along the circle spans
