@@ -3,9 +3,10 @@ import Toybox.Lang;
 
 //! The seconds over the off screen face: a dot just inside the circle.
 //! Round, so it looks the same at every second; a bar turned on the pixel
-//! grid shows a different shape at each. Every second's place and box is worked out once per screen, so a tick
-//! only looks them up. In low power mode a partial update copies the face
-//! back over the old box and the new one, then draws.
+//! grid shows a different shape at each. Every second's place and box is
+//! worked out once per screen, so a tick only looks them up. In low power
+//! mode a partial update copies the face back over the old box and the new
+//! one, then draws.
 class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
