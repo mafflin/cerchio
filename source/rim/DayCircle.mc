@@ -93,11 +93,12 @@ class DayCircle {
         drawCuts(dc, sunrise, sunset);
     }
 
-    //! Cuts either side of a piece of the line as long as the line is wide
-    function drawGapsAround(dc as Dc, position as Float, gapLength as Number) as Void {
-        var offset = degreesAlong((penWidth + gapLength) / 2.0);
+    //! Cuts either side of a piece of the line of the given length, as wide
+    //! as the cuts at the color changes
+    function drawGapsAround(dc as Dc, position as Float, length as Number) as Void {
+        var offset = degreesAlong((length + cutWidth) / 2.0);
 
-        dc.setPenWidth(gapLength);
+        dc.setPenWidth(cutWidth);
         dc.setColor(background, Graphics.COLOR_TRANSPARENT);
 
         drawCut(dc, position - offset);
