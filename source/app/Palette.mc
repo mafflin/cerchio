@@ -5,5 +5,4 @@ module Palette {
     const AMBER = 0xFFAA00;
     const SKY = 0x00AAFF;
     const ORANGE = 0xFF5500;
-    const RED = 0xFF0000;
 }

@@ -3,7 +3,7 @@ import Toybox.Lang;
 import Toybox.System;
 
 //! Shown while there is recovery time left, its length said with color as
-//! the wind's strength is: orange past a day, red past two.
+//! the wind's strength is: amber past a day, orange past two.
 class Recovery extends Icon {
 
     //! The limits in minutes, which the complication carries: a day and two
@@ -11,8 +11,8 @@ class Recovery extends Icon {
     private const LONG_LIMIT_MINUTES = 2880;
 
     //! Up to a day is the ordinary case and keeps its drawer's color
-    private const MODERATE_COLOR = Palette.ORANGE;
-    private const LONG_COLOR = Palette.RED;
+    private const MODERATE_COLOR = Palette.AMBER;
+    private const LONG_COLOR = Palette.ORANGE;
 
     private var recoveryId as Complications.Id;
 
@@ -38,7 +38,7 @@ class Recovery extends Icon {
         return minutes > 0;
     }
 
-    //! Orange past a day, red past two, the given color otherwise
+    //! Amber past a day, orange past two, the given color otherwise
     protected function tint() as Number {
         if (minutes > LONG_LIMIT_MINUTES) {
             return LONG_COLOR;

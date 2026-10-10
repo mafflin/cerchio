@@ -2,7 +2,7 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
 
-//! The charge as one of eleven bitmaps, red when empty and orange when low.
+//! The charge as one of eleven bitmaps, orange when empty and amber when low.
 class Battery extends Icon {
 
     private const PERCENT_PER_LEVEL = 10;
@@ -11,8 +11,8 @@ class Battery extends Icon {
     private const TOP_LEVEL = 10;
 
     //! Both read against the black background
-    private const EMPTY_COLOR = Palette.RED;
-    private const LOW_COLOR = Palette.ORANGE;
+    private const EMPTY_COLOR = Palette.ORANGE;
+    private const LOW_COLOR = Palette.AMBER;
 
     //! One per level
     private var images as Array<ResourceId> = [

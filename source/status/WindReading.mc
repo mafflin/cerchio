@@ -16,8 +16,8 @@ class WindReading {
     private const STRONG = 2;
 
     //! A light wind is the ordinary case and keeps its drawer's color
-    private const MODERATE_COLOR = Palette.ORANGE;
-    private const STRONG_COLOR = Palette.RED;
+    private const MODERATE_COLOR = Palette.AMBER;
+    private const STRONG_COLOR = Palette.ORANGE;
 
     //! Where the wind blows from, north up; null when unknown
     private var currentBearing as Number? = null;
@@ -70,7 +70,7 @@ class WindReading {
         return calm;
     }
 
-    //! Orange when moderate, red when strong, the given color otherwise
+    //! Amber when moderate, orange when strong, the given color otherwise
     function colorFor(lightColor as Number) as Number {
         if (strength == STRONG) {
             return STRONG_COLOR;
