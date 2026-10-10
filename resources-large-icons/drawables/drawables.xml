@@ -16,6 +16,7 @@
 <drawables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <bitmap id="Alarm" filename="alarm/alarm.png" packingFormat="png" />
     <bitmap id="Phone" filename="phone/phone.png" packingFormat="png" />
+    <bitmap id="Recovery" filename="recovery/recovery.png" packingFormat="png" />
 
     <bitmap id="Battery0" filename="battery/battery_0.png" packingFormat="png" />
     <bitmap id="Battery10" filename="battery/battery_10.png" packingFormat="png" />

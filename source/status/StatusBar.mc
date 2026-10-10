@@ -30,6 +30,7 @@ class StatusBar {
             new Battery(),
             new Phone(),
             new Alarm(),
+            new Recovery(),
             new Wind(),
             new Meridiem()
         ] as Array<Icon>;
