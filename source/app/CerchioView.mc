@@ -221,12 +221,13 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the seconds dot and the goal dot. Data: the time, the status
-    //! row and the data fields.
+    //! Accent: the hour hand, the seconds dot and the goal dot. Data: the
+    //! time, the status row and the data fields.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
 
+        hourHand.setColor(accent);
         secondsHand.setColor(accent);
         goalDot.setColor(accent);
         timeDisplay.setColor(data);

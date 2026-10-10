@@ -23,7 +23,7 @@ class Editor {
         self.fields = fields;
     }
 
-    //! The seconds dot and the goal dot
+    //! The hour hand, the seconds dot and the goal dot
     function accentColor() as Number {
         return currentAccent;
     }
