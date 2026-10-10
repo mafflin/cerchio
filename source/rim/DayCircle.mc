@@ -30,16 +30,10 @@ class DayCircle {
     private var cutWidth as Number = 1;
     private var cutReach as Number = 1;
 
-    private var background as Number = Graphics.COLOR_BLACK;
-
     private var dayColors as DayColors;
 
     function initialize(dayColors as DayColors) {
         self.dayColors = dayColors;
-    }
-
-    function setBackground(background as Number) as Void {
-        self.background = background;
     }
 
     //! The pen reaches half its width past the radius: the line's outer edge
@@ -82,7 +76,7 @@ class DayCircle {
         drawSectors(dc, sunrise, sunset);
 
         dc.setPenWidth(cutWidth);
-        dc.setColor(background, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Palette.BACKGROUND, Graphics.COLOR_TRANSPARENT);
 
         drawCuts(dc, sunrise, sunset);
     }
@@ -93,7 +87,7 @@ class DayCircle {
         var offset = degreesAlong((length + cutWidth) / 2.0);
 
         dc.setPenWidth(cutWidth);
-        dc.setColor(background, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Palette.BACKGROUND, Graphics.COLOR_TRANSPARENT);
 
         drawCut(dc, position - offset);
         drawCut(dc, position + offset);

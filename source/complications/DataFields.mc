@@ -55,7 +55,7 @@ class DataFields {
     //! last draw covered is painted background, then the row drawn anew.
     //! Nothing else on the face may lie in the row's box. Returns the box
     //! that changed, null for none.
-    function redraw(dc as Dc, skippedSlot as Number?, background as Number) as Array<Number>? {
+    function redraw(dc as Dc, skippedSlot as Number?) as Array<Number>? {
         placeContents(dc);
 
         var box = union(drawnBox, contentBox());
@@ -65,7 +65,7 @@ class DataFields {
         }
 
         dc.setClip(box[0], box[1], box[2] - box[0], box[3] - box[1]);
-        dc.setColor(background, background);
+        dc.setColor(Palette.BACKGROUND, Palette.BACKGROUND);
         dc.fillRectangle(box[0], box[1], box[2] - box[0], box[3] - box[1]);
         drawPlaced(dc, skippedSlot);
         dc.clearClip();

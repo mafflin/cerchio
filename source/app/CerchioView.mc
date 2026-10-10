@@ -13,8 +13,6 @@ class CerchioView extends WatchUi.WatchFace {
     private const FRAME_RATIO = 0.66;
     private const FIELD_DROP_RATIO = 0.02;
 
-    private const BACKGROUND = Graphics.COLOR_BLACK;
-
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
     private var dayColors as DayColors;
@@ -54,7 +52,6 @@ class CerchioView extends WatchUi.WatchFace {
         daylight = Sun.daylight();
         dayColors = new DayColors(daylight);
         dayCircle = new DayCircle(dayColors);
-        dayCircle.setBackground(BACKGROUND);
         rimMark = new RimMark(dayCircle);
         noonMark = new NoonMark(rimMark, dayColors);
         hourHand = new HourHand(rimMark);
@@ -289,7 +286,7 @@ class CerchioView extends WatchUi.WatchFace {
         rowStale = false;
         smooth(faceDc);
 
-        return fields.redraw(faceDc, editor.pulsedSlot(), BACKGROUND);
+        return fields.redraw(faceDc, editor.pulsedSlot());
     }
 
     //! The row drawn again off screen, and copied to the screen
@@ -356,7 +353,7 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     private function paintBackground(dc as Dc) as Void {
-        dc.setColor(BACKGROUND, BACKGROUND);
+        dc.setColor(Palette.BACKGROUND, Palette.BACKGROUND);
         dc.clear();
     }
 }
