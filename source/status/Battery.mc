@@ -38,11 +38,17 @@ class Battery extends Icon {
         minuteGate = new MinuteGate();
     }
 
-    protected function bitmap() as BitmapResource {
+    //! Always shown. Read here, once a minute: the row asks every icon
+    //! before it draws.
+    function isReporting(settings as System.DeviceSettings) as Boolean {
         if (minuteGate.opens()) {
             level = readLevel();
         }
 
+        return true;
+    }
+
+    protected function bitmap() as BitmapResource {
         return choose(images, level);
     }
 
