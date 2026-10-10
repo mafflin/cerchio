@@ -4,11 +4,12 @@ import Toybox.Lang;
 //! steps, and the color for each step.
 class WindReading {
 
-    //! The limits read as km/h
+    //! The weather reports wind speed in m/s; the limits read as km/h
+    private const KMH_PER_MS = 3.6;
     private const LIGHT_LIMIT_KMH = 20;
     private const MODERATE_LIMIT_KMH = 40;
 
-    //! Below this the speed rounds to 0 km/h, as the weather field shows it
+    //! Below this the speed rounds to 0 km/h
     private const CALM_LIMIT_KMH = 0.5;
 
     private const LIGHT = 0;
@@ -57,7 +58,7 @@ class WindReading {
         var speed = conditions.windSpeed;
 
         currentBearing = bearing;
-        calm = (speed != null) ? ((speed * CurrentWeather.KMH_PER_MS) < CALM_LIMIT_KMH) : false;
+        calm = (speed != null) ? ((speed * KMH_PER_MS) < CALM_LIMIT_KMH) : false;
         strength = strengthFor(speed);
     }
 
@@ -89,7 +90,7 @@ class WindReading {
             return LIGHT;
         }
 
-        var kmh = speed * CurrentWeather.KMH_PER_MS;
+        var kmh = speed * KMH_PER_MS;
 
         if (kmh <= LIGHT_LIMIT_KMH) {
             return LIGHT;

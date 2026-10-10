@@ -5,9 +5,6 @@ import Toybox.Weather;
 //! latitude
 module CurrentWeather {
 
-    //! The weather reports wind speed in m/s; the face shows km/h
-    const KMH_PER_MS = 3.6;
-
     //! Null on a watch without weather, or before the phone has sent any
     function conditions() as Weather.CurrentConditions? {
         if (!(Toybox has :Weather)) {
