@@ -181,11 +181,9 @@ class CerchioView extends WatchUi.WatchFace {
         WatchUi.requestUpdate();
     }
 
-    //! Back from another screen: the off screen face may be from before it,
-    //! and the fields may have missed updates meanwhile
+    //! Back from another screen
     function onShow() as Void {
-        fields.refreshAll();
-        redraw();
+        resume();
     }
 
     function onEnterSleep() as Void {
@@ -193,10 +191,14 @@ class CerchioView extends WatchUi.WatchFace {
         WatchUi.requestUpdate();
     }
 
-    //! The off screen face may be from before the sleep began, and the
-    //! fields may have missed updates meanwhile
     function onExitSleep() as Void {
         isAwake = true;
+        resume();
+    }
+
+    //! Back from asleep or another screen: the off screen face may be from
+    //! before, and the fields may have missed updates meanwhile
+    private function resume() as Void {
         fields.refreshAll();
         redraw();
     }
