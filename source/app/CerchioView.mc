@@ -116,7 +116,7 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! The slot under a tap, or null
     function getTappedComplication(x as Number, y as Number) as Number? {
-        return editor.tappedSlot(x, y);
+        return fields.slotAt(x, y);
     }
 
     function onComplicationChange(complicationId as Complications.Id) as Void {
