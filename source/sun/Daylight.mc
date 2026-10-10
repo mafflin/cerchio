@@ -3,7 +3,8 @@ import Toybox.Lang;
 
 //! Today's sunrise and sunset off the complications, solar noon halfway
 //! between, and dawn and dusk either side of noon. Read once a minute,
-//! worked out again only when the sun moves.
+//! worked out again only when the sun moves, or once the latitude comes
+//! in: asked for with the sun, and hourly until known.
 class Daylight {
 
     //! Minutes past midnight, null when not known
@@ -11,6 +12,17 @@ class Daylight {
     private var sunsetMinute as Number? = null;
     private var dawnMinute as Number? = null;
     private var duskMinute as Number? = null;
+
+    //! Degrees, north positive, as twilight was last worked out for; null
+    //! when not known
+    private var latitudeDegrees as Float? = null;
+
+    //! Unknown, it is asked for again this often: the phone or a fix may
+    //! have come in meanwhile
+    private const LATITUDE_RETRY_MINUTES = Clock.MINUTES_PER_HOUR;
+
+    //! The Clock.minuteOfDay() it was last asked for, null before the first
+    private var latitudeAskedMinute as Number? = null;
 
     private var sunriseId as Complications.Id;
     private var sunsetId as Complications.Id;
@@ -22,24 +34,33 @@ class Daylight {
         minuteGate = new MinuteGate();
     }
 
-    //! true when the sun has moved, about once a day
-    function refresh() as Boolean {
+    //! Once per full update; reads at most once a minute
+    function refresh() as Void {
         if (!minuteGate.opens()) {
-            return false;
+            return;
         }
 
         var sunrise = minutesOf(sunriseId);
         var sunset = minutesOf(sunsetId);
+        var sunMoved = (sunrise != sunriseMinute) || (sunset != sunsetMinute);
+        var sunKnown = (sunrise != null) && (sunset != null);
 
-        if ((sunrise == sunriseMinute) && (sunset == sunsetMinute)) {
-            return false;
+        // The latitude goes with the sun, not the minute: read every minute
+        // it would flap between the weather's station and the last fix, and
+        // dawn and dusk with it. Nothing to work out without the sun.
+        var wantsLatitude = sunKnown && (sunMoved || isLatitudeDue());
+
+        if (!sunMoved && !wantsLatitude) {
+            return;
+        }
+
+        if (wantsLatitude && !readLatitude() && !sunMoved) {
+            return;
         }
 
         sunriseMinute = sunrise;
         sunsetMinute = sunset;
         refreshTwilight();
-
-        return true;
     }
 
     function sunrise() as Number? {
@@ -109,6 +130,33 @@ class Daylight {
         return Clock.wrapMinutes(set - rise);
     }
 
+    //! Unknown, and not asked for an hour
+    private function isLatitudeDue() as Boolean {
+        var asked = latitudeAskedMinute;
+
+        if (latitudeDegrees != null) {
+            return false;
+        }
+
+        return (asked == null) || (Clock.wrapMinutes(Clock.minuteOfDay() - asked) >= LATITUDE_RETRY_MINUTES);
+    }
+
+    //! Whether it came in. The watch has not moved just because the phone
+    //! is away: the last known latitude stands.
+    private function readLatitude() as Boolean {
+        var latitude = Latitude.read();
+
+        latitudeAskedMinute = Clock.minuteOfDay();
+
+        if (latitude == null) {
+            return false;
+        }
+
+        latitudeDegrees = latitude;
+
+        return true;
+    }
+
     //! Twilight has to reach past sunrise and sunset, or the latitude is off
     private function refreshTwilight() as Void {
         dawnMinute = null;
@@ -121,7 +169,7 @@ class Daylight {
             return;
         }
 
-        var fromNoon = Twilight.minutesFromNoon(length);
+        var fromNoon = Twilight.minutesFromNoon(length, latitudeDegrees);
 
         if ((fromNoon == null) || ((fromNoon * 2) <= length)) {
             return;

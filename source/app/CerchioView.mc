@@ -13,11 +13,8 @@ class CerchioView extends WatchUi.WatchFace {
     private const FRAME_RATIO = 0.66;
     private const FIELD_DROP_RATIO = 0.02;
 
-    private const BACKGROUND = Graphics.COLOR_BLACK;
-
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
-    private var dayColors as DayColors;
     private var dayCircle as DayCircle;
     private var rimMark as RimMark;
     private var noonMark as NoonMark;
@@ -29,6 +26,9 @@ class CerchioView extends WatchUi.WatchFace {
     private var goalDot as GoalDot;
     private var faceBuffer as FaceBuffer;
     private var editor as Editor;
+
+    //! The weather's complication: a change to it means fresh weather
+    private var weatherId as Complications.Id;
 
     //! AMOLED: asleep, only the time shows
     private var needsBurnInProtection as Boolean = false;
@@ -52,11 +52,10 @@ class CerchioView extends WatchUi.WatchFace {
 
         timeDisplay = new TimeDisplay();
         daylight = Sun.daylight();
-        dayColors = new DayColors(daylight);
-        dayCircle = new DayCircle(dayColors);
-        dayCircle.setBackground(BACKGROUND);
+        var dayColors = new DayColors(daylight);
+        dayCircle = new DayCircle(daylight, dayColors);
         rimMark = new RimMark(dayCircle);
-        noonMark = new NoonMark(rimMark, dayColors);
+        noonMark = new NoonMark(rimMark, daylight, dayColors);
         hourHand = new HourHand(rimMark);
         statusBar = new StatusBar();
         fields = new DataFields();
@@ -65,13 +64,15 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot = new GoalDot();
         faceBuffer = new FaceBuffer();
         editor = new Editor(fields);
+        weatherId = new Complications.Id(Complications.COMPLICATION_TYPE_CURRENT_WEATHER);
     }
 
     //! Size everything for this screen
     function onLayout(dc as Dc) as Void {
         needsBurnInProtection = Clock.settings().requiresBurnInProtection;
 
-        Dial.setup(dc);
+        Screen.setup(dc);
+        Dial.setup();
 
         // The circle against the glass; the rest on the rim sized off it
         dayCircle.prepare();
@@ -79,7 +80,7 @@ class CerchioView extends WatchUi.WatchFace {
         secondsHand.place(dayCircle.inner());
         goalDot.prepare(dayCircle.width(), dayCircle.inner());
 
-        faceBuffer.prepare(dc);
+        faceBuffer.prepare();
         placeFrame(dc);
 
         // The editor shows a snapshot; live updates are not worth the power.
@@ -119,10 +120,14 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! The slot under a tap, or null
     function getTappedComplication(x as Number, y as Number) as Number? {
-        return editor.tappedSlot(x, y);
+        return fields.slotAt(x, y);
     }
 
     function onComplicationChange(complicationId as Complications.Id) as Void {
+        if (weatherId.equals(complicationId)) {
+            CurrentWeather.invalidate();
+        }
+
         if (fields.refreshShowing(complicationId)) {
             rowStale = true;
             WatchUi.requestUpdate();
@@ -184,11 +189,9 @@ class CerchioView extends WatchUi.WatchFace {
         WatchUi.requestUpdate();
     }
 
-    //! Back from another screen: the off screen face may be from before it,
-    //! and the fields may have missed updates meanwhile
+    //! Back from another screen
     function onShow() as Void {
-        fields.refreshAll();
-        redraw();
+        resume();
     }
 
     function onEnterSleep() as Void {
@@ -196,18 +199,24 @@ class CerchioView extends WatchUi.WatchFace {
         WatchUi.requestUpdate();
     }
 
-    //! The off screen face may be from before the sleep began, and the
-    //! fields may have missed updates meanwhile
     function onExitSleep() as Void {
         isAwake = true;
+        resume();
+    }
+
+    //! Back from away, asleep or on another screen: the off screen face may
+    //! be from before, and the weather and the fields may have missed
+    //! updates meanwhile
+    private function resume() as Void {
+        CurrentWeather.invalidate();
         fields.refreshAll();
         redraw();
     }
 
     //! The status row above the time mirrors the line the fields hang from
     private function placeFrame(dc as Dc) as Void {
-        var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
-        var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();
+        var frame = (Screen.height * FRAME_RATIO).toNumber();
+        var top = frame + (Screen.height * FIELD_DROP_RATIO).toNumber();
 
         fields.prepare(dc, top);
         statusBar.mirror(frame);
@@ -222,12 +231,13 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the seconds dot and the goal dot. Data: the time, the status
-    //! row and the data fields.
+    //! Accent: the hour hand, the seconds dot and the goal dot. Data: the
+    //! time, the status row and the data fields.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
 
+        hourHand.setColor(accent);
         secondsHand.setColor(accent);
         goalDot.setColor(accent);
         timeDisplay.setColor(data);
@@ -289,7 +299,7 @@ class CerchioView extends WatchUi.WatchFace {
         rowStale = false;
         smooth(faceDc);
 
-        return fields.redraw(faceDc, editor.pulsedSlot(), BACKGROUND);
+        return fields.redraw(faceDc, editor.pulsedSlot());
     }
 
     //! The row drawn again off screen, and copied to the screen
@@ -300,7 +310,7 @@ class CerchioView extends WatchUi.WatchFace {
             return;
         }
 
-        dc.setClip(box[0], box[1], box[2] - box[0], box[3] - box[1]);
+        Box.clip(dc, box);
         dc.drawBitmap(0, 0, face);
         dc.clearClip();
     }
@@ -336,10 +346,7 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! Everything the draw reads, before anything draws
     private function refreshReadings() as Void {
-        if (daylight.refresh()) {
-            dayColors.refresh();
-        }
-
+        daylight.refresh();
         fields.refreshClocked();
 
         refreshGoal();
@@ -356,7 +363,7 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     private function paintBackground(dc as Dc) as Void {
-        dc.setColor(BACKGROUND, BACKGROUND);
+        dc.setColor(Palette.BACKGROUND, Palette.BACKGROUND);
         dc.clear();
     }
 }

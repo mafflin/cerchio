@@ -1,4 +1,5 @@
 import Toybox.Lang;
+import Toybox.Math;
 
 module Numbers {
 
@@ -8,6 +9,11 @@ module Numbers {
 
     function max(first as Number, second as Number) as Number {
         return (first > second) ? first : second;
+    }
+
+    //! Rounded, not truncated: truncation always errs the same way
+    function round(value as Decimal) as Number {
+        return Math.round(value).toNumber();
     }
 
     //! From one point on a circle clockwise up to, not including, the other;

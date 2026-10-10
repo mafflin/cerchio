@@ -4,7 +4,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 //! The native watch face editor's side of the face: applies its settings,
-//! and answers what to pulse and what was tapped.
+//! and answers what to pulse.
 class Editor {
 
     //! Until the editor picks one
@@ -23,7 +23,7 @@ class Editor {
         self.fields = fields;
     }
 
-    //! The seconds dot and the goal dot
+    //! The hour hand, the seconds dot and the goal dot
     function accentColor() as Number {
         return currentAccent;
     }
@@ -63,11 +63,6 @@ class Editor {
             :drawable => field,
             :boundingBox => field.getBoundingBox()
         });
-    }
-
-    //! The slot under a tap, or null
-    function tappedSlot(x as Number, y as Number) as Number? {
-        return fields.slotAt(x, y);
     }
 
     private function colorOf(chosen as WatchFaceConfig.Color?) as Number {

@@ -3,9 +3,10 @@ import Toybox.Lang;
 
 //! The seconds over the off screen face: a dot just inside the circle.
 //! Round, so it looks the same at every second; a bar turned on the pixel
-//! grid shows a different shape at each. Every second's place and box is worked out once per screen, so a tick
-//! only looks them up. In low power mode a partial update copies the face
-//! back over the old box and the new one, then draws.
+//! grid shows a different shape at each. Every second's place and box is
+//! worked out once per screen, so a tick only looks them up. In low power
+//! mode a partial update copies the face back over the old box and the new
+//! one, then draws.
 class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
@@ -94,14 +95,7 @@ class SecondsHand {
 
     //! The box around both seconds
     private function clipAround(dc as Dc, first as Number, second as Number) as Void {
-        var a = boxes[first];
-        var b = boxes[second];
-        var left = Numbers.min(a[0], b[0]);
-        var top = Numbers.min(a[1], b[1]);
-        var right = Numbers.max(a[2], b[2]);
-        var bottom = Numbers.max(a[3], b[3]);
-
-        dc.setClip(left, top, right - left, bottom - top);
+        Box.clip(dc, Box.union(boxes[first], boxes[second]) as Array<Number>);
     }
 
     //! The center grown by margin, cut down to the screen
@@ -109,8 +103,8 @@ class SecondsHand {
         return [
             Numbers.max(x - margin, 0),
             Numbers.max(y - margin, 0),
-            Numbers.min(x + margin + 1, Dial.screenWidth),
-            Numbers.min(y + margin + 1, Dial.screenHeight)
+            Numbers.min(x + margin + 1, Screen.width),
+            Numbers.min(y + margin + 1, Screen.height)
         ];
     }
 }

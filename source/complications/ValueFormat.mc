@@ -1,6 +1,5 @@
 import Toybox.Complications;
 import Toybox.Lang;
-import Toybox.Math;
 import Toybox.System;
 
 //! What every kind of field formats with. The system hands over a number
@@ -66,7 +65,7 @@ module ValueFormat {
     }
 
     function rounded(amount as Float) as String {
-        return Math.round(amount).toNumber().format(LEADING_FORMAT);
+        return Numbers.round(amount).format(LEADING_FORMAT);
     }
 
     //! Zero if not a number at all
