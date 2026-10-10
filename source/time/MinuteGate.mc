@@ -23,4 +23,9 @@ class MinuteGate {
 
         return true;
     }
+
+    //! Opens at the next ask, whatever the minute
+    function reset() as Void {
+        lastMinute = NO_MINUTE;
+    }
 }

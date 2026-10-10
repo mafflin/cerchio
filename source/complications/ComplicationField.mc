@@ -43,11 +43,11 @@ class ComplicationField extends WatchUi.Drawable {
 
     //! Once per layout: the row's height; across, placeContent() says
     function prepare(dc as Dc, centerY as Number) as Void {
-        width = widthIn(dc);
-        height = heightIn(dc);
-        locX = Dial.centerX - (width / 2);
+        width = (Screen.width * WIDTH_RATIO).toNumber();
+        height = IconText.heightIn(dc);
+        locX = Screen.centerX - (width / 2);
         locY = (centerY - (height / 2)).toNumber();
-        contentLeft = Dial.centerX;
+        contentLeft = Screen.centerX;
     }
 
     //! How wide the icon and value are now
@@ -62,10 +62,6 @@ class ComplicationField extends WatchUi.Drawable {
         contentLeft = left;
         placedWidth = contentWidth;
         locX = left + (contentWidth / 2) - (width.toNumber() / 2);
-    }
-
-    function heightIn(dc as Dc) as Number {
-        return IconText.heightIn(dc);
     }
 
     function getSlotId() as Number {
@@ -152,10 +148,6 @@ class ComplicationField extends WatchUi.Drawable {
 
     function containsPoint(x as Number, y as Number) as Boolean {
         return getBoundingBox().includesPoint(x, y);
-    }
-
-    private function widthIn(dc as Dc) as Number {
-        return (dc.getWidth() * WIDTH_RATIO).toNumber();
     }
 
     //! The kind for a type, kept until the type moves

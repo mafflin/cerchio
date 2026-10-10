@@ -10,8 +10,6 @@ class FaceBuffer {
 
     private const NO_MINUTE = -1;
 
-    private var screenWidth as Number = 0;
-    private var screenHeight as Number = 0;
     private var reference as BufferedBitmapReference? = null;
 
     //! The Clock.minuteOfDay() it was last drawn for
@@ -23,9 +21,8 @@ class FaceBuffer {
     function initialize() {
     }
 
-    function prepare(dc as Dc) as Void {
-        screenWidth = dc.getWidth();
-        screenHeight = dc.getHeight();
+    //! After Screen.setup()
+    function prepare() as Void {
         reference = null;
         hasFace = false;
         invalidate();
@@ -72,7 +69,7 @@ class FaceBuffer {
         // Lost or never made: whatever it held is gone.
         invalidate();
         hasFace = false;
-        reference = Graphics.createBufferedBitmap({ :width => screenWidth, :height => screenHeight });
+        reference = Graphics.createBufferedBitmap({ :width => Screen.width, :height => Screen.height });
 
         return (reference as BufferedBitmapReference).get() as BufferedBitmap?;
     }

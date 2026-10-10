@@ -5,7 +5,7 @@
              so none of these dither on those screens. No black: the
              background is black.
 
-             Accent colors the seconds dot and the goal dot;
+             Accent colors the hour hand, the seconds dot and the goal dot;
              data colors the time, the status row and the data fields. -->
         <accentColors>
             <color label="@Strings.ColorWhite" default="true">0xFFFFFF</color>
@@ -75,10 +75,9 @@
              exactly these, in this order. The slots are the data fields
              left and right; the right one defaults to the weekday and
              date.
-             The weather type shows the temperature and the wind, which has
-             no type of its own, beside an icon for the conditions that
-             WeatherIcon picks, and the sunset stands for the sun's next
-             turn, sunset or sunrise.
+             The weather type shows the temperature beside an icon for the
+             conditions that WeatherIcon picks, and the sunset stands for
+             the sun's next turn, sunset or sunrise.
              The comment on each line is the icon FieldKinds gives it - the
              two lists are meant to stay in step, so a type dropped here
              should lose its case there as well. -->

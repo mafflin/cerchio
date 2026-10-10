@@ -26,7 +26,9 @@ module Latitude {
 
     //! Null without a fix
     function lastFixLatitude() as Float? {
-        return latitudeOf(Activity.getActivityInfo().currentLocation);
+        var info = Activity.getActivityInfo();
+
+        return (info != null) ? latitudeOf(info.currentLocation) : null;
     }
 
     //! Null without a location

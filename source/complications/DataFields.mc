@@ -28,9 +28,9 @@ class DataFields {
 
     //! Once per layout: the row from top
     function prepare(dc as Dc, top as Number) as Void {
-        var centerY = top + (fields[0].heightIn(dc) / 2);
+        var centerY = top + (IconText.heightIn(dc) / 2);
 
-        gap = (dc.getWidth() * GAP_RATIO).toNumber();
+        gap = (Screen.width * GAP_RATIO).toNumber();
 
         for (var i = 0; i < fields.size(); i++) {
             fields[i].prepare(dc, centerY);
@@ -55,18 +55,18 @@ class DataFields {
     //! last draw covered is painted background, then the row drawn anew.
     //! Nothing else on the face may lie in the row's box. Returns the box
     //! that changed, null for none.
-    function redraw(dc as Dc, skippedSlot as Number?, background as Number) as Array<Number>? {
+    function redraw(dc as Dc, skippedSlot as Number?) as Array<Number>? {
         placeContents(dc);
 
-        var box = union(drawnBox, contentBox());
+        var box = Box.union(drawnBox, contentBox());
 
         if (box == null) {
             return null;
         }
 
-        dc.setClip(box[0], box[1], box[2] - box[0], box[3] - box[1]);
-        dc.setColor(background, background);
-        dc.fillRectangle(box[0], box[1], box[2] - box[0], box[3] - box[1]);
+        Box.clip(dc, box);
+        dc.setColor(Palette.BACKGROUND, Palette.BACKGROUND);
+        Box.fill(dc, box);
         drawPlaced(dc, skippedSlot);
         dc.clearClip();
 
@@ -176,7 +176,7 @@ class DataFields {
             total += gap * (shown - 1);
         }
 
-        var left = Dial.centerX - (total / 2);
+        var left = Screen.centerX - (total / 2);
 
         for (var i = 0; i < count; i++) {
             fields[i].placeContent(left, widths[i]);
@@ -201,28 +201,10 @@ class DataFields {
         var box = null as Array<Number>?;
 
         for (var i = 0; i < fields.size(); i++) {
-            box = union(box, fields[i].contentBox());
+            box = Box.union(box, fields[i].contentBox());
         }
 
         return box;
-    }
-
-    //! The box round both, either of which may be null
-    private function union(first as Array<Number>?, second as Array<Number>?) as Array<Number>? {
-        if (first == null) {
-            return second;
-        }
-
-        if (second == null) {
-            return first;
-        }
-
-        return [
-            Numbers.min(first[0], second[0]),
-            Numbers.min(first[1], second[1]),
-            Numbers.max(first[2], second[2]),
-            Numbers.max(first[3], second[3])
-        ];
     }
 
     private function indexOf(slotId as Number?) as Number? {

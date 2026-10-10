@@ -4,11 +4,12 @@ import Toybox.Lang;
 //! steps, and the color for each step.
 class WindReading {
 
-    //! The limits read as km/h
+    //! The weather reports wind speed in m/s; the limits read as km/h
+    private const KMH_PER_MS = 3.6;
     private const LIGHT_LIMIT_KMH = 20;
     private const MODERATE_LIMIT_KMH = 40;
 
-    //! Below this the speed rounds to 0 km/h, as the weather field shows it
+    //! Below this the speed rounds to 0 km/h
     private const CALM_LIMIT_KMH = 0.5;
 
     private const LIGHT = 0;
@@ -19,30 +20,27 @@ class WindReading {
     private const MODERATE_COLOR = Palette.AMBER;
     private const STRONG_COLOR = Palette.ORANGE;
 
+    //! Whether the phone has sent any weather
+    private var weatherKnown as Boolean = false;
+
     //! Where the wind blows from, north up; null when unknown
     private var currentBearing as Number? = null;
 
     private var calm as Boolean = false;
     private var strength as Number = LIGHT;
 
-    //! Once a minute: the phone refills the weather by the hour at best
-    private var minuteGate as MinuteGate;
-
     function initialize() {
-        minuteGate = new MinuteGate();
     }
 
-    //! Once per draw of the row; reads at most once a minute
+    //! Once per draw of the row, off the weather as CurrentWeather has it
     function refresh() as Void {
-        if (!minuteGate.opens()) {
-            return;
-        }
-
         currentBearing = null;
         calm = false;
         strength = LIGHT;
 
         var conditions = CurrentWeather.conditions();
+
+        weatherKnown = (conditions != null);
 
         if (conditions == null) {
             return;
@@ -57,8 +55,13 @@ class WindReading {
         var speed = conditions.windSpeed;
 
         currentBearing = bearing;
-        calm = (speed != null) ? ((speed * CurrentWeather.KMH_PER_MS) < CALM_LIMIT_KMH) : false;
+        calm = (speed != null) ? ((speed * KMH_PER_MS) < CALM_LIMIT_KMH) : false;
         strength = strengthFor(speed);
+    }
+
+    //! False on a watch without weather, or before the phone has sent any
+    function hasWeather() as Boolean {
+        return weatherKnown;
     }
 
     function bearing() as Number? {
@@ -89,7 +92,7 @@ class WindReading {
             return LIGHT;
         }
 
-        var kmh = speed * CurrentWeather.KMH_PER_MS;
+        var kmh = speed * KMH_PER_MS;
 
         if (kmh <= LIGHT_LIMIT_KMH) {
             return LIGHT;

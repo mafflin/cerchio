@@ -31,7 +31,7 @@ class GoalDot {
 
     //! After Dial.setup(): the air inside the circle the seconds dot keeps
     function prepare(circleWidth as Number, circleInnerEdge as Number) as Void {
-        dotRadius = Dial.pixel(circleWidth * SIZE_RATIO);
+        dotRadius = Numbers.round(circleWidth * SIZE_RATIO);
         ringWidth = Numbers.max(dotRadius / RING_DIVISOR, MIN_RING);
 
         radius = circleInnerEdge - Dial.air - dotRadius;
@@ -48,7 +48,7 @@ class GoalDot {
             return;
         }
 
-        degrees = Dial.pixel(share * Dial.DEGREES_PER_CIRCLE) % Dial.DEGREES_PER_CIRCLE;
+        degrees = Numbers.round(share * Dial.DEGREES_PER_CIRCLE) % Dial.DEGREES_PER_CIRCLE;
         isDone = (share >= 1.0);
     }
 

@@ -11,8 +11,6 @@ class SunKind extends FieldKind {
 
     private const CLOCK_FORMAT = "$1$:$2$";
 
-    private const TWILIGHT_COLOR = Palette.ORANGE;
-
     private var risingIcon as Icon;
     private var settingIcon as Icon;
 
@@ -31,7 +29,7 @@ class SunKind extends FieldKind {
     }
 
     function iconTint(color as Number) as Number {
-        return isTwilight ? TWILIGHT_COLOR : color;
+        return isTwilight ? Palette.TWILIGHT : color;
     }
 
     //! The sun turns whether or not the system sends anything

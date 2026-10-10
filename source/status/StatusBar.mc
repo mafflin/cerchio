@@ -3,7 +3,8 @@ import Toybox.Lang;
 import Toybox.Math;
 
 //! The row of status icons above the time. No settings: every icon shows
-//! whenever it has something to report.
+//! whenever it has something to report - the wind whenever there is
+//! weather, a bare ring when it is unknown or calm.
 class StatusBar {
 
     //! Lifts the row so it and the data fields frame the time by eye
@@ -66,7 +67,7 @@ class StatusBar {
         var iconsWidth = shownWidth();
 
         gap = gapFor(count, chordAt(rowTop) - iconsWidth);
-        rowLeft = (Dial.screenWidth - (iconsWidth + ((count - 1) * gap))) / 2;
+        rowLeft = (Screen.width - (iconsWidth + ((count - 1) * gap))) / 2;
     }
 
     //! Each centered on the row's middle
@@ -89,7 +90,7 @@ class StatusBar {
     //! The row's bottom as far from the top as the frame line is from the
     //! bottom, lifted a touch
     private function rowCenterY() as Number {
-        var screenHeight = Dial.screenHeight;
+        var screenHeight = Screen.height;
 
         return screenHeight - mirrorY - (rowHeight / 2) - (screenHeight / LIFT_DIVISOR);
     }
@@ -136,16 +137,16 @@ class StatusBar {
     //! middle
     private function chordAt(top as Number) as Number {
         var rim = Dial.rim;
-        var fromMiddle = Dial.centerY - top;
+        var fromMiddle = Screen.centerY - top;
 
         if (fromMiddle >= rim) {
-            return Dial.screenWidth;
+            return Screen.width;
         }
 
         var half = Math.sqrt((rim * rim) - (fromMiddle * fromMiddle));
         var chord = (2 * half).toNumber() - (2 * MARGIN);
 
-        return Numbers.min(chord, Dial.screenWidth);
+        return Numbers.min(chord, Screen.width);
     }
 
     //! How many icons show this draw

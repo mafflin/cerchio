@@ -22,8 +22,8 @@ class TimeDisplay {
     function draw(dc as Dc) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
-            Dial.centerX,
-            Dial.centerY,
+            Screen.centerX,
+            Screen.centerY,
             FONT,
             currentTime(),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER

@@ -1,4 +1,3 @@
-import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
@@ -18,10 +17,6 @@ module Dial {
     //! Midnight at the bottom, noon at the top
     const MIDNIGHT_DEGREES = HALF_TURN;
 
-    var screenWidth as Number = 0;
-    var screenHeight as Number = 0;
-    var centerX as Number = 0;
-    var centerY as Number = 0;
     var rim as Number = 0;
 
     //! The air things on the rim keep from each other, as a share of the
@@ -29,13 +24,9 @@ module Dial {
     const AIR_DIVISOR = 32;
     var air as Number = 0;
 
-    //! Before anything sizes itself off the glass
-    function setup(dc as Dc) as Void {
-        screenWidth = dc.getWidth();
-        screenHeight = dc.getHeight();
-        centerX = screenWidth / 2;
-        centerY = screenHeight / 2;
-        rim = Numbers.min(centerX, centerY);
+    //! After Screen.setup(), before anything sizes itself off the rim
+    function setup() as Void {
+        rim = Numbers.min(Screen.centerX, Screen.centerY);
         air = rim / AIR_DIVISOR;
     }
 
@@ -48,16 +39,11 @@ module Dial {
 
     //! The pixel at a screen angle and radius. Screen y grows downward.
     function pointX(radians as Decimal, radius as Numeric) as Number {
-        return pixel(centerX + (radius * Math.cos(radians)));
+        return Numbers.round(Screen.centerX + (radius * Math.cos(radians)));
     }
 
     function pointY(radians as Decimal, radius as Numeric) as Number {
-        return pixel(centerY - (radius * Math.sin(radians)));
-    }
-
-    //! Rounded, not truncated: truncation drags every point the same way
-    function pixel(value as Decimal) as Number {
-        return Math.round(value).toNumber();
+        return Numbers.round(Screen.centerY - (radius * Math.sin(radians)));
     }
 
     //! A dial value as a screen angle in radians
