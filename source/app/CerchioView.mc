@@ -184,14 +184,24 @@ class CerchioView extends WatchUi.WatchFace {
         WatchUi.requestUpdate();
     }
 
+    //! Back from another screen: the off screen face may be from before it,
+    //! and the fields may have missed updates meanwhile
+    function onShow() as Void {
+        fields.refreshAll();
+        redraw();
+    }
+
     function onEnterSleep() as Void {
         isAwake = false;
         WatchUi.requestUpdate();
     }
 
+    //! The off screen face may be from before the sleep began, and the
+    //! fields may have missed updates meanwhile
     function onExitSleep() as Void {
         isAwake = true;
-        WatchUi.requestUpdate();
+        fields.refreshAll();
+        redraw();
     }
 
     //! The status row above the time mirrors the line the fields hang from

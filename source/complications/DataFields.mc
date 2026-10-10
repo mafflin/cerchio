@@ -127,6 +127,13 @@ class DataFields {
         }
     }
 
+    //! Every field read again, for a face that may have missed updates
+    function refreshAll() as Void {
+        for (var i = 0; i < fields.size(); i++) {
+            fields[i].refresh();
+        }
+    }
+
     function subscribe() as Void {
         for (var i = 0; i < fields.size(); i++) {
             Complications.subscribeToUpdates(fields[i].getComplicationId());
