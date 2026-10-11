@@ -21,8 +21,11 @@ class Daylight {
     //! have come in meanwhile
     private const LATITUDE_RETRY_MINUTES = Clock.MINUTES_PER_HOUR;
 
-    //! The Clock.minuteOfDay() it was last asked for, null before the first
+    //! The minute of the day it was last asked for, null before the first
     private var latitudeAskedMinute as Number? = null;
+
+    //! Answers a Float or null, see setLatitudeSource()
+    private var latitudeSource as Method;
 
     private var sunriseId as Complications.Id;
     private var sunsetId as Complications.Id;
@@ -32,6 +35,7 @@ class Daylight {
         sunriseId = new Complications.Id(Complications.COMPLICATION_TYPE_SUNRISE);
         sunsetId = new Complications.Id(Complications.COMPLICATION_TYPE_SUNSET);
         minuteGate = new MinuteGate();
+        latitudeSource = new Lang.Method(Latitude, :read);
     }
 
     //! Once per full update; reads at most once a minute
@@ -40,15 +44,19 @@ class Daylight {
             return;
         }
 
-        var sunrise = minutesOf(sunriseId);
-        var sunset = minutesOf(sunsetId);
+        update(minutesOf(sunriseId), minutesOf(sunsetId), Clock.minuteOfDay(), Twilight.declination());
+    }
+
+    //! The sun as read at a minute of the day, sunDeclination being today's;
+    //! refresh() hands over to it, and a test calls it directly
+    function update(sunrise as Number?, sunset as Number?, minute as Number, sunDeclination as Decimal) as Void {
         var sunMoved = (sunrise != sunriseMinute) || (sunset != sunsetMinute);
         var sunKnown = (sunrise != null) && (sunset != null);
 
         // The latitude goes with the sun, not the minute: read every minute
         // it would flap between the weather's station and the last fix, and
         // dawn and dusk with it. Nothing to work out without the sun.
-        var cameIn = sunKnown && (sunMoved || isLatitudeDue()) && readLatitude();
+        var cameIn = sunKnown && (sunMoved || isLatitudeDue(minute)) && readLatitude(minute);
 
         if (!sunMoved && !cameIn) {
             return;
@@ -56,7 +64,13 @@ class Daylight {
 
         sunriseMinute = sunrise;
         sunsetMinute = sunset;
-        refreshTwilight();
+        refreshTwilight(sunDeclination);
+    }
+
+    //! Where the latitude comes from, Latitude.read() unless a test says
+    //! otherwise: a method taking nothing and answering degrees or null
+    function setLatitudeSource(source as Method) as Void {
+        latitudeSource = source;
     }
 
     function sunrise() as Number? {
@@ -127,22 +141,22 @@ class Daylight {
     }
 
     //! Unknown, and not asked for an hour
-    private function isLatitudeDue() as Boolean {
+    private function isLatitudeDue(minute as Number) as Boolean {
         var asked = latitudeAskedMinute;
 
         if (latitudeDegrees != null) {
             return false;
         }
 
-        return (asked == null) || (Clock.wrapMinutes(Clock.minuteOfDay() - asked) >= LATITUDE_RETRY_MINUTES);
+        return (asked == null) || (Clock.wrapMinutes(minute - asked) >= LATITUDE_RETRY_MINUTES);
     }
 
     //! Whether it came in. The watch has not moved just because the phone
     //! is away: the last known latitude stands.
-    private function readLatitude() as Boolean {
-        var latitude = Latitude.read();
+    private function readLatitude(minute as Number) as Boolean {
+        var latitude = latitudeSource.invoke() as Float?;
 
-        latitudeAskedMinute = Clock.minuteOfDay();
+        latitudeAskedMinute = minute;
 
         if (latitude == null) {
             return false;
@@ -154,7 +168,7 @@ class Daylight {
     }
 
     //! Twilight has to reach past sunrise and sunset, or the latitude is off
-    private function refreshTwilight() as Void {
+    private function refreshTwilight(sunDeclination as Decimal) as Void {
         dawnMinute = null;
         duskMinute = null;
 
@@ -165,7 +179,7 @@ class Daylight {
             return;
         }
 
-        var fromNoon = Twilight.minutesFromNoon(length, latitudeDegrees);
+        var fromNoon = Twilight.minutesFromNoon(length, latitudeDegrees, sunDeclination);
 
         if ((fromNoon == null) || ((fromNoon * 2) <= length)) {
             return;

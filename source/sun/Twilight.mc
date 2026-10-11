@@ -37,11 +37,11 @@ module Twilight {
 
     //! From dawn to solar noon, and from noon to dusk. latitudeDegrees is
     //! null when the watch does not know where it is; the day's length then
-    //! stands in, see latitudeOf(). Null when neither gives a latitude, or
-    //! when the sun never climbs that far; half a day when it never sinks
-    //! that far, a white night: dawn and dusk meet at midnight.
-    function minutesFromNoon(dayLength as Number, latitudeDegrees as Float?) as Number? {
-        var sunDeclination = declination();
+    //! stands in, see latitudeOf(). sunDeclination is radians, today's from
+    //! declination(). Null when neither gives a latitude, or when the sun
+    //! never climbs that far; half a day when it never sinks that far, a
+    //! white night: dawn and dusk meet at midnight.
+    function minutesFromNoon(dayLength as Number, latitudeDegrees as Float?, sunDeclination as Decimal) as Number? {
         var latitude = latitudeOf(latitudeDegrees, dayLength, sunDeclination);
 
         if (latitude == null) {
