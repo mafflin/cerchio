@@ -116,11 +116,14 @@ render meridiem/pm.svg "$LARGE/meridiem/pm.png" 49 30 "$MERIDIEM_LARGE"
 # a unit of the 24 unit art is a whole pixel, and 32px on the large screens,
 # a touch taller than the digits either way. A half sun on a horizon line
 # for both, over two lines for the sunrise, shown while the sun is down, and
-# an arrow down for the sunset, shown while it is up.
+# an arrow down for the sunset, shown while it is up; the whole sun around
+# solar noon.
 render sun/sunrise.svg "$SMALL/sun/sunrise.png" 24 24 "$BOX" flat
 render sun/sunrise.svg "$LARGE/sun/sunrise.png" 32 32 "$BOX"
 render sun/sunset.svg "$SMALL/sun/sunset.png" 24 24 "$BOX" flat
 render sun/sunset.svg "$LARGE/sun/sunset.png" 32 32 "$BOX"
+render sun/zenith.svg "$SMALL/sun/zenith.png" 24 24 "$BOX" flat
+render sun/zenith.svg "$LARGE/sun/zenith.png" 32 32 "$BOX"
 
 # The data fields' icons stand beside the same FONT_TINY digits as the
 # suns, so they take the suns' sizes; the sun field uses the suns

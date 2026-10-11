@@ -46,6 +46,7 @@
 
     <bitmap id="Sunrise" filename="sun/sunrise.png" packingFormat="png" />
     <bitmap id="Sunset" filename="sun/sunset.png" packingFormat="png" />
+    <bitmap id="Zenith" filename="sun/zenith.png" packingFormat="png" />
 
     <bitmap id="FieldBattery" filename="field/battery.png" packingFormat="png" />
     <bitmap id="FieldCalories" filename="field/calories.png" packingFormat="png" />

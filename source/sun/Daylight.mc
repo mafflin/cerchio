@@ -17,6 +17,10 @@ class Daylight {
     //! when not known
     private var latitudeDegrees as Float? = null;
 
+    //! Either side of solar noon, the time it counts as noon: long enough to
+    //! catch at a glance, short enough to stay a moment of the day
+    const ZENITH_MINUTES = 15;
+
     //! Unknown, it is asked for again this often: the phone or a fix may
     //! have come in meanwhile
     private const LATITUDE_RETRY_MINUTES = Clock.MINUTES_PER_HOUR;
@@ -114,6 +118,18 @@ class Daylight {
         }
 
         return Numbers.isBetween(minute, dawn, rise) || Numbers.isBetween(minute, set, dusk);
+    }
+
+    //! Within ZENITH_MINUTES of solar noon, either side; false while it is
+    //! not known
+    function isZenithAt(minute as Number) as Boolean {
+        var noon = zenith();
+
+        if (noon == null) {
+            return false;
+        }
+
+        return Numbers.isBetween(minute, Clock.wrapMinutes(noon - ZENITH_MINUTES), Clock.wrapMinutes(noon + ZENITH_MINUTES + 1));
     }
 
     //! Solar noon, halfway from sunrise to sunset; null with either unknown

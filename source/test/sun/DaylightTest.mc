@@ -60,6 +60,41 @@ module DaylightTest {
         return true;
     }
 
+    //! 06:00 to 18:00: noon from 11:45 through 12:15
+    (:test)
+    function zenithWindow(logger as Test.Logger) as Boolean {
+        var daylight = daylightWith(new LatitudeStub(50.0));
+        var reach = Daylight.ZENITH_MINUTES;
+
+        Approx.check(!daylight.isZenithAt(NOON), "not before the sun is known");
+
+        daylight.update(SIX, EIGHTEEN, NOON, 0.0);
+
+        Approx.check(daylight.isZenithAt(NOON), "at noon");
+        Approx.check(daylight.isZenithAt(NOON - reach), "from a quarter before");
+        Approx.check(daylight.isZenithAt(NOON + reach), "through a quarter after");
+        Approx.check(!daylight.isZenithAt(NOON - reach - 1), "not before");
+        Approx.check(!daylight.isZenithAt(NOON + reach + 1), "not after");
+
+        return true;
+    }
+
+    //! Sunrise at 23:00, sunset at 01:00: noon at midnight, the window
+    //! across it
+    (:test)
+    function zenithAcrossMidnight(logger as Test.Logger) as Boolean {
+        var daylight = daylightWith(new LatitudeStub(50.0));
+
+        daylight.update(23 * 60, 60, NOON, 0.0);
+
+        Approx.check(daylight.isZenithAt(0), "at midnight");
+        Approx.check(daylight.isZenithAt(Clock.MINUTES_PER_DAY - Daylight.ZENITH_MINUTES), "before midnight");
+        Approx.check(daylight.isZenithAt(Daylight.ZENITH_MINUTES), "after midnight");
+        Approx.check(!daylight.isZenithAt(NOON), "not at clock noon");
+
+        return true;
+    }
+
     //! Sunrise at 23:00, sunset at 13:00, as far west of a time zone's
     //! middle as clocks get: noon, dawn and dusk wrap round midnight
     (:test)

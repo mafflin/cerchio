@@ -4,7 +4,7 @@ import Toybox.Lang;
 //! The sun's next turn as H:MM by the 12/24 hour setting: the sunset while
 //! the sun is up, beside a setting sun, and the sunrise while it is down,
 //! beside a rising one; the sun in the dial's twilight color through dawn
-//! and dusk.
+//! and dusk, and a whole sun in its day color around solar noon.
 //! The sunset complication stands for it; the times are the dial's. Until
 //! they are known, the sunset as the system gives it.
 class SunKind extends FieldKind {
@@ -13,22 +13,33 @@ class SunKind extends FieldKind {
 
     private var risingIcon as Icon;
     private var settingIcon as Icon;
+    private var zenithIcon as Icon;
 
     //! As of the last read
     private var isUp as Boolean = true;
     private var isTwilight as Boolean = false;
+    private var isZenith as Boolean = false;
 
     function initialize() {
         FieldKind.initialize(null);
         risingIcon = new Icon(Rez.Drawables.Sunrise);
         settingIcon = new Icon(Rez.Drawables.Sunset);
+        zenithIcon = new Icon(Rez.Drawables.Zenith);
     }
 
     function icon() as Icon? {
+        if (isZenith) {
+            return zenithIcon;
+        }
+
         return isUp ? settingIcon : risingIcon;
     }
 
     function iconTint(color as Number) as Number {
+        if (isZenith) {
+            return DayColors.DAY;
+        }
+
         return isTwilight ? DayColors.TWILIGHT : color;
     }
 
@@ -45,11 +56,13 @@ class SunKind extends FieldKind {
         if (up == null) {
             isUp = true;
             isTwilight = false;
+            isZenith = false;
             return FieldKind.text(complication);
         }
 
         isUp = up;
         isTwilight = daylight.isTwilightAt(minute);
+        isZenith = daylight.isZenithAt(minute);
 
         return clockOf((up ? daylight.sunset() : daylight.sunrise()) as Number);
     }

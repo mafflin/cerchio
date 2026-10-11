@@ -14,7 +14,8 @@ blows, amber when moderate and orange when strong, and AM/PM, shown only
 when there is something to report. **Below it**, two data
 fields of your choice, each an icon and its value: the weather as an icon
 for the conditions beside the temperature, and the sun as its next sunset
-or sunrise, its icon orange through dawn and dusk.
+or sunrise, its icon orange through dawn and dusk and a whole amber sun
+around solar noon.
 
 - A goal dot glides round from the top as your steps goal is done, a ring
   until it is done and solid once it is
