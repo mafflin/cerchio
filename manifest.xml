@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
-  <iq:application id="b917191a-b733-481d-8cbb-3303343bacb1" type="watchface" name="@Strings.AppName" entry="CerchioApp" launcherIcon="@Drawables.LauncherIcon" minApiLevel="5.1.0">
+  <iq:application id="7546d936-c318-4d1b-bdc2-c030fd0d2648" type="watchface" name="@Strings.AppName" entry="CerchioApp" launcherIcon="@Drawables.LauncherIcon" minApiLevel="5.1.0">
     <iq:products>
       <iq:product id="approachs7243mm"/>
       <iq:product id="approachs7247mm"/>
@@ -31,8 +31,8 @@
       <iq:product id="vivoactive6"/>
     </iq:products>
     <iq:permissions>
+      <!-- Without positioning permisson the weather comes with no location, and twilight has no latitude -->
       <iq:uses-permission id="ComplicationSubscriber"/>
-      <!-- Without it the weather comes with no location, and twilight has no latitude -->
       <iq:uses-permission id="Positioning"/>
     </iq:permissions>
     <iq:languages>
