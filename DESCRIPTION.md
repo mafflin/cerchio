@@ -2,7 +2,9 @@ Cerchio is a digital watch face: the time, large and centered, inside a
 24-hour dial.
 
 **The dial** follows the sun: the circle is amber by day, orange through
-dawn and dusk, sky blue at night, with a small mark at solar noon. A line
+dawn and dusk, sky blue at night, with a small mark at solar noon. Dawn
+and dusk come from your location, the weather's or the last GPS fix,
+which is used for nothing else and never leaves the watch. A line
 on the circle shows the hour, and the seconds go round the edge of the
 screen, in low power mode too where the watch allows it.
 

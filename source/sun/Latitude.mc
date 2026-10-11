@@ -1,9 +1,9 @@
-import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.Position;
 
 //! Where on earth the watch is, north to south: the weather's location, or
-//! the last fix. Degrees, north positive.
+//! the last fix. Degrees, north positive. Both need the Positioning
+//! permission.
 module Latitude {
 
     //! Null with neither
@@ -24,11 +24,16 @@ module Latitude {
         return latitudeOf(conditions.observationLocationPosition);
     }
 
-    //! Null without a fix
+    //! The last known position, however old; null without a fix since the
+    //! watch started, when the position it gives is not a real one
     function lastFixLatitude() as Float? {
-        var info = Activity.getActivityInfo();
+        var info = Position.getInfo();
 
-        return (info != null) ? latitudeOf(info.currentLocation) : null;
+        if (info.accuracy == Position.QUALITY_NOT_AVAILABLE) {
+            return null;
+        }
+
+        return latitudeOf(info.position);
     }
 
     //! Null without a location

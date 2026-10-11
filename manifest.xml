@@ -32,6 +32,8 @@
     </iq:products>
     <iq:permissions>
       <iq:uses-permission id="ComplicationSubscriber"/>
+      <!-- Without it the weather comes with no location, and twilight has no latitude -->
+      <iq:uses-permission id="Positioning"/>
     </iq:permissions>
     <iq:languages>
       <iq:language>eng</iq:language>
