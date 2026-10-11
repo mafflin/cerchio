@@ -49,8 +49,6 @@ module DayCircleTest {
 
                 circle.prepare();
                 circle.draw(dc);
-                circle.drawGapBeside(dc, 90.0, circle.width() * 2, 1);
-                circle.drawGapBeside(dc, 90.0, circle.width() * 2, -1);
             }
         }
 

@@ -17,8 +17,6 @@ class CerchioView extends WatchUi.WatchFace {
     private var daylight as Daylight;
     private var dayCircle as DayCircle;
     private var rimMark as RimMark;
-    private var noonMark as NoonMark;
-    private var hourHand as HourHand;
     private var statusBar as StatusBar;
     private var fields as DataFields;
     private var secondsHand as SecondsHand;
@@ -51,8 +49,6 @@ class CerchioView extends WatchUi.WatchFace {
         daylight = Sun.daylight();
         dayCircle = new DayCircle(daylight);
         rimMark = new RimMark(dayCircle);
-        noonMark = new NoonMark(rimMark, daylight);
-        hourHand = new HourHand(rimMark);
         statusBar = new StatusBar();
         fields = new DataFields();
         secondsHand = new SecondsHand();
@@ -225,7 +221,6 @@ class CerchioView extends WatchUi.WatchFace {
         var accent = editor.accentColor();
         var data = editor.dataColor();
 
-        hourHand.setColor(accent);
         secondsHand.setColor(accent);
         goalDot.setColor(accent);
         timeDisplay.setColor(data);
@@ -311,12 +306,23 @@ class CerchioView extends WatchUi.WatchFace {
         refreshReadings();
 
         dayCircle.draw(dc);
-        noonMark.draw(dc);
-        hourHand.draw(dc, noonMark.position());
+        drawMarks(dc);
         goalDot.draw(dc);
         statusBar.draw(dc);
         fields.draw(dc, editor.pulsedSlot());
         timeDisplay.draw(dc);
+    }
+
+    //! Solar noon in the day's color once the sun is known, then the hour in
+    //! the accent on top
+    private function drawMarks(dc as Dc) as Void {
+        var zenith = daylight.zenith();
+
+        if (zenith != null) {
+            rimMark.draw(dc, Dial.positionOfMinute(zenith), DayColors.DAY);
+        }
+
+        rimMark.draw(dc, Dial.positionOfMinute(Clock.minuteOfDay()), editor.accentColor());
     }
 
     //! Asleep, the hand shows only if a partial update can move it, which
