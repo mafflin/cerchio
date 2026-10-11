@@ -28,9 +28,9 @@ class DataFields {
 
     //! Once per layout: the row from top
     function prepare(dc as Dc, top as Number) as Void {
-        var centerY = top + (fields[0].heightIn(dc) / 2);
+        var centerY = top + (IconText.heightIn(dc) / 2);
 
-        gap = (dc.getWidth() * GAP_RATIO).toNumber();
+        gap = (Dial.screenWidth * GAP_RATIO).toNumber();
 
         for (var i = 0; i < fields.size(); i++) {
             fields[i].prepare(dc, centerY);

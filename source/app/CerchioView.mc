@@ -76,7 +76,7 @@ class CerchioView extends WatchUi.WatchFace {
         secondsHand.place(dayCircle.inner());
         goalDot.prepare(dayCircle.width(), dayCircle.inner());
 
-        faceBuffer.prepare(dc);
+        faceBuffer.prepare();
         placeFrame(dc);
 
         // The editor shows a snapshot; live updates are not worth the power.
