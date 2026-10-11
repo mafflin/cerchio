@@ -4,7 +4,7 @@ import Toybox.Lang;
 //! Progress to the goal: a dot just inside the circle against the glass,
 //! gliding round from the top a degree at a time as the goal is done. Not
 //! started and done are both at the top. A ring until the goal is done,
-//! solid once it is.
+//! solid once it is. Reads its own progress, as the wind its reading.
 class GoalDot {
 
     //! The dot's radius against the circle's line width, so it keeps to the
@@ -26,7 +26,10 @@ class GoalDot {
     private var degrees as Number? = null;
     private var isDone as Boolean = false;
 
+    private var progress as GoalProgress;
+
     function initialize() {
+        progress = new GoalProgress();
     }
 
     //! After Dial.setup(): the air inside the circle the seconds dot keeps
@@ -41,8 +44,14 @@ class GoalDot {
         self.color = color;
     }
 
+    //! Before drawing; reads at most once a minute
+    function refresh() as Void {
+        progress.refresh();
+        setShare(progress.share());
+    }
+
     //! 0 to 1; null without a goal, which shows nothing
-    function setShare(share as Float?) as Void {
+    private function setShare(share as Float?) as Void {
         if (share == null) {
             degrees = null;
             return;

@@ -20,7 +20,6 @@ class CerchioView extends WatchUi.WatchFace {
     private var statusBar as StatusBar;
     private var fields as DataFields;
     private var secondsHand as SecondsHand;
-    private var goalProgress as GoalProgress;
     private var goalDot as GoalDot;
     private var faceBuffer as FaceBuffer;
     private var editor as Editor;
@@ -48,11 +47,10 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay = new TimeDisplay();
         daylight = Sun.daylight();
         dayCircle = new DayCircle(daylight);
-        rimMark = new RimMark(dayCircle);
+        rimMark = new RimMark();
         statusBar = new StatusBar();
         fields = new DataFields();
         secondsHand = new SecondsHand();
-        goalProgress = new GoalProgress();
         goalDot = new GoalDot();
         faceBuffer = new FaceBuffer();
         editor = new Editor(fields);
@@ -66,7 +64,7 @@ class CerchioView extends WatchUi.WatchFace {
 
         // The circle against the glass; the rest on the rim sized off it
         dayCircle.prepare();
-        rimMark.prepare();
+        rimMark.prepare(dayCircle.width(), dayCircle.middle());
         secondsHand.place(dayCircle.inner());
         goalDot.prepare(dayCircle.width(), dayCircle.inner());
 
@@ -344,12 +342,7 @@ class CerchioView extends WatchUi.WatchFace {
 
         fields.refreshClocked();
 
-        refreshGoal();
-    }
-
-    private function refreshGoal() as Void {
-        goalProgress.refresh();
-        goalDot.setShare(goalProgress.share());
+        goalDot.refresh();
     }
 
     //! Once per dc: the dc between two updates is the system's

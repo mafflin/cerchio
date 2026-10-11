@@ -22,21 +22,19 @@ class RimMark {
     private var innerEnd as Number = 0;
     private var outerEnd as Number = 0;
 
-    private var circle as DayCircle;
-
-    function initialize(circle as DayCircle) {
-        self.circle = circle;
+    function initialize() {
     }
 
-    //! After the circle is prepared
-    function prepare() as Void {
-        width = circle.width() * WIDTH_FACTOR;
-        outlineWidth = circle.width() * OUTLINE_FACTOR;
+    //! After Dial.setup(): the circle's line width, and its middle from the
+    //! center
+    function prepare(circleWidth as Number, circleMiddle as Number) as Void {
+        width = circleWidth * WIDTH_FACTOR;
+        outlineWidth = circleWidth * OUTLINE_FACTOR;
 
         // Inside, past the circle's edge by half the air it keeps from its
         // neighbors. Outside, well past the glass, which cuts it off: a long
         // line keeps its direction where the ends are rounded to whole pixels.
-        innerEnd = circle.middle() - (Dial.air / 2);
+        innerEnd = circleMiddle - (Dial.air / 2);
         outerEnd = Dial.rim * 2;
     }
 
