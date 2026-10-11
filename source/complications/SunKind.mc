@@ -29,7 +29,7 @@ class SunKind extends FieldKind {
     }
 
     function iconTint(color as Number) as Number {
-        return isTwilight ? Palette.TWILIGHT : color;
+        return isTwilight ? DayColors.TWILIGHT : color;
     }
 
     //! The sun turns whether or not the system sends anything

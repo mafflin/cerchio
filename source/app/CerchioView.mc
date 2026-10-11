@@ -15,7 +15,6 @@ class CerchioView extends WatchUi.WatchFace {
 
     private var timeDisplay as TimeDisplay;
     private var daylight as Daylight;
-    private var dayColors as DayColors;
     private var dayCircle as DayCircle;
     private var rimMark as RimMark;
     private var noonMark as NoonMark;
@@ -50,10 +49,9 @@ class CerchioView extends WatchUi.WatchFace {
 
         timeDisplay = new TimeDisplay();
         daylight = Sun.daylight();
-        dayColors = new DayColors(daylight);
-        dayCircle = new DayCircle(dayColors);
+        dayCircle = new DayCircle(daylight);
         rimMark = new RimMark(dayCircle);
-        noonMark = new NoonMark(rimMark, dayColors);
+        noonMark = new NoonMark(rimMark, daylight);
         hourHand = new HourHand(rimMark);
         statusBar = new StatusBar();
         fields = new DataFields();
@@ -336,9 +334,7 @@ class CerchioView extends WatchUi.WatchFace {
 
     //! Everything the draw reads, before anything draws
     private function refreshReadings() as Void {
-        if (daylight.refresh()) {
-            dayColors.refresh();
-        }
+        daylight.refresh();
 
         fields.refreshClocked();
 

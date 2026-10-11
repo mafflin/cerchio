@@ -6,20 +6,20 @@ import Toybox.Lang;
 class NoonMark {
 
     private var mark as RimMark;
-    private var dayColors as DayColors;
+    private var daylight as Daylight;
 
-    function initialize(mark as RimMark, dayColors as DayColors) {
+    function initialize(mark as RimMark, daylight as Daylight) {
         self.mark = mark;
-        self.dayColors = dayColors;
+        self.daylight = daylight;
     }
 
     function draw(dc as Dc) as Void {
-        var zenith = dayColors.zenith();
+        var zenith = daylight.zenith();
 
         if (zenith == null) {
             return;
         }
 
-        mark.draw(dc, zenith, dayColors.dayColor());
+        mark.draw(dc, Dial.positionOfMinute(zenith), DayColors.DAY);
     }
 }

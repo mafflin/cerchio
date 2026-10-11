@@ -34,11 +34,10 @@ class Daylight {
         minuteGate = new MinuteGate();
     }
 
-    //! true when the sun has moved, about once a day, or the latitude has
-    //! come in
-    function refresh() as Boolean {
+    //! Once per full update; reads at most once a minute
+    function refresh() as Void {
         if (!minuteGate.opens()) {
-            return false;
+            return;
         }
 
         var sunrise = minutesOf(sunriseId);
@@ -52,14 +51,12 @@ class Daylight {
         var cameIn = sunKnown && (sunMoved || isLatitudeDue()) && readLatitude();
 
         if (!sunMoved && !cameIn) {
-            return false;
+            return;
         }
 
         sunriseMinute = sunrise;
         sunsetMinute = sunset;
         refreshTwilight();
-
-        return true;
     }
 
     function sunrise() as Number? {

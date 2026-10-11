@@ -30,10 +30,10 @@ class DayCircle {
     private var cutWidth as Number = 1;
     private var cutReach as Number = 1;
 
-    private var dayColors as DayColors;
+    private var daylight as Daylight;
 
-    function initialize(dayColors as DayColors) {
-        self.dayColors = dayColors;
+    function initialize(daylight as Daylight) {
+        self.daylight = daylight;
     }
 
     //! The pen reaches half its width past the radius: the line's outer edge
@@ -62,13 +62,13 @@ class DayCircle {
     }
 
     function draw(dc as Dc) as Void {
-        var sunrise = dayColors.sunrise();
-        var sunset = dayColors.sunset();
+        var sunrise = daylight.sunrise();
+        var sunset = daylight.sunset();
 
         dc.setPenWidth(penWidth);
 
         if ((sunrise == null) || (sunset == null)) {
-            dc.setColor(dayColors.colorAt(0), Graphics.COLOR_TRANSPARENT);
+            dc.setColor(DayColors.FALLBACK, Graphics.COLOR_TRANSPARENT);
             dc.drawCircle(Dial.centerX, Dial.centerY, radius);
             return;
         }
@@ -93,48 +93,51 @@ class DayCircle {
         drawCut(dc, position + offset);
     }
 
-    //! Sunrise round to sunrise, through dusk and dawn when they are known
-    private function drawSectors(dc as Dc, sunrise as Float, sunset as Float) as Void {
-        var dawn = dayColors.dawn();
-        var dusk = dayColors.dusk();
+    //! Sunrise round to sunrise, through dusk and dawn when they are known;
+    //! minutes past midnight
+    private function drawSectors(dc as Dc, sunrise as Number, sunset as Number) as Void {
+        var dawn = daylight.dawn();
+        var dusk = daylight.dusk();
 
-        drawSector(dc, sunrise, sunset);
+        drawSector(dc, sunrise, sunset, DayColors.DAY);
 
         if ((dawn == null) || (dusk == null)) {
-            drawSector(dc, sunset, sunrise);
+            drawSector(dc, sunset, sunrise, DayColors.NIGHT);
             return;
         }
 
-        drawSector(dc, sunset, dusk);
-        drawSector(dc, dusk, dawn);
-        drawSector(dc, dawn, sunrise);
+        drawSector(dc, sunset, dusk, DayColors.TWILIGHT);
+        drawSector(dc, dusk, dawn, DayColors.NIGHT);
+        drawSector(dc, dawn, sunrise, DayColors.TWILIGHT);
     }
 
-    //! At every color change
-    private function drawCuts(dc as Dc, sunrise as Float, sunset as Float) as Void {
-        var dawn = dayColors.dawn();
-        var dusk = dayColors.dusk();
+    //! At every color change; minutes past midnight
+    private function drawCuts(dc as Dc, sunrise as Number, sunset as Number) as Void {
+        var dawn = daylight.dawn();
+        var dusk = daylight.dusk();
 
-        drawCut(dc, sunrise);
-        drawCut(dc, sunset);
+        drawCut(dc, Dial.positionOfMinute(sunrise));
+        drawCut(dc, Dial.positionOfMinute(sunset));
 
         // Met at midnight, in a white night: no night between them, and no
         // change of color.
         if ((dawn != null) && (dusk != null) && (dawn != dusk)) {
-            drawCut(dc, dawn);
-            drawCut(dc, dusk);
+            drawCut(dc, Dial.positionOfMinute(dawn));
+            drawCut(dc, Dial.positionOfMinute(dusk));
         }
     }
 
-    //! Clockwise between two color changes, in the color at the first. Both
-    //! ends rounded, so neighbors meet on the same whole degree. Ends on the
-    //! same degree are not left to drawArc: a sliver is left out, and all
-    //! but a sliver of the circle is drawn whole.
-    private function drawSector(dc as Dc, from as Float, to as Float) as Void {
+    //! Clockwise between two color changes, minutes past midnight, in the
+    //! given color. Both ends rounded, so neighbors meet on the same whole
+    //! degree. Ends on the same degree are not left to drawArc: a sliver is
+    //! left out, and all but a sliver of the circle is drawn whole.
+    private function drawSector(dc as Dc, fromMinute as Number, toMinute as Number, color as Number) as Void {
+        var from = Dial.positionOfMinute(fromMinute);
+        var to = Dial.positionOfMinute(toMinute);
         var start = screenDegrees(from);
         var end = screenDegrees(to);
 
-        dc.setColor(dayColors.colorAt(from), Graphics.COLOR_TRANSPARENT);
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
 
         if (start != end) {
             dc.drawArc(Dial.centerX, Dial.centerY, radius, Graphics.ARC_CLOCKWISE, start, end);
