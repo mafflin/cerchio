@@ -4,7 +4,8 @@ import Toybox.WatchUi;
 
 //! The wind in the status row: a ring with a wedge in it pointing where the
 //! wind goes, one bitmap to each eighth of the compass, strength said with
-//! color - see WindReading. The ring alone when the wind is unknown or calm.
+//! color - see WindReading. The ring alone when the wind is unknown or calm,
+//! nothing without any weather.
 class Wind extends Icon {
 
     //! An eighth of the compass, in degrees
@@ -35,12 +36,12 @@ class Wind extends Icon {
         windReading = new WindReading();
     }
 
-    //! Always shown, the ring alone for no wind. Read here, once a minute:
-    //! the row asks every icon before it draws.
+    //! Shown whenever there is weather, the ring alone for no wind. Read
+    //! here, once a minute: the row asks every icon before it draws.
     function isReporting(settings as System.DeviceSettings) as Boolean {
         windReading.refresh();
 
-        return true;
+        return windReading.hasWeather();
     }
 
     protected function bitmap() as BitmapResource {

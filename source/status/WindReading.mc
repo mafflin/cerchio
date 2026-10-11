@@ -20,6 +20,9 @@ class WindReading {
     private const MODERATE_COLOR = Palette.AMBER;
     private const STRONG_COLOR = Palette.ORANGE;
 
+    //! Whether the phone has sent any weather
+    private var weatherKnown as Boolean = false;
+
     //! Where the wind blows from, north up; null when unknown
     private var currentBearing as Number? = null;
 
@@ -45,6 +48,8 @@ class WindReading {
 
         var conditions = CurrentWeather.conditions();
 
+        weatherKnown = (conditions != null);
+
         if (conditions == null) {
             return;
         }
@@ -60,6 +65,11 @@ class WindReading {
         currentBearing = bearing;
         calm = (speed != null) ? ((speed * KMH_PER_MS) < CALM_LIMIT_KMH) : false;
         strength = strengthFor(speed);
+    }
+
+    //! False on a watch without weather, or before the phone has sent any
+    function hasWeather() as Boolean {
+        return weatherKnown;
     }
 
     function bearing() as Number? {

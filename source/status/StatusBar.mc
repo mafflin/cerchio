@@ -3,7 +3,8 @@ import Toybox.Lang;
 import Toybox.Math;
 
 //! The row of status icons above the time. No settings: every icon shows
-//! whenever it has something to report.
+//! whenever it has something to report - the wind whenever there is
+//! weather, a bare ring when it is unknown or calm.
 class StatusBar {
 
     //! Lifts the row so it and the data fields frame the time by eye
