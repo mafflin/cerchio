@@ -35,12 +35,14 @@ module Twilight {
     //! Leap years ignored: a day off moves the sun under half a degree
     const DAYS_BEFORE_MONTH = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
-    //! From dawn to solar noon, and from noon to dusk. Null without a
-    //! latitude, or when the sun never climbs that far; half a day when it
-    //! never sinks that far, a white night: dawn and dusk meet at midnight.
-    function minutesFromNoon(dayLength as Number) as Number? {
+    //! From dawn to solar noon, and from noon to dusk. latitudeDegrees is
+    //! null when the watch does not know where it is; the day's length then
+    //! stands in, see latitudeOf(). Null when neither gives a latitude, or
+    //! when the sun never climbs that far; half a day when it never sinks
+    //! that far, a white night: dawn and dusk meet at midnight.
+    function minutesFromNoon(dayLength as Number, latitudeDegrees as Float?) as Number? {
         var sunDeclination = declination();
-        var latitude = latitudeOf(dayLength, sunDeclination);
+        var latitude = latitudeOf(latitudeDegrees, dayLength, sunDeclination);
 
         if (latitude == null) {
             return null;
@@ -57,9 +59,7 @@ module Twilight {
 
     //! Radians: where the watch is if it knows, what the day's length says
     //! otherwise
-    function latitudeOf(dayLength as Number, sunDeclination as Decimal) as Decimal? {
-        var degrees = Latitude.read();
-
+    function latitudeOf(degrees as Float?, dayLength as Number, sunDeclination as Decimal) as Decimal? {
         if (degrees != null) {
             return Math.toRadians(degrees);
         }
