@@ -26,8 +26,8 @@ class WindReading {
     //! Where the wind blows from, north up; null when unknown
     private var currentBearing as Number? = null;
 
-    private var calm as Boolean = false;
-    private var strength as Number = LIGHT;
+    //! m/s, null when unknown
+    private var speed as Numeric? = null;
 
     //! Once a minute: the phone refills the weather by the hour at best
     private var minuteGate as MinuteGate;
@@ -43,8 +43,7 @@ class WindReading {
         }
 
         currentBearing = null;
-        calm = false;
-        strength = LIGHT;
+        speed = null;
 
         var conditions = CurrentWeather.conditions();
 
@@ -60,11 +59,8 @@ class WindReading {
             return;
         }
 
-        var speed = conditions.windSpeed;
-
         currentBearing = bearing;
-        calm = (speed != null) ? ((speed * KMH_PER_MS) < CALM_LIMIT_KMH) : false;
-        strength = strengthFor(speed);
+        speed = conditions.windSpeed;
     }
 
     //! False on a watch without weather, or before the phone has sent any
@@ -78,11 +74,23 @@ class WindReading {
 
     //! A bearing without a speed is not calm
     function isCalm() as Boolean {
-        return calm;
+        return isCalmAt(speed);
     }
 
     //! Amber when moderate, orange when strong, the given color otherwise
     function colorFor(lightColor as Number) as Number {
+        return colorAt(speed, lightColor);
+    }
+
+    //! Under half a km/h; null is not calm
+    function isCalmAt(windSpeed as Numeric?) as Boolean {
+        return (windSpeed != null) ? ((windSpeed * KMH_PER_MS) < CALM_LIMIT_KMH) : false;
+    }
+
+    //! colorFor() at a speed in m/s
+    function colorAt(windSpeed as Numeric?, lightColor as Number) as Number {
+        var strength = strengthFor(windSpeed);
+
         if (strength == STRONG) {
             return STRONG_COLOR;
         }
@@ -95,12 +103,12 @@ class WindReading {
     }
 
     //! A bearing without a speed counts as light
-    private function strengthFor(speed as Numeric?) as Number {
-        if (speed == null) {
+    private function strengthFor(windSpeed as Numeric?) as Number {
+        if (windSpeed == null) {
             return LIGHT;
         }
 
-        var kmh = speed * KMH_PER_MS;
+        var kmh = windSpeed * KMH_PER_MS;
 
         if (kmh <= LIGHT_LIMIT_KMH) {
             return LIGHT;

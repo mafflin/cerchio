@@ -58,8 +58,8 @@ class Wind extends Icon {
         return windReading.colorFor(Icon.tint());
     }
 
-    //! The nearest eighth
-    private function eighthOf(bearing as Number) as Number {
+    //! The nearest eighth, 0 for north
+    function eighthOf(bearing as Number) as Number {
         return ((bearing + (EIGHTH / 2)) / EIGHTH) % EIGHTHS;
     }
 }

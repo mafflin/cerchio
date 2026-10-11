@@ -38,16 +38,20 @@ class Recovery extends Icon {
         return minutes > 0;
     }
 
-    //! Amber past a day, orange past two, the given color otherwise
     protected function tint() as Number {
-        if (minutes > LONG_LIMIT_MINUTES) {
+        return tintFor(minutes, Icon.tint());
+    }
+
+    //! Amber past a day, orange past two, the given color otherwise
+    function tintFor(remaining as Number, plainColor as Number) as Number {
+        if (remaining > LONG_LIMIT_MINUTES) {
             return LONG_COLOR;
         }
 
-        if (minutes > MODERATE_LIMIT_MINUTES) {
+        if (remaining > MODERATE_LIMIT_MINUTES) {
             return MODERATE_COLOR;
         }
 
-        return Icon.tint();
+        return plainColor;
     }
 }

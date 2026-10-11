@@ -53,20 +53,30 @@ class Battery extends Icon {
     }
 
     protected function tint() as Number {
-        if (level == EMPTY_LEVEL) {
+        return tintFor(level, Icon.tint());
+    }
+
+    //! Orange when empty, amber when low, the given color otherwise
+    function tintFor(shownLevel as Number, plainColor as Number) as Number {
+        if (shownLevel == EMPTY_LEVEL) {
             return EMPTY_COLOR;
         }
 
-        if (level == LOW_LEVEL) {
+        if (shownLevel == LOW_LEVEL) {
             return LOW_COLOR;
         }
 
-        return Icon.tint();
+        return plainColor;
+    }
+
+    //! A tenth of the charge, rounded down: 0 below 10%, 10 at full
+    function levelOf(percent as Float) as Number {
+        var charge = percent.toNumber() / PERCENT_PER_LEVEL;
+
+        return Numbers.min(Numbers.max(charge, EMPTY_LEVEL), TOP_LEVEL);
     }
 
     private function readLevel() as Number {
-        var charge = System.getSystemStats().battery.toNumber() / PERCENT_PER_LEVEL;
-
-        return Numbers.min(Numbers.max(charge, EMPTY_LEVEL), TOP_LEVEL);
+        return levelOf(System.getSystemStats().battery);
     }
 }

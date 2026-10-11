@@ -27,7 +27,8 @@ class WeatherIcon extends Icon {
         return chooseResource(imageFor(condition, isUp == false));
     }
 
-    private function imageFor(condition as Number?, night as Boolean) as ResourceId {
+    //! The image for a Weather.CONDITION_*, by day or night
+    function imageFor(condition as Number?, night as Boolean) as ResourceId {
         if (condition == null) {
             return Rez.Drawables.WeatherUnknown;
         }

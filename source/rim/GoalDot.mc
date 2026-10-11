@@ -48,8 +48,13 @@ class GoalDot {
             return;
         }
 
-        degrees = Numbers.round(share * Dial.DEGREES_PER_CIRCLE) % Dial.DEGREES_PER_CIRCLE;
+        degrees = degreesOf(share);
         isDone = (share >= 1.0);
+    }
+
+    //! Whole degrees clockwise from the top; done is back at the top
+    function degreesOf(share as Float) as Number {
+        return Numbers.round(share * Dial.DEGREES_PER_CIRCLE) % Dial.DEGREES_PER_CIRCLE;
     }
 
     function draw(dc as Dc) as Void {

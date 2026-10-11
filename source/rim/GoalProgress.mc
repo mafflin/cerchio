@@ -27,7 +27,8 @@ class GoalProgress {
         return shareDone;
     }
 
-    private function shareOf(value as Number?, goal as Number?) as Float? {
+    //! 0 to 1, 1 past the goal; null without a goal
+    function shareOf(value as Number?, goal as Number?) as Float? {
         if ((value == null) || (goal == null) || (goal <= 0)) {
             return null;
         }
