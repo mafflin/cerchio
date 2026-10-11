@@ -312,7 +312,7 @@ class CerchioView extends WatchUi.WatchFace {
 
         dayCircle.draw(dc);
         noonMark.draw(dc);
-        hourHand.draw(dc);
+        hourHand.draw(dc, noonMark.position());
         goalDot.draw(dc);
         statusBar.draw(dc);
         fields.draw(dc, editor.pulsedSlot());

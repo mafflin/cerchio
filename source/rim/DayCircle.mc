@@ -81,16 +81,21 @@ class DayCircle {
         drawCuts(dc, sunrise, sunset);
     }
 
-    //! Cuts either side of a piece of the line of the given length, as wide
-    //! as the cuts at the color changes
-    function drawGapsAround(dc as Dc, position as Float, length as Number) as Void {
+    //! A cut beside a piece of the line of the given length, as wide as the
+    //! cuts at the color changes: side 1 clockwise of it, -1 counterclockwise
+    function drawGapBeside(dc as Dc, position as Float, length as Number, side as Number) as Void {
         var offset = degreesAlong((length + cutWidth) / 2.0);
 
         dc.setPenWidth(cutWidth);
         dc.setColor(Palette.BACKGROUND, Graphics.COLOR_TRANSPARENT);
 
-        drawCut(dc, position - offset);
-        drawCut(dc, position + offset);
+        drawCut(dc, position + (side * offset));
+    }
+
+    //! Degrees two pieces of the given length must be apart for the gap
+    //! beside one to clear the other
+    function gapClearance(length as Number) as Float {
+        return degreesAlong(length + cutWidth);
     }
 
     //! Sunrise round to sunrise, through dusk and dawn when they are known;

@@ -15,7 +15,9 @@ class HourHand {
         self.color = color;
     }
 
-    function draw(dc as Dc) as Void {
-        mark.draw(dc, Dial.positionOfMinute(Clock.minuteOfDay()), color);
+    //! After the noon mark, at noon, null for none: no gap of the hand's cuts
+    //! into its line
+    function draw(dc as Dc, noon as Float?) as Void {
+        mark.draw(dc, Dial.positionOfMinute(Clock.minuteOfDay()), color, noon);
     }
 }

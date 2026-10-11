@@ -66,7 +66,7 @@ class StatusBar {
 
         var iconsWidth = shownWidth();
 
-        gap = gapFor(count, chordAt(rowTop) - iconsWidth);
+        gap = gapFor(count, chordAt(rowTop) - iconsWidth, rowHeight);
         rowLeft = (Dial.screenWidth - (iconsWidth + ((count - 1) * gap))) / 2;
     }
 
@@ -120,9 +120,9 @@ class StatusBar {
     }
 
     //! Half an icon, giving way before the outermost item runs off the glass:
-    //! spare is the room the icons leave
-    private function gapFor(count as Number, spare as Number) as Number {
-        var preferred = rowHeight / GAP_DIVISOR;
+    //! spare is the room the icons leave, height the row's
+    function gapFor(count as Number, spare as Number, height as Number) as Number {
+        var preferred = height / GAP_DIVISOR;
 
         if (count < 2) {
             return preferred;
@@ -135,7 +135,7 @@ class StatusBar {
 
     //! The width of the screen at the row's top edge, the far one from the
     //! middle
-    private function chordAt(top as Number) as Number {
+    function chordAt(top as Number) as Number {
         var rim = Dial.rim;
         var fromMiddle = Dial.centerY - top;
 

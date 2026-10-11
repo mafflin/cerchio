@@ -14,12 +14,18 @@ class NoonMark {
     }
 
     function draw(dc as Dc) as Void {
+        var noon = position();
+
+        if (noon != null) {
+            mark.draw(dc, noon, DayColors.DAY, null);
+        }
+    }
+
+    //! On the dial, in degrees clockwise from the top; null until the sun is
+    //! known
+    function position() as Float? {
         var zenith = daylight.zenith();
 
-        if (zenith == null) {
-            return;
-        }
-
-        mark.draw(dc, Dial.positionOfMinute(zenith), DayColors.DAY);
+        return (zenith != null) ? Dial.positionOfMinute(zenith) : null;
     }
 }

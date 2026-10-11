@@ -48,6 +48,16 @@ class SecondsHand {
         drawnSecond = null;
     }
 
+    //! Where a second's dot sits, x and y, as last placed
+    function centerOf(second as Number) as Array<Number> {
+        return centers[second];
+    }
+
+    //! What a second's dot covers, left, top, right and bottom, as last placed
+    function boxOf(second as Number) as Array<Number> {
+        return boxes[second];
+    }
+
     function draw(dc as Dc) as Void {
         paint(dc, Clock.now().sec);
     }
