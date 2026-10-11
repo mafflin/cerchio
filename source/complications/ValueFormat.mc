@@ -78,6 +78,10 @@ module ValueFormat {
             return value.toFloat();
         }
 
+        if (value instanceof Lang.Long) {
+            return value.toFloat();
+        }
+
         if (value instanceof Lang.Number) {
             return value.toFloat();
         }
