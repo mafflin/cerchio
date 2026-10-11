@@ -18,7 +18,7 @@ or sunrise, its icon orange through dawn and dusk and a whole amber sun
 around solar noon.
 
 - A goal dot glides round from the top as your steps goal is done, a ring
-  until it is done and solid once it is
+  that turns orange once it is done
 - Set on the watch in Garmin's watch face editor: data fields, a color
   for the time and data, and an accent for the hour, the seconds and the
   goal dot

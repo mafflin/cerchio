@@ -64,7 +64,7 @@ module DaylightTest {
     (:test)
     function zenithWindow(logger as Test.Logger) as Boolean {
         var daylight = daylightWith(new LatitudeStub(50.0));
-        var reach = Daylight.ZENITH_MINUTES;
+        var reach = daylight.ZENITH_MINUTES;
 
         Approx.check(!daylight.isZenithAt(NOON), "not before the sun is known");
 
@@ -84,12 +84,13 @@ module DaylightTest {
     (:test)
     function zenithAcrossMidnight(logger as Test.Logger) as Boolean {
         var daylight = daylightWith(new LatitudeStub(50.0));
+        var reach = daylight.ZENITH_MINUTES;
 
         daylight.update(23 * 60, 60, NOON, 0.0);
 
         Approx.check(daylight.isZenithAt(0), "at midnight");
-        Approx.check(daylight.isZenithAt(Clock.MINUTES_PER_DAY - Daylight.ZENITH_MINUTES), "before midnight");
-        Approx.check(daylight.isZenithAt(Daylight.ZENITH_MINUTES), "after midnight");
+        Approx.check(daylight.isZenithAt(Clock.MINUTES_PER_DAY - reach), "before midnight");
+        Approx.check(daylight.isZenithAt(reach), "after midnight");
         Approx.check(!daylight.isZenithAt(NOON), "not at clock noon");
 
         return true;

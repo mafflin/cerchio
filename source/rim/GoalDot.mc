@@ -4,7 +4,8 @@ import Toybox.Lang;
 //! Progress to the goal: a dot just inside the circle against the glass,
 //! gliding round from the top a degree at a time as the goal is done. Not
 //! started and done are both at the top. A ring until the goal is done,
-//! solid once it is. Reads its own progress, as the wind its reading.
+//! in the twilight's color once it is, so it never reads as the seconds
+//! dot. Reads its own progress, as the wind its reading.
 class GoalDot {
 
     //! The dot's radius against the circle's line width, so it keeps to the
@@ -24,7 +25,7 @@ class GoalDot {
 
     //! Whole degrees clockwise from the top, null for none
     private var degrees as Number? = null;
-    private var isDone as Boolean = false;
+    private var share as Float = 0.0;
 
     private var progress as GoalProgress;
 
@@ -58,12 +59,17 @@ class GoalDot {
         }
 
         degrees = degreesOf(share);
-        isDone = (share >= 1.0);
+        self.share = share;
     }
 
     //! Whole degrees clockwise from the top; done is back at the top
     function degreesOf(share as Float) as Number {
         return Numbers.round(share * Dial.DEGREES_PER_CIRCLE) % Dial.DEGREES_PER_CIRCLE;
+    }
+
+    //! The accent until done, then the twilight's color
+    function colorOf(share as Float) as Number {
+        return (share >= 1.0) ? DayColors.TWILIGHT : color;
     }
 
     function draw(dc as Dc) as Void {
@@ -77,12 +83,7 @@ class GoalDot {
         var x = Dial.pointX(radians, radius);
         var y = Dial.pointY(radians, radius);
 
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-
-        if (isDone) {
-            dc.fillCircle(x, y, dotRadius);
-            return;
-        }
+        dc.setColor(colorOf(share), Graphics.COLOR_TRANSPARENT);
 
         // The pen reaches half its width either side of the radius.
         dc.setPenWidth(ringWidth);
