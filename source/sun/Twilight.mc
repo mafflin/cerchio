@@ -3,44 +3,35 @@ import Toybox.Math;
 import Toybox.Time;
 import Toybox.Time.Gregorian;
 
-//! Civil twilight, the sun 6° below the horizon. Garmin gives no dawn or
-//! dusk, so they come from the latitude and the date, either side of noon.
-//! Without a location the latitude comes from the day's length.
+//! Civil dawn and dusk, which Garmin doesn't give
 module Twilight {
 
-    //! The sun's altitude at dawn and dusk, degrees
+    //! Degrees
     const ALTITUDE = -6.0;
 
-    //! The sun's center at sunrise and sunset, refraction included, degrees
+    //! Degrees, refraction included
     const HORIZON = -0.833;
 
-    //! Closer to an equinox every latitude has a day of about 12 hours, so the
-    //! day's length says nothing about it; degrees, about five days
+    //! Degrees; near an equinox day length doesn't tell the latitude
     const MIN_DECLINATION = 2.0;
 
-    //! The earth's tilt, degrees
+    //! Degrees
     const TILT = 23.44;
 
     const DAYS_PER_YEAR = 365.0;
 
-    //! The winter solstice falls this many days before the year starts
+    //! Days from the winter solstice to January 1st
     const SOLSTICE_LEAD = 10;
 
-    //! The earth turns a degree in four minutes
     const MINUTES_PER_DEGREE = 4.0;
 
-    //! Noon round to midnight
     const HALF_DAY_DEGREES = 180.0;
 
-    //! Leap years ignored: a day off moves the sun under half a degree
+    //! Leap years ignored
     const DAYS_BEFORE_MONTH = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
-    //! From dawn to solar noon, and from noon to dusk. latitudeDegrees is
-    //! null when the watch does not know where it is; the day's length then
-    //! stands in, see latitudeOf(). sunDeclination is radians, today's from
-    //! declination(). Null when neither gives a latitude, or when the sun
-    //! never climbs that far; half a day when it never sinks that far, a
-    //! white night: dawn and dusk meet at midnight.
+    //! Dawn to noon; sunDeclination in radians. Null without a latitude or
+    //! twilight; half a day on a white night.
     function minutesFromNoon(dayLength as Number, latitudeDegrees as Float?, sunDeclination as Decimal) as Number? {
         var latitude = latitudeOf(latitudeDegrees, dayLength, sunDeclination);
 
@@ -57,8 +48,7 @@ module Twilight {
         return (hourAngle * MINUTES_PER_DEGREE).toNumber();
     }
 
-    //! Radians: where the watch is if it knows, what the day's length says
-    //! otherwise
+    //! Radians; falls back to the day's length
     function latitudeOf(degrees as Float?, dayLength as Number, sunDeclination as Decimal) as Decimal? {
         if (degrees != null) {
             return Math.toRadians(degrees);
@@ -67,9 +57,7 @@ module Twilight {
         return latitudeFromDayLength(dayLength, sunDeclination);
     }
 
-    //! Radians, the latitude whose sunrise and sunset lie this many minutes
-    //! apart. Solves cos(h)·cos(d)·cos(lat) + sin(d)·sin(lat) = sin(HORIZON);
-    //! of the two roots, the one on the globe.
+    //! Radians. Solves cos(h)·cos(d)·cos(lat) + sin(d)·sin(lat) = sin(HORIZON).
     function latitudeFromDayLength(dayLength as Number, sunDeclination as Decimal) as Decimal? {
         if (Math.toDegrees(sunDeclination).abs() < MIN_DECLINATION) {
             return null;
@@ -91,9 +79,7 @@ module Twilight {
         return (latitude.abs() <= (Math.PI / 2)) ? latitude : (middle - spread);
     }
 
-    //! Degrees the earth turns from noon until the sun is down to ALTITUDE;
-    //! all the way round to midnight when it never gets that low, null when
-    //! it never climbs that high
+    //! Degrees from noon to ALTITUDE; null if never that high
     function hourAngleOf(latitude as Decimal, sunDeclination as Decimal) as Decimal? {
         var cosine = (Math.sin(Math.toRadians(ALTITUDE)) - (Math.sin(latitude) * Math.sin(sunDeclination)))
             / (Math.cos(latitude) * Math.cos(sunDeclination));
@@ -109,7 +95,7 @@ module Twilight {
         return Math.toDegrees(Math.acos(cosine));
     }
 
-    //! How far north of the equator the sun stands today, radians
+    //! Radians
     function declination() as Decimal {
         var turn = 2 * Math.PI * (dayOfYear() + SOLSTICE_LEAD) / DAYS_PER_YEAR;
 

@@ -1,34 +1,27 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The face but the seconds, drawn off screen once a minute: a full update
-//! copies all of it, a partial update only the box round the seconds.
-//! The system may take the bitmap back; it is then made anew and redrawn.
-//! Out of date, it is what the screen last got, so still right to copy
-//! back under the seconds.
+//! Off screen face without the seconds. The system may reclaim the bitmap.
 class FaceBuffer {
 
     private const NO_MINUTE = -1;
 
     private var reference as BufferedBitmapReference? = null;
 
-    //! The Clock.minuteOfDay() it was last drawn for
     private var drawnMinute as Number = NO_MINUTE;
 
-    //! Whether the bitmap holds a face at all, however old
+    //! Holds a face, however old
     private var hasFace as Boolean = false;
 
     function initialize() {
     }
 
-    //! After Dial.setup()
     function prepare() as Void {
         reference = null;
         hasFace = false;
         invalidate();
     }
 
-    //! Draw it again before it is next used
     function invalidate() as Void {
         drawnMinute = NO_MINUTE;
     }
@@ -42,8 +35,7 @@ class FaceBuffer {
         hasFace = true;
     }
 
-    //! The face as last drawn, however old, neither made nor drawn here: a
-    //! partial update cannot afford either. Null when there is none.
+    //! Never creates or draws: partial updates can't afford it
     function lastDrawn() as BufferedBitmap? {
         var current = reference;
 
@@ -54,7 +46,7 @@ class FaceBuffer {
         return current.get() as BufferedBitmap?;
     }
 
-    //! Null when the graphics pool has no room for it
+    //! Null when the graphics pool is full
     function bitmap() as BufferedBitmap? {
         var current = reference;
 
@@ -66,7 +58,6 @@ class FaceBuffer {
             }
         }
 
-        // Lost or never made: whatever it held is gone.
         invalidate();
         hasFace = false;
         reference = Graphics.createBufferedBitmap({ :width => Dial.screenWidth, :height => Dial.screenHeight });

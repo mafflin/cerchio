@@ -3,37 +3,28 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-//! A data container below the time: whichever complication the user picked
-//! in the editor, its icon and its value as its FieldKind shows them. A
-//! Drawable so the editor can pulse it in place. DataFields says where its
-//! icon and value start, each draw.
+//! A Drawable so the editor can pulse it
 class ComplicationField extends WatchUi.Drawable {
 
-    //! Fixed, so a short value still leaves a tap target; a quarter of the
-    //! screen, centered on what the field shows
+    //! Fixed, so a short value still leaves a tap target
     private const WIDTH_RATIO = 0.25;
 
-    //! Past the icon and value on every side, for the smoothed edges
+    //! For the smoothed edges
     private const PADDING = 2;
 
-    //! Matches the slot id in watchface.xml
+    //! As in watchface.xml
     private var slotId as Number;
 
     private var complicationId as Complications.Id;
     private var text as String = "";
 
-    //! How the type is shown, made again only when the type moves; null
-    //! while nothing is known
     private var kind as FieldKind? = null;
     private var kindType as Complications.Type? = null;
     private var color as Number = Graphics.COLOR_WHITE;
 
-    //! Where the icon and value start, and how wide they are, as of the last
-    //! placement
     private var contentLeft as Number = 0;
     private var placedWidth as Number = 0;
 
-    //! defaultType shows until the user picks one
     function initialize(slotId as Number, defaultType as Complications.Type) {
         Drawable.initialize({ :identifier => slotId });
 
@@ -41,7 +32,6 @@ class ComplicationField extends WatchUi.Drawable {
         complicationId = new Complications.Id(defaultType);
     }
 
-    //! Once per layout: the row's height; across, placeContent() says
     function prepare(dc as Dc, centerY as Number) as Void {
         width = (Dial.screenWidth * WIDTH_RATIO).toNumber();
         height = IconText.heightIn(dc);
@@ -50,14 +40,12 @@ class ComplicationField extends WatchUi.Drawable {
         contentLeft = Dial.centerX;
     }
 
-    //! How wide the icon and value are now
     function contentWidth(dc as Dc) as Number {
         var shown = kind;
 
         return IconText.widthOf(dc, (shown != null) ? shown.icon() : null, text);
     }
 
-    //! The icon and value from left, the tap target centered on them
     function placeContent(left as Number, contentWidth as Number) as Void {
         contentLeft = left;
         placedWidth = contentWidth;
@@ -90,7 +78,6 @@ class ComplicationField extends WatchUi.Drawable {
         return (shown != null) && shown.followsClock();
     }
 
-    //! Read the complication's current value
     function refresh() as Void {
         var complication = ComplicationReader.read(complicationId);
 
@@ -104,7 +91,6 @@ class ComplicationField extends WatchUi.Drawable {
         text = kindOf(complication.getType()).text(complication);
     }
 
-    //! Also drawn by the editor while it pulses the field
     function draw(dc as Dc) as Void {
         var shown = kind;
 
@@ -116,8 +102,7 @@ class ComplicationField extends WatchUi.Drawable {
         IconText.draw(dc, contentLeft, locY.toNumber(), shown.icon(), text, color, shown.iconTint(color));
     }
 
-    //! The pixels the icon and value cover as last placed, left, top, right
-    //! and bottom; null for nothing
+    //! [left, top, right, bottom], null for nothing
     function contentBox() as Array<Number>? {
         if (placedWidth <= 0) {
             return null;
@@ -138,7 +123,6 @@ class ComplicationField extends WatchUi.Drawable {
         return [contentLeft - PADDING, top - PADDING, contentLeft + placedWidth + PADDING, bottom + PADDING];
     }
 
-    //! What the editor outlines and taps are tested against
     function getBoundingBox() as Graphics.BoundingBox {
         var boundingBox = new Graphics.BoundingBox();
         boundingBox.addRectangle(locX.toNumber(), locY.toNumber(), width.toNumber(), height.toNumber());
@@ -150,7 +134,7 @@ class ComplicationField extends WatchUi.Drawable {
         return getBoundingBox().includesPoint(x, y);
     }
 
-    //! The kind for a type, kept until the type moves
+    //! Cached until the type changes
     private function kindOf(type as Complications.Type?) as FieldKind {
         var current = kind;
 

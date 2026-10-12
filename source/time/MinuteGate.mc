@@ -1,7 +1,6 @@
 import Toybox.Lang;
 
-//! Lets a caller through once a minute, for readings asked for every draw
-//! that move no faster than the minute. Goes by the time the view read.
+//! Opens once per minute, by Clock's last read.
 class MinuteGate {
 
     private const NO_MINUTE = -1;
@@ -11,7 +10,6 @@ class MinuteGate {
     function initialize() {
     }
 
-    //! true the first time it is asked in each minute
     function opens() as Boolean {
         var minute = Clock.minuteOfDay();
 

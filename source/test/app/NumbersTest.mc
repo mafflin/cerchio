@@ -14,7 +14,6 @@ module NumbersTest {
         return true;
     }
 
-    //! Halves away from zero
     (:test)
     function round(logger as Test.Logger) as Boolean {
         Approx.checkEqual(Numbers.round(2.4), 2, "2.4");
@@ -36,7 +35,6 @@ module NumbersTest {
         return true;
     }
 
-    //! 22:00 to 02:00, across midnight
     (:test)
     function isBetweenAcrossZero(logger as Test.Logger) as Boolean {
         var from = 22 * Clock.MINUTES_PER_HOUR;

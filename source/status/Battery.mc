@@ -2,7 +2,6 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
 
-//! The charge as one of eleven bitmaps, orange when empty and amber when low.
 class Battery extends Icon {
 
     private const PERCENT_PER_LEVEL = 10;
@@ -10,11 +9,9 @@ class Battery extends Icon {
     private const LOW_LEVEL = 1;
     private const TOP_LEVEL = 10;
 
-    //! Both read against the black background
     private const EMPTY_COLOR = Palette.ORANGE;
     private const LOW_COLOR = Palette.AMBER;
 
-    //! One per level
     private var images as Array<ResourceId> = [
         Rez.Drawables.Battery0,
         Rez.Drawables.Battery10,
@@ -29,7 +26,6 @@ class Battery extends Icon {
         Rez.Drawables.Battery100
     ];
 
-    //! Read once a minute
     private var level as Number = EMPTY_LEVEL;
     private var minuteGate as MinuteGate;
 
@@ -38,8 +34,7 @@ class Battery extends Icon {
         minuteGate = new MinuteGate();
     }
 
-    //! Always shown. Read here, once a minute: the row asks every icon
-    //! before it draws.
+    //! Always shown; reads here, once a minute
     function isReporting(settings as System.DeviceSettings) as Boolean {
         if (minuteGate.opens()) {
             level = readLevel();
@@ -56,7 +51,6 @@ class Battery extends Icon {
         return tintFor(level, Icon.tint());
     }
 
-    //! Orange when empty, amber when low, the given color otherwise
     function tintFor(shownLevel as Number, plainColor as Number) as Number {
         if (shownLevel == EMPTY_LEVEL) {
             return EMPTY_COLOR;
@@ -69,7 +63,7 @@ class Battery extends Icon {
         return plainColor;
     }
 
-    //! A tenth of the charge, rounded down: 0 below 10%, 10 at full
+    //! 0 to 10
     function levelOf(percent as Float) as Number {
         var charge = percent.toNumber() / PERCENT_PER_LEVEL;
 

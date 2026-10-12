@@ -1,31 +1,26 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The seconds over the off screen face: a dot just inside the circle.
-//! Round, so it looks the same at every second; a bar turned on the pixel
-//! grid shows a different shape at each. Every second's place and box is
-//! worked out once per screen, so a tick only looks them up. In low power
-//! mode a partial update copies the face back over the old box and the new
-//! one, then draws.
+//! A dot: looks the same at every angle, unlike a bar. Positions are
+//! precomputed per screen.
 class SecondsHand {
 
     private const COUNT = Dial.SECONDS_PER_TURN;
 
-    //! The dot's radius, as a share of the glass's: 6px on a 260px screen
+    //! 6px on a 260px screen
     private const RADIUS_DIVISOR = 21;
 
-    //! Past the dot on every side, for the smoothed edges
+    //! For anti-aliased edges
     private const PADDING = 1;
 
     private var color as Number = Graphics.COLOR_WHITE;
     private var dotRadius as Number = 1;
 
-    //! Per second: the dot's center, x and y, and the box it fits in, left,
-    //! top, right and bottom
+    //! Per second: [x, y] and [left, top, right, bottom]
     private var centers as Array<Array<Number> >;
     private var boxes as Array<Array<Number> >;
 
-    //! Where it was last drawn, null when off screen
+    //! Null when not on screen
     private var drawnSecond as Number? = null;
 
     function initialize() {
@@ -33,7 +28,6 @@ class SecondsHand {
         boxes = new [COUNT] as Array<Array<Number> >;
     }
 
-    //! After Dial.setup(): the dot's outer edge the air inside the circle
     function place(circleInnerEdge as Number) as Void {
         dotRadius = Dial.rim / RADIUS_DIVISOR;
         placeAt(circleInnerEdge - Dial.air - dotRadius);
@@ -43,17 +37,15 @@ class SecondsHand {
         self.color = color;
     }
 
-    //! So the next tick does not lift it off a screen since repainted
+    //! After a full repaint
     function forget() as Void {
         drawnSecond = null;
     }
 
-    //! Where a second's dot sits, x and y, as last placed
     function centerOf(second as Number) as Array<Number> {
         return centers[second];
     }
 
-    //! What a second's dot covers, left, top, right and bottom, as last placed
     function boxOf(second as Number) as Array<Number> {
         return boxes[second];
     }
@@ -62,7 +54,6 @@ class SecondsHand {
         paint(dc, Clock.now().sec);
     }
 
-    //! Copy the face back over where it was and where it goes, then draw
     function drawPartial(dc as Dc, face as BufferedBitmap) as Void {
         var second = Clock.now().sec;
         var previous = drawnSecond;
@@ -81,7 +72,6 @@ class SecondsHand {
         dc.clearClip();
     }
 
-    //! Every second's center on one radius
     private function placeAt(radius as Number) as Void {
         for (var second = 0; second < COUNT; second++) {
             var radians = Dial.radiansOf(second * Dial.DEGREES_PER_SECOND);
@@ -103,7 +93,6 @@ class SecondsHand {
         drawnSecond = second;
     }
 
-    //! The box around both seconds
     private function clipAround(dc as Dc, first as Number, second as Number) as Void {
         var a = boxes[first];
         var b = boxes[second];
@@ -115,7 +104,6 @@ class SecondsHand {
         dc.setClip(left, top, right - left, bottom - top);
     }
 
-    //! The center grown by margin, cut down to the screen
     private function boxAround(x as Number, y as Number, margin as Number) as Array<Number> {
         return [
             Numbers.max(x - margin, 0),

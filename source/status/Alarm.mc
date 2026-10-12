@@ -1,7 +1,6 @@
 import Toybox.Lang;
 import Toybox.System;
 
-//! Shown while an alarm is set.
 class Alarm extends Icon {
 
     function initialize() {

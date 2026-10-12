@@ -1,12 +1,9 @@
 import Toybox.Complications;
 import Toybox.Lang;
 
-//! The weather: an icon for the conditions, beside the temperature, 12°.
-//! A dash when the temperature is not known. The complication's own value
-//! goes unread; all of it comes off the weather itself.
+//! Reads Weather directly; the complication's value goes unused
 class WeatherKind extends FieldKind {
 
-    //! Nothing known: the field still shows
     private const UNKNOWN = "--";
 
     private var conditionIcon as WeatherIcon;

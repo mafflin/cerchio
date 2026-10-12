@@ -1,8 +1,7 @@
 import Toybox.Lang;
 
-//! Colors the code names. All 64 color MIP safe.
+//! All MIP 64 color safe.
 module Palette {
-    //! Behind everything; no color the user picks is black
     const BACKGROUND = 0x000000;
 
     const AMBER = 0xFFAA00;

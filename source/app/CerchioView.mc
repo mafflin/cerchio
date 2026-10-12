@@ -4,12 +4,10 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-//! The watch face: owns the elements. Everything but the seconds is drawn
-//! off screen once a minute; an update copies it and adds the seconds dot.
+//! All but the seconds is drawn off screen once a minute.
 class CerchioView extends WatchUi.WatchFace {
 
-    //! Shares of the screen height: the line the status row mirrors, and the
-    //! data fields' drop below it
+    //! Shares of the screen height
     private const FRAME_RATIO = 0.66;
     private const FIELD_DROP_RATIO = 0.02;
 
@@ -28,15 +26,12 @@ class CerchioView extends WatchUi.WatchFace {
     private var needsBurnInProtection as Boolean = false;
     private var isAwake as Boolean = true;
 
-    //! Whether the system lets the seconds move every second in low power
-    //! mode; no longer once the power budget is exceeded
+    //! False once the power budget is exceeded
     private var partialUpdatesAllowed as Boolean = true;
 
-    //! Whether the native watch face editor started the face
     private var editMode as Boolean;
 
-    //! A data field has a new value the off screen face does not show yet;
-    //! only the row is drawn again for it
+    //! A field changed; only the row is redrawn
     private var rowStale as Boolean = false;
 
     function initialize(editMode as Boolean) {
@@ -56,13 +51,11 @@ class CerchioView extends WatchUi.WatchFace {
         editor = new Editor(fields);
     }
 
-    //! Size everything for this screen
     function onLayout(dc as Dc) as Void {
         needsBurnInProtection = Clock.settings().requiresBurnInProtection;
 
         Dial.setup(dc);
 
-        // The circle against the glass; the rest on the rim sized off it
         dayCircle.prepare();
         rimMark.prepare(dayCircle.width(), dayCircle.middle());
         secondsHand.place(dayCircle.inner());
@@ -71,8 +64,7 @@ class CerchioView extends WatchUi.WatchFace {
         faceBuffer.prepare();
         placeFrame(dc);
 
-        // The editor shows a snapshot; live updates are not worth the power.
-        // Before the settings: a saved pick then swaps the subscription.
+        // Before loadSettings(), which may swap subscriptions. None in the editor.
         if (!editMode) {
             subscribeToComplications();
         }
@@ -86,7 +78,6 @@ class CerchioView extends WatchUi.WatchFace {
 
         editor.apply(config, editedType);
 
-        // Live updates follow the picks; none in the editor.
         if (!editMode) {
             fields.follow(shown);
         }
@@ -95,7 +86,6 @@ class CerchioView extends WatchUi.WatchFace {
         redraw();
     }
 
-    //! The drawable the editor is about to pulse, null for none
     function getComplication(complication as ComplicationRef) as ComplicationDrawableRef? {
         var pulsed = editor.pulse(complication);
 
@@ -106,7 +96,6 @@ class CerchioView extends WatchUi.WatchFace {
         return pulsed;
     }
 
-    //! The slot under a tap, or null
     function getTappedComplication(x as Number, y as Number) as Number? {
         return fields.slotAt(x, y);
     }
@@ -139,7 +128,6 @@ class CerchioView extends WatchUi.WatchFace {
         drawSeconds(dc, face != null);
     }
 
-    //! Once a second in low power mode; has to stay within the power budget
     function onPartialUpdate(dc as Dc) as Void {
         if (isAlwaysOn() || !partialUpdatesAllowed) {
             return;
@@ -147,12 +135,9 @@ class CerchioView extends WatchUi.WatchFace {
 
         Clock.readTime();
 
-        // As last drawn, not drawn again: a whole face would eat the budget,
-        // and asleep the next full update is up to a minute off. A new data
-        // field value redraws only the row.
+        // Never redraw the whole face here: it would eat the power budget.
         var face = faceBuffer.lastDrawn();
 
-        // Nothing to put back under the old seconds.
         if (face == null) {
             return;
         }
@@ -166,14 +151,12 @@ class CerchioView extends WatchUi.WatchFace {
         secondsHand.drawPartial(dc, face);
     }
 
-    //! The seconds would freeze once the system stops calling onPartialUpdate,
-    //! so they come off the screen in low power mode instead
+    //! Hides the seconds asleep rather than freeze them
     function turnPartialUpdatesOff() as Void {
         partialUpdatesAllowed = false;
         WatchUi.requestUpdate();
     }
 
-    //! Back from another screen
     function onShow() as Void {
         resume();
     }
@@ -188,14 +171,12 @@ class CerchioView extends WatchUi.WatchFace {
         resume();
     }
 
-    //! Back from asleep or another screen: the off screen face may be from
-    //! before, and the fields may have missed updates meanwhile
+    //! Fields may have missed updates meanwhile
     private function resume() as Void {
         fields.refreshAll();
         redraw();
     }
 
-    //! The status row above the time mirrors the line the fields hang from
     private function placeFrame(dc as Dc) as Void {
         var frame = (Dial.screenHeight * FRAME_RATIO).toNumber();
         var top = frame + (Dial.screenHeight * FIELD_DROP_RATIO).toNumber();
@@ -204,7 +185,6 @@ class CerchioView extends WatchUi.WatchFace {
         statusBar.mirror(frame);
     }
 
-    //! Null without watch face configuration support: the defaults stand
     private function loadSettings() as Void {
         var settings = WatchFaceConfig.getSettings(null);
 
@@ -213,8 +193,6 @@ class CerchioView extends WatchUi.WatchFace {
         }
     }
 
-    //! Accent: the hour hand, the seconds dot and the goal dot. Data: the
-    //! time, the status row and the data fields.
     private function applyColors() as Void {
         var accent = editor.accentColor();
         var data = editor.dataColor();
@@ -226,7 +204,6 @@ class CerchioView extends WatchUi.WatchFace {
         fields.setColor(data);
     }
 
-    //! Something on the off screen face has changed
     private function redraw() as Void {
         faceBuffer.invalidate();
         WatchUi.requestUpdate();
@@ -241,7 +218,6 @@ class CerchioView extends WatchUi.WatchFace {
         return needsBurnInProtection && !isAwake;
     }
 
-    //! Only the time, straight on screen; the buffer is drawn again on waking
     private function drawAlwaysOn(dc as Dc) as Void {
         smooth(dc);
         paintBackground(dc);
@@ -251,8 +227,7 @@ class CerchioView extends WatchUi.WatchFace {
         secondsHand.forget();
     }
 
-    //! The off screen face, drawn anew when the minute has moved on; null
-    //! without room for it
+    //! Null without memory for it
     private function currentFace() as BufferedBitmap? {
         var face = faceBuffer.bitmap();
 
@@ -272,8 +247,7 @@ class CerchioView extends WatchUi.WatchFace {
         return face;
     }
 
-    //! The data fields alone, drawn again on the off screen face; the box
-    //! that changed, null for none
+    //! The changed box, or null
     private function redrawRow(face as BufferedBitmap) as Array<Number>? {
         var faceDc = face.getDc();
 
@@ -283,7 +257,6 @@ class CerchioView extends WatchUi.WatchFace {
         return fields.redraw(faceDc, editor.pulsedSlot());
     }
 
-    //! The row drawn again off screen, and copied to the screen
     private function copyRow(dc as Dc, face as BufferedBitmap) as Void {
         var box = redrawRow(face);
 
@@ -296,7 +269,6 @@ class CerchioView extends WatchUi.WatchFace {
         dc.clearClip();
     }
 
-    //! Everything but the seconds
     private function drawFace(dc as Dc) as Void {
         rowStale = false;
         smooth(dc);
@@ -311,8 +283,6 @@ class CerchioView extends WatchUi.WatchFace {
         timeDisplay.draw(dc);
     }
 
-    //! Solar noon in the day's color once the sun is known, then the hour in
-    //! the accent on top
     private function drawMarks(dc as Dc) as Void {
         var zenith = daylight.zenith();
 
@@ -323,11 +293,9 @@ class CerchioView extends WatchUi.WatchFace {
         rimMark.draw(dc, Dial.positionOfMinute(Clock.minuteOfDay()), editor.accentColor());
     }
 
-    //! Asleep, the hand shows only if a partial update can move it, which
-    //! takes the off screen face to copy back under it.
+    //! Asleep, only if partial updates can move it
     private function drawSeconds(dc as Dc, hasFace as Boolean) as Void {
         if (!isAwake && !(partialUpdatesAllowed && hasFace)) {
-            // Nothing on screen to lift off next tick.
             secondsHand.forget();
             return;
         }
@@ -336,7 +304,6 @@ class CerchioView extends WatchUi.WatchFace {
         secondsHand.draw(dc);
     }
 
-    //! Everything the draw reads, before anything draws
     private function refreshReadings() as Void {
         daylight.refresh();
 
@@ -345,7 +312,7 @@ class CerchioView extends WatchUi.WatchFace {
         goalDot.refresh();
     }
 
-    //! Once per dc: the dc between two updates is the system's
+    //! Per update: the system may hand over a fresh dc
     private function smooth(dc as Dc) as Void {
         dc.setAntiAlias(true);
     }

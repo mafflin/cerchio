@@ -5,7 +5,6 @@ import Toybox.Test;
 (:test)
 module SecondsHandTest {
 
-    //! Every box on screen and round its dot, the dot inside the circle
     (:test)
     function boxes(logger as Test.Logger) as Boolean {
         var sizes = Probe.screenSizes();
@@ -41,7 +40,6 @@ module SecondsHandTest {
         return true;
     }
 
-    //! Clockwise from the top
     (:test)
     function quarters(logger as Test.Logger) as Boolean {
         var circle = placedCircle(Probe.SMALL_SCREEN);
@@ -59,7 +57,6 @@ module SecondsHandTest {
         return true;
     }
 
-    //! A partial update lifts the dot off a face and draws it anew
     (:test)
     function drawsPartially(logger as Test.Logger) as Boolean {
         var circle = placedCircle(Probe.SMALL_SCREEN);

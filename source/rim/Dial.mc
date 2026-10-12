@@ -2,16 +2,15 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-//! The circle of the glass, and where a value on the dial lands on it.
+//! Screen geometry and dial positions
 module Dial {
 
     const DEGREES_PER_CIRCLE = 360;
     const HALF_TURN = DEGREES_PER_CIRCLE / 2;
 
-    //! Dial zero is at the top; screen zero is at three o'clock, counterclockwise
+    //! Screen zero is three o'clock, counterclockwise
     const TOP_DEGREES = 90;
 
-    //! Seconds run round the glass once a minute, from the top
     const SECONDS_PER_TURN = 60;
     const DEGREES_PER_SECOND = DEGREES_PER_CIRCLE / SECONDS_PER_TURN;
 
@@ -24,12 +23,11 @@ module Dial {
     var centerY as Number = 0;
     var rim as Number = 0;
 
-    //! The air things on the rim keep from each other, as a share of the
-    //! radius
+    //! Spacing between things on the rim
     const AIR_DIVISOR = 32;
     var air as Number = 0;
 
-    //! Before anything sizes itself off the glass
+    //! Call first
     function setup(dc as Dc) as Void {
         screenWidth = dc.getWidth();
         screenHeight = dc.getHeight();
@@ -39,14 +37,13 @@ module Dial {
         air = rim / AIR_DIVISOR;
     }
 
-    //! Degrees clockwise from the top. A float: a minute is a quarter degree.
+    //! Degrees clockwise from the top
     function positionOfMinute(minutes as Number) as Float {
         var degrees = MIDNIGHT_DEGREES + (minutes.toFloat() * DEGREES_PER_CIRCLE / Clock.MINUTES_PER_DAY);
 
         return (degrees >= DEGREES_PER_CIRCLE) ? (degrees - DEGREES_PER_CIRCLE) : degrees;
     }
 
-    //! The pixel at a screen angle and radius. Screen y grows downward.
     function pointX(radians as Decimal, radius as Numeric) as Number {
         return Numbers.round(centerX + (radius * Math.cos(radians)));
     }
@@ -55,7 +52,7 @@ module Dial {
         return Numbers.round(centerY - (radius * Math.sin(radians)));
     }
 
-    //! A dial value as a screen angle in radians
+    //! Dial degrees to screen radians
     function radiansOf(valueDegrees as Numeric) as Decimal {
         return Math.toRadians(TOP_DEGREES - valueDegrees);
     }

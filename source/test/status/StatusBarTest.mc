@@ -4,7 +4,6 @@ import Toybox.Test;
 (:test)
 module StatusBarTest {
 
-    //! The screen's width at a height, 2px kept clear each side
     (:test)
     function chord(logger as Test.Logger) as Boolean {
         var sizes = Probe.screenSizes();
@@ -26,8 +25,6 @@ module StatusBarTest {
         return true;
     }
 
-    //! Half the row's height, giving way down to 2px before the row runs off
-    //! the glass
     (:test)
     function gap(logger as Test.Logger) as Boolean {
         var bar = new StatusBar();
@@ -42,7 +39,6 @@ module StatusBarTest {
         return true;
     }
 
-    //! Whatever the watch reports, laid out and drawn without failing
     (:test)
     function draws(logger as Test.Logger) as Boolean {
         var sizes = Probe.screenSizes();

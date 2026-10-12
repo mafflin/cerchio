@@ -28,7 +28,6 @@ module FaceBufferTest {
         return true;
     }
 
-    //! The bitmap is made on first ask, and a face is there once drawn into
     (:test)
     function bitmapAndLastDrawn(logger as Test.Logger) as Boolean {
         var buffer = new FaceBuffer();

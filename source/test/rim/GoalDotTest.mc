@@ -2,7 +2,6 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Test;
 
-//! Not started and done are both at the top
 (:test)
 module GoalDotTest {
 
@@ -20,7 +19,6 @@ module GoalDotTest {
         return true;
     }
 
-    //! A ring in the accent until done, then in the twilight's color
     (:test)
     function color(logger as Test.Logger) as Boolean {
         var dot = new GoalDot();

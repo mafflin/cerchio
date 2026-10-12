@@ -5,7 +5,6 @@ import Toybox.Test;
 (:test)
 module ComplicationFieldTest {
 
-    //! A quarter of the screen wide, a line of the font high
     (:test)
     function prepared(logger as Test.Logger) as Boolean {
         var bitmap = Probe.screen(Probe.SMALL_SCREEN);
@@ -21,7 +20,6 @@ module ComplicationFieldTest {
         return true;
     }
 
-    //! The tap target centered on what the field shows
     (:test)
     function placed(logger as Test.Logger) as Boolean {
         var bitmap = Probe.screen(Probe.SMALL_SCREEN);

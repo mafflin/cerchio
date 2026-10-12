@@ -2,7 +2,6 @@ import Toybox.Complications;
 import Toybox.Lang;
 import Toybox.Test;
 
-//! Minutes in, whole hours rounded up out
 (:test)
 module HoursKindTest {
 

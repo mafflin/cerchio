@@ -2,25 +2,21 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-//! The row of status icons above the time. No settings: every icon shows
-//! whenever it has something to report - the wind whenever there is
-//! weather, a bare ring when it is unknown or calm.
+//! Status icons above the time; each shows when it has something to report
 class StatusBar {
 
-    //! Lifts the row so it and the data fields frame the time by eye
+    //! Optical lift
     private const LIFT_DIVISOR = 22;
 
-    //! Half an icon of air between items, down to MIN_GAP on a round screen
+    //! Half an icon, shrinking to fit the round screen
     private const GAP_DIVISOR = 2;
     private const MIN_GAP = 2;
     private const MARGIN = 2;
 
     private var icons as Array<Icon>;
 
-    //! The line below the time the row mirrors
     private var mirrorY as Number = 0;
 
-    //! Settled each draw
     private var rowLeft as Number = 0;
     private var rowTop as Number = 0;
     private var rowHeight as Number = 0;
@@ -43,7 +39,7 @@ class StatusBar {
         }
     }
 
-    //! Once per layout
+    //! The line below the time to mirror
     function mirror(y as Number) as Void {
         mirrorY = y;
     }
@@ -59,7 +55,6 @@ class StatusBar {
         drawIcons(dc);
     }
 
-    //! Size the row, centered, and the gap between its icons
     private function layOut(count as Number) as Void {
         rowHeight = tallestShown();
         rowTop = rowCenterY() - (rowHeight / 2);
@@ -70,7 +65,6 @@ class StatusBar {
         rowLeft = (Dial.screenWidth - (iconsWidth + ((count - 1) * gap))) / 2;
     }
 
-    //! Each centered on the row's middle
     private function drawIcons(dc as Dc) as Void {
         var middle = rowTop + (rowHeight / 2);
         var x = rowLeft;
@@ -87,8 +81,7 @@ class StatusBar {
         }
     }
 
-    //! The row's bottom as far from the top as the frame line is from the
-    //! bottom, lifted a touch
+    //! Mirrors the frame line
     private function rowCenterY() as Number {
         var screenHeight = Dial.screenHeight;
 
@@ -119,8 +112,7 @@ class StatusBar {
         return tallest;
     }
 
-    //! Half an icon, giving way before the outermost item runs off the glass:
-    //! spare is the room the icons leave, height the row's
+    //! spare: width left beside the icons
     function gapFor(count as Number, spare as Number, height as Number) as Number {
         var preferred = height / GAP_DIVISOR;
 
@@ -133,8 +125,7 @@ class StatusBar {
         return Numbers.max(Numbers.min(room, preferred), MIN_GAP);
     }
 
-    //! The width of the screen at the row's top edge, the far one from the
-    //! middle
+    //! Screen width at y = top, less margins
     function chordAt(top as Number) as Number {
         var rim = Dial.rim;
         var fromMiddle = Dial.centerY - top;
@@ -149,7 +140,6 @@ class StatusBar {
         return Numbers.min(chord, Dial.screenWidth);
     }
 
-    //! How many icons show this draw
     private function countShown() as Number {
         var settings = Clock.settings();
         var count = 0;

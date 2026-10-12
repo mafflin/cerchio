@@ -2,7 +2,6 @@ import Toybox.Lang;
 import Toybox.Test;
 import Toybox.Weather;
 
-//! One condition from each group, by day and by night
 (:test)
 module WeatherIconTest {
 
@@ -16,7 +15,6 @@ module WeatherIconTest {
         return true;
     }
 
-    //! A sun gives way to a moon, or to its cloud alone
     (:test)
     function turnsAtNight(logger as Test.Logger) as Boolean {
         checkImage(Weather.CONDITION_CLEAR, Rez.Drawables.WeatherSunny, Rez.Drawables.WeatherNight, "clear");
@@ -32,7 +30,6 @@ module WeatherIconTest {
         return true;
     }
 
-    //! No sun in them: the same day and night
     (:test)
     function sameAtNight(logger as Test.Logger) as Boolean {
         checkImage(Weather.CONDITION_CLOUDY, Rez.Drawables.WeatherCloudy, Rez.Drawables.WeatherCloudy, "cloudy");

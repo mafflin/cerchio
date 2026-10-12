@@ -2,8 +2,7 @@ import Toybox.Lang;
 import Toybox.Position;
 import Toybox.Test;
 
-//! Where the latitude comes from. In the simulator, set weather and a
-//! position (Simulation > Set Position) to see each source come in.
+//! Set weather and Simulation > Set Position to exercise each source
 (:test)
 module LatitudeTest {
 
@@ -29,9 +28,7 @@ module LatitudeTest {
         return true;
     }
 
-    //! The weather's location first, the last fix without it. Logs what the
-    //! simulator or watch has: null for both means twilight falls back on
-    //! the day's length.
+    //! Logs both; both null means twilight falls back on day length
     (:test)
     function weatherFirst(logger as Test.Logger) as Boolean {
         var weather = Latitude.weatherLatitude();
@@ -44,9 +41,7 @@ module LatitudeTest {
         return true;
     }
 
-    //! Weather that came in comes with where it was observed: without the
-    //! Positioning permission it comes without, and twilight never gets a
-    //! latitude. Passes on a watch or simulator without weather.
+    //! Needs the Positioning permission. Passes without weather
     (:test)
     function weatherHasPosition(logger as Test.Logger) as Boolean {
         var conditions = CurrentWeather.conditions();
@@ -65,8 +60,7 @@ module LatitudeTest {
         return true;
     }
 
-    //! Null until the watch has a fix (Simulation > Set Position), then on
-    //! the globe
+    //! Null until a fix
     (:test)
     function lastFix(logger as Test.Logger) as Boolean {
         var accuracy = Position.getInfo().accuracy;

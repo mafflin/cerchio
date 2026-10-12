@@ -3,17 +3,14 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Test;
 
-//! The row as the view lays it out, with whatever the simulator reports
-//! for its default fields, steps and the date. An empty field is made by
-//! pointing it at a complication no watch has.
+//! Uses the simulator's default fields
 (:test)
 module DataFieldsTest {
 
-    //! Between the two contents: the gap, less the padding either box keeps
+    //! Mirror DataFields and ComplicationField
     const GAP_RATIO = 0.03;
     const PADDING = 2;
 
-    //! Side by side, a gap between, centered as one
     (:test)
     function centeredAsOne(logger as Test.Logger) as Boolean {
         var sizes = Probe.screenSizes();
@@ -40,8 +37,6 @@ module DataFieldsTest {
         return true;
     }
 
-    //! A field with nothing takes no room and no gap: the other is centered
-    //! alone
     (:test)
     function emptyFieldTakesNoGap(logger as Test.Logger) as Boolean {
         var bitmap = Probe.screen(Probe.SMALL_SCREEN);
@@ -65,7 +60,6 @@ module DataFieldsTest {
         return true;
     }
 
-    //! What redraw() paints over: the old row and the new, or nothing
     (:test)
     function redrawBox(logger as Test.Logger) as Boolean {
         var bitmap = Probe.screen(Probe.SMALL_SCREEN);
@@ -98,7 +92,6 @@ module DataFieldsTest {
         return true;
     }
 
-    //! A tap on a field's target finds its slot
     (:test)
     function slots(logger as Test.Logger) as Boolean {
         var bitmap = Probe.screen(Probe.SMALL_SCREEN);

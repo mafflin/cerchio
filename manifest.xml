@@ -31,7 +31,7 @@
       <iq:product id="vivoactive6"/>
     </iq:products>
     <iq:permissions>
-      <!-- Without positioning permisson the weather comes with no location, and twilight has no latitude -->
+      <!-- Positioning: the weather's location gives twilight its latitude -->
       <iq:uses-permission id="ComplicationSubscriber"/>
       <iq:uses-permission id="Positioning"/>
     </iq:permissions>

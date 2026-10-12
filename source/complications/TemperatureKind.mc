@@ -1,7 +1,7 @@
 import Toybox.Complications;
 import Toybox.Lang;
 
-//! Always Celsius, whatever the watch shows; whole degrees in its unit
+//! Always comes in Celsius
 class TemperatureKind extends FieldKind {
 
     function initialize(resourceId as ResourceId?) {

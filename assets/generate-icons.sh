@@ -1,20 +1,7 @@
 #!/bin/sh
-# Regenerates the icon PNGs the build consumes from assets/icons/*.svg.
-#
-# Run from the repository root:
-#
-#     sh assets/generate-icons.sh
-#
-# The artwork is black on transparent, and the face tints it at draw time, so
-# every path is refilled white on the way through: an untinted icon has to be
-# visible on the black background, and a black one would not be. See Icon.draw.
-#
-# Two sizes, 24px in resources/ and 36px in resources-large-icons/ (the suns
-# and field icons 24px and 32px), selected by the resourcePath lines in
-# monkey.jungle. The small set is also flattened to hard edges, which the
-# large set is not - see the note above pair().
-#
-# Needs rsvg-convert (librsvg) and python3.
+# Regenerates the icon PNGs from assets/icons/*.svg. Run from the repo root.
+# Paths are refilled white; the face tints them. Small set (MIP) is
+# flattened, large set (AMOLED) is not. Needs rsvg-convert and python3.
 
 set -e
 
@@ -23,11 +10,9 @@ SMALL=resources/drawables
 LARGE=resources-large-icons/drawables
 FLATTEN=assets/flatten-alpha.py
 
-# Degrees to turn the artwork clockwise about its middle, or empty for none.
-# Only the wind sets it.
+# Degrees clockwise, wind only
 TURN=
 
-# The source with every path refilled white and the viewBox replaced.
 #   $1 source svg   $2 viewBox
 artwork() {
     sed -e "s|<path |<path fill=\"#FFFFFF\" ${TURN:+transform=\"rotate($TURN 12 12)\" }|g" \
@@ -35,9 +20,8 @@ artwork() {
         "$SRC/$1"
 }
 
-# One icon, at one size.
 #   $1 source svg   $2 destination png   $3 width   $4 height   $5 viewBox
-#   $6 "flat" to reduce the edges to on or off, empty to keep them
+#   $6 "flat" to flatten the alpha
 render() {
     mkdir -p "$(dirname "$2")"
 
@@ -50,16 +34,8 @@ render() {
     fi
 }
 
-# The square icons fill their 24 unit box, so they render as it stands.
 BOX="0 0 24 24"
 
-# One icon into both sizes.
-#
-# Only the small set is flattened. Those 24px icons are what the MIP devices
-# get, and a MIP panel holds 64 colours and cannot composite: it reduces an
-# alpha channel to on or off as it draws, badly, so the decision is taken
-# here instead. The 36px set keeps its edges, because the AMOLED screens it
-# goes to do composite them.
 #   $1 source svg   $2 path under drawables
 pair() {
     render "$1" "$SMALL/$2" 24 24 "$BOX" flat
@@ -74,11 +50,7 @@ for level in 0 10 20 30 40 50 60 70 80 90 100; do
     pair "battery/$level.svg" "battery/battery_$level.png"
 done
 
-# The wind: a ring with a wedge in it pointing where the wind goes, one
-# icon to each eighth of the compass, so each is drawn and flattened as it
-# stands rather than turned on the watch. Named for where the wind comes
-# from, as the weather gives it. The art points north, a wind from the
-# south, and is turned for the rest.
+# Named for where the wind comes from; the art points north.
 for direction in "n 180" "ne 225" "e 270" "se 315" "s 0" "sw 45" "w 90" "nw 135"; do
     set -- $direction
     TURN=$2
@@ -86,24 +58,10 @@ for direction in "n 180" "ne 225" "e 270" "se 315" "s 0" "sw 45" "w 90" "nw 135"
 done
 TURN=
 
-# The same ring alone, for a wind that is unknown or calm.
 pair wind/calm.svg wind/wind_calm.png
 
-# AM and PM are letters, not a symbol: the art is 18 units by 10 inside the
-# same 24 unit box, so rendering it square would leave a small pair of letters
-# in a lot of empty space. The box is cropped to the letters instead and
-# padded back out, which is what gives these two their own dimensions.
-#
-# The small box is the one the flattening cares about. Every edge in these two
-# glyphs sits on an odd unit - the stems run 3 to 5, 11 to 13, 15 to 17, 19 to
-# 21 - so at scale 1.5 from an odd origin every one of them lands on a whole
-# pixel and all five stems come out 3px. Off that grid they come out 3 and 4
-# about equally, which is what the letters used to do. 22 units by 14 is the
-# letters' own 18 by 10 plus 2 units of padding, and 1,5 is the odd origin.
-#
-# The large box is left as it was: nothing flattens it, so landing it on the
-# grid buys nothing, and moving it would resize the icon on every AMOLED
-# device. Those numbers are the letters' bounds grown to the ratio of 49:30.
+# Cropped to the letters. The small box puts every stem edge on a whole pixel
+# at scale 1.5, so the flattened stems come out even.
 MERIDIEM_SMALL="1 5 22 14"
 MERIDIEM_LARGE="1.684 5.684 20.632 12.632"
 
@@ -112,12 +70,7 @@ render meridiem/pm.svg "$SMALL/meridiem/pm.png" 33 21 "$MERIDIEM_SMALL" flat
 render meridiem/am.svg "$LARGE/meridiem/am.png" 49 30 "$MERIDIEM_LARGE"
 render meridiem/pm.svg "$LARGE/meridiem/pm.png" 49 30 "$MERIDIEM_LARGE"
 
-# The suns stand beside the digits of the sun field, FONT_TINY: 24px, where
-# a unit of the 24 unit art is a whole pixel, and 32px on the large screens,
-# a touch taller than the digits either way. A half sun on a horizon line
-# for both, over two lines for the sunrise, shown while the sun is down, and
-# an arrow down for the sunset, shown while it is up; the whole sun around
-# solar noon.
+# Sized to stand beside FONT_TINY digits
 render sun/sunrise.svg "$SMALL/sun/sunrise.png" 24 24 "$BOX" flat
 render sun/sunrise.svg "$LARGE/sun/sunrise.png" 32 32 "$BOX"
 render sun/sunset.svg "$SMALL/sun/sunset.png" 24 24 "$BOX" flat
@@ -125,10 +78,7 @@ render sun/sunset.svg "$LARGE/sun/sunset.png" 32 32 "$BOX"
 render sun/zenith.svg "$SMALL/sun/zenith.png" 24 24 "$BOX" flat
 render sun/zenith.svg "$LARGE/sun/zenith.png" 32 32 "$BOX"
 
-# The data fields' icons stand beside the same FONT_TINY digits as the
-# suns, so they take the suns' sizes; the sun field uses the suns
-# themselves. The battery is always the full one.
-#   $1 source svg   $2 name under field/
+# Same sizes as the suns
 field() {
     render "$1" "$SMALL/field/$2.png" 24 24 "$BOX" flat
     render "$1" "$LARGE/field/$2.png" 32 32 "$BOX"
@@ -147,10 +97,7 @@ field recovery.svg recovery
 field human.svg human
 field thermometer.svg thermometer
 
-# The weather field's conditions, one icon to a group of them, and a moon or
-# a bare cloud for the ones with a sun at night - WeatherIcon picks. These
-# are Material Design Icons (pictogrammers.com/library/mdi, Apache 2.0),
-# @mdi/svg 7.4.47, renamed without their weather- prefix.
+# Material Design Icons (Apache 2.0), @mdi/svg 7.4.47, weather- prefix dropped
 for name in \
     sunny night partly-cloudy night-partly-cloudy cloudy \
     rainy pouring partly-rainy snowy snowy-heavy partly-snowy \
@@ -160,11 +107,7 @@ for name in \
     field "weather/$name.svg" "weather/$name"
 done
 
-# The launcher icon is drawn by the system and never tinted, so it is not
-# flattened either: the system scales it to whatever each device asks for, and
-# that scaling wants the edges. It is white for the same reason as the rest,
-# the app list being dark. 65x65 is what fenix847mm asks for; a device wanting
-# another size scales it and warns at build time.
+# Never tinted, and scaled by the system, so not flattened. 65px: fenix847mm.
 render launcher_icon.svg "$SMALL/launcher_icon.png" 65 65 "$BOX"
 
 echo "Icons regenerated."

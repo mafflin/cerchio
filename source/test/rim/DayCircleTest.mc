@@ -4,8 +4,6 @@ import Toybox.Test;
 (:test)
 module DayCircleTest {
 
-    //! The line's outer edge against the glass, its weight growing with
-    //! the screen
     (:test)
     function geometry(logger as Test.Logger) as Boolean {
         var sizes = Probe.screenSizes();
@@ -28,8 +26,6 @@ module DayCircleTest {
         return true;
     }
 
-    //! Every kind of day drawn without failing: no sun, an ordinary day, a
-    //! white night where dawn and dusk meet, and no twilight
     (:test)
     function drawsEveryDay(logger as Test.Logger) as Boolean {
         var days = [

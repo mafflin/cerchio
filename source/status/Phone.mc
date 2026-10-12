@@ -1,7 +1,6 @@
 import Toybox.Lang;
 import Toybox.System;
 
-//! Shown while a phone is connected.
 class Phone extends Icon {
 
     function initialize() {

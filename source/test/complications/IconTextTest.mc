@@ -5,7 +5,6 @@ import Toybox.Test;
 (:test)
 module IconTextTest {
 
-    //! The icon and an eighth of it in air before digits; no air without
     (:test)
     function span(logger as Test.Logger) as Boolean {
         var icon = new Icon(Rez.Drawables.FieldSteps);
@@ -33,8 +32,6 @@ module IconTextTest {
         return true;
     }
 
-    //! The icon's middle on the digits' middle, the digits sitting at the
-    //! bottom of the font's ascent
     (:test)
     function iconOnDigits(logger as Test.Logger) as Boolean {
         var icon = new Icon(Rez.Drawables.FieldSteps);

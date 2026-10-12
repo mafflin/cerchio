@@ -1,11 +1,11 @@
 import Toybox.Lang;
 import Toybox.Test;
 
-//! Comparing worked out numbers, for the tests; left out of release builds
+//! Test assertions; not in release builds
 (:debug)
 module Approx {
 
-    //! Within tolerance; false for null
+    //! False for null
     function isNear(value as Decimal?, expected as Decimal, tolerance as Decimal) as Boolean {
         if (value == null) {
             return false;
@@ -27,7 +27,7 @@ module Approx {
         Test.assertMessage(isTrue, message);
     }
 
-    //! Exactly equal, both shown when not
+    //! Logs both on mismatch
     function checkEqual(actual as Object, expected as Object, message as String) as Void {
         Test.assertEqualMessage(actual, expected, message + ": got " + actual + ", expected " + expected);
     }

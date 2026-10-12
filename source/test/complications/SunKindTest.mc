@@ -2,8 +2,6 @@ import Toybox.Complications;
 import Toybox.Lang;
 import Toybox.Test;
 
-//! The system's sunset, before the dial knows the sun: seconds past
-//! midnight in, H:MM out by the 12/24 hour setting
 (:test)
 module SunKindTest {
 

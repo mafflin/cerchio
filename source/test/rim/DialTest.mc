@@ -3,13 +3,11 @@ import Toybox.Lang;
 import Toybox.Math;
 import Toybox.Test;
 
-//! Positions are degrees clockwise from the top; midnight is at the bottom
 (:test)
 module DialTest {
 
     const TOLERANCE = 0.001;
 
-    //! The rim is the smaller half
     (:test)
     function setup(logger as Test.Logger) as Boolean {
         var bitmap = Graphics.createBufferedBitmap({ :width => 260, :height => 200 }).get() as Graphics.BufferedBitmap;
@@ -45,7 +43,6 @@ module DialTest {
         return true;
     }
 
-    //! Screen y grows downward
     (:test)
     function points(logger as Test.Logger) as Boolean {
         Dial.centerX = 100;

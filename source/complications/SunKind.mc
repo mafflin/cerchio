@@ -1,12 +1,7 @@
 import Toybox.Complications;
 import Toybox.Lang;
 
-//! The sun's next turn as H:MM by the 12/24 hour setting: the sunset while
-//! the sun is up, beside a setting sun, and the sunrise while it is down,
-//! beside a rising one; the sun in the dial's twilight color through dawn
-//! and dusk, and a whole sun in its day color around solar noon.
-//! The sunset complication stands for it; the times are the dial's. Until
-//! they are known, the sunset as the system gives it.
+//! Next sunrise or sunset; the system sunset until the dial knows
 class SunKind extends FieldKind {
 
     private const CLOCK_FORMAT = "$1$:$2$";
@@ -15,7 +10,6 @@ class SunKind extends FieldKind {
     private var settingIcon as Icon;
     private var zenithIcon as Icon;
 
-    //! As of the last read
     private var isUp as Boolean = true;
     private var isTwilight as Boolean = false;
     private var isZenith as Boolean = false;
@@ -43,7 +37,6 @@ class SunKind extends FieldKind {
         return isTwilight ? DayColors.TWILIGHT : color;
     }
 
-    //! The sun turns whether or not the system sends anything
     function followsClock() as Boolean {
         return true;
     }
@@ -67,7 +60,7 @@ class SunKind extends FieldKind {
         return clockOf((up ? daylight.sunset() : daylight.sunrise()) as Number);
     }
 
-    //! The complication carries seconds past midnight
+    //! Seconds past midnight
     protected function format(value as Complications.Value, complication as Complications.Complication) as String {
         return clockOf(ValueFormat.wholeNumber(value) / Clock.SECONDS_PER_MINUTE);
     }

@@ -1,13 +1,11 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The time, centered, in the largest numeric system font.
 class TimeDisplay {
 
     private const TIME_FORMAT = "$1$$2$";
     private const FIELD_FORMAT = "%02d";
 
-    //! Garmin sizes it per device
     private const FONT = Graphics.FONT_NUMBER_THAI_HOT;
 
     private var color as Number = Graphics.COLOR_WHITE;

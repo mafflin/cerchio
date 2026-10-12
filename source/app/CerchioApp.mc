@@ -2,10 +2,8 @@ import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-//! Round watch face: the time in the middle.
 class CerchioApp extends Application.AppBase {
 
-    //! Whether the native watch face editor started the face
     private var editMode as Boolean = false;
 
     function initialize() {
@@ -22,7 +20,6 @@ class CerchioApp extends Application.AppBase {
     function onStop(state as Dictionary?) as Void {
     }
 
-    //! The delegate carries editor edits and the power budget notice
     function getInitialView() as [Views] or [Views, InputDelegates] {
         var view = new CerchioView(editMode);
 

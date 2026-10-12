@@ -4,7 +4,6 @@ import Toybox.Test;
 (:test)
 module ClockTest {
 
-    //! From a day either side
     (:test)
     function wrapMinutes(logger as Test.Logger) as Boolean {
         Approx.checkEqual(Clock.wrapMinutes(0), 0, "midnight");
@@ -16,7 +15,6 @@ module ClockTest {
         return true;
     }
 
-    //! Midnight and noon read as 12
     (:test)
     function twelveHour(logger as Test.Logger) as Boolean {
         Approx.checkEqual(Clock.twelveHour(0), 12, "midnight");
@@ -39,7 +37,6 @@ module ClockTest {
         return true;
     }
 
-    //! By the watch's 12/24 hour setting
     (:test)
     function displayHour(logger as Test.Logger) as Boolean {
         var is24Hour = Clock.settings().is24Hour;

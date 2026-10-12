@@ -2,15 +2,11 @@ import Toybox.Complications;
 import Toybox.Lang;
 import Toybox.System;
 
-//! What every kind of field formats with. The system hands over a number
-//! and sometimes a unit, and almost never formats: see the FieldKind
-//! subclasses for what each kind makes of it.
 module ValueFormat {
 
     const NOTHING = "";
     const DEGREE = "°";
 
-    //! The leading count as it is, the trailing one padded to two digits
     const LEADING_FORMAT = "%d";
     const TRAILING_FORMAT = "%02d";
 
@@ -20,7 +16,6 @@ module ValueFormat {
     const FAHRENHEIT_AT_ZERO = 32.0;
     const VALUE_UNIT_FORMAT = "$1$$2$";
 
-    //! The value with whatever unit the system supplied, if it is a string
     function withUnit(value as Complications.Value, unit as Complications.Unit or String or Null) as String {
         var text = number(value);
 
@@ -35,7 +30,6 @@ module ValueFormat {
         return Lang.format(VALUE_UNIT_FORMAT, [text, unit]);
     }
 
-    //! A float keeps a decimal
     function number(value as Complications.Value) as String {
         if ((value instanceof Lang.Float) || (value instanceof Lang.Double)) {
             return decimal(value).format(DECIMAL_FORMAT);
@@ -52,8 +46,6 @@ module ValueFormat {
         return rounded(decimal(value));
     }
 
-    //! Whole degrees in the watch's unit, from Celsius, which the system
-    //! always reports, with a degree mark
     function temperature(celsius as Float) as String {
         var degrees = celsius;
 
@@ -68,7 +60,6 @@ module ValueFormat {
         return Numbers.round(amount).format(LEADING_FORMAT);
     }
 
-    //! Zero if not a number at all
     function decimal(value as Complications.Value) as Float {
         if (value instanceof Lang.Float) {
             return value;

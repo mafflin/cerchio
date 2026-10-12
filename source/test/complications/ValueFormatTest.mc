@@ -6,7 +6,6 @@ import Toybox.Test;
 (:test)
 module ValueFormatTest {
 
-    //! Zero for anything not a number
     (:test)
     function decimal(logger as Test.Logger) as Boolean {
         Approx.checkEqual(ValueFormat.decimal(3), 3.0, "a number");
@@ -18,7 +17,6 @@ module ValueFormatTest {
         return true;
     }
 
-    //! Truncated, not rounded
     (:test)
     function wholeNumber(logger as Test.Logger) as Boolean {
         Approx.checkEqual(ValueFormat.wholeNumber(7), 7, "a number");
@@ -29,7 +27,6 @@ module ValueFormatTest {
         return true;
     }
 
-    //! A float keeps one decimal
     (:test)
     function number(logger as Test.Logger) as Boolean {
         Approx.checkEqual(ValueFormat.number(5), "5", "a number");
@@ -41,7 +38,6 @@ module ValueFormatTest {
         return true;
     }
 
-    //! Only a string unit is shown
     (:test)
     function withUnit(logger as Test.Logger) as Boolean {
         Approx.checkEqual(ValueFormat.withUnit(5, "km"), "5km", "a string");
@@ -52,7 +48,6 @@ module ValueFormatTest {
         return true;
     }
 
-    //! The trailing count padded, the leading one not
     (:test)
     function pair(logger as Test.Logger) as Boolean {
         Approx.checkEqual(ValueFormat.pair("$1$:$2$", 7, 5), "7:05", "padded");
@@ -72,7 +67,6 @@ module ValueFormatTest {
         return true;
     }
 
-    //! Celsius in, the watch's unit out
     (:test)
     function temperature(logger as Test.Logger) as Boolean {
         var isFahrenheit = Clock.settings().temperatureUnits == System.UNIT_STATUTE;

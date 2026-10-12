@@ -1,38 +1,19 @@
 #!/usr/bin/env python3
-"""Flatten a PNG's alpha channel to fully on or fully off.
+"""Flatten an RGBA PNG's alpha to on/off, stdin to stdout.
 
-Reads an RGBA PNG on stdin and writes one on stdout. A pixel at or above the
-cutoff comes out opaque white, everything else fully transparent; nothing in
-between survives.
-
-This is for the 24px icons, the ones that run on the MIP devices. Those
-panels hold 64 colours and cannot composite, so an eight bit alpha channel is
-no use to them: the watch reduces it to on or off as it draws, and it does a
-poor job - see the alarm bell, whose ring breaks apart. Deciding here instead
-means the artwork that ships is the artwork that appears.
-
-The AMOLED icons are left alone. Those screens do composite, and their edges
-are the reason they look right.
-
-Needs no third party modules: the images are small and the format is only
-used in its simplest form.
+For the 24px MIP icons: the watch's own flattening is poor.
 """
 
 import struct
 import sys
 import zlib
 
-# A pixel is kept when the glyph covers a little under half of it. Not half:
-# these strokes are two units wide on a 24 unit grid, so at 24px they are 2px
-# wide, and a stroke that thin loses a side to a cutoff of half. 128 thinned
-# the clock face inside the alarm and broke the phone's handset where it
-# crosses the diagonal; 160 dropped pixels out of the clock hands. Below about
-# 96 the bell's feet merge into its ring.
+# Under half, so 2px strokes keep both sides. 128 broke the alarm and phone;
+# below ~96 the bell's feet merge into its ring.
 CUTOFF = 112
 
 
 def read_rgba(data):
-    """Width, height and RGBA rows of an 8 bit RGBA PNG."""
     position, stream, width, height = 8, b"", None, None
 
     while position < len(data):
@@ -56,8 +37,7 @@ def read_rgba(data):
     previous = bytearray(stride)
     position = 0
 
-    # Undo the per row filter. rsvg-convert picks whichever it likes, so all
-    # five have to be handled.
+    # rsvg-convert may use any of the five row filters.
     for _ in range(height):
         method = raw[position]
         position += 1
@@ -91,11 +71,10 @@ def read_rgba(data):
 
 
 def flatten(width, rows):
-    """Every pixel opaque white or fully clear, nothing in between."""
     out = bytearray()
 
     for row in rows:
-        out.append(0)  # no filter: these rows are mostly runs already
+        out.append(0)  # no filter
 
         for x in range(width):
             if row[x * 4 + 3] >= CUTOFF:

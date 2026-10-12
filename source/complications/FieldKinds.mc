@@ -1,14 +1,9 @@
 import Toybox.Complications;
 import Toybox.Lang;
 
-//! The kind of field each complication type is shown as, and its icon. One
-//! case per type in watchface.xml, same order - the two lists are meant to
-//! stay in step. A type above minApiLevel cannot be named here, which keeps
-//! sleep score off both lists.
+//! Keep in step with watchface.xml, same order
 module FieldKinds {
 
-    //! A new kind for a type; the dates read as what they are and get the
-    //! plain kind without an icon, as does anything unknown
     function of(type as Complications.Type?) as FieldKind {
         if (type == null) {
             return new FieldKind(null);
@@ -32,8 +27,7 @@ module FieldKinds {
             case Complications.COMPLICATION_TYPE_WEEKLY_RUN_DISTANCE:  return new DistanceKind(Rez.Drawables.FieldRun);
         }
 
-        // The dates, COMPLICATION_TYPE_INVALID, and anything a later system
-        // adds
+        // Dates, invalid, unknown
         return new FieldKind(null);
     }
 }

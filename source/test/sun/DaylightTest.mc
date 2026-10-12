@@ -2,9 +2,7 @@ import Toybox.Lang;
 import Toybox.Math;
 import Toybox.Test;
 
-//! Daylight fed through update(): the sun, the minute and the declination
-//! given, the latitude from a stub. Dawn and dusk are checked against
-//! Twilight, which TwilightTest covers.
+//! Latitude stubbed; dawn and dusk checked against Twilight
 (:test)
 module DaylightTest {
 
@@ -12,7 +10,6 @@ module DaylightTest {
     const NOON = 12 * 60;
     const EIGHTEEN = 18 * 60;
 
-    //! Nothing worked out, and the latitude not asked for
     (:test)
     function sunUnknown(logger as Test.Logger) as Boolean {
         var stub = new LatitudeStub(50.0);
@@ -29,7 +26,7 @@ module DaylightTest {
         return true;
     }
 
-    //! 06:00 to 18:00 at 50° north, an equinox
+    //! 06:00–18:00, 50° N, equinox
     (:test)
     function ordinaryDay(logger as Test.Logger) as Boolean {
         var daylight = daylightWith(new LatitudeStub(50.0));
@@ -60,7 +57,7 @@ module DaylightTest {
         return true;
     }
 
-    //! 06:00 to 18:00: noon from 11:45 through 12:15
+    //! 06:00–18:00: noon 11:45–12:15
     (:test)
     function zenithWindow(logger as Test.Logger) as Boolean {
         var daylight = daylightWith(new LatitudeStub(50.0));
@@ -79,8 +76,7 @@ module DaylightTest {
         return true;
     }
 
-    //! Sunrise at 23:00, sunset at 01:00: noon at midnight, the window
-    //! across it
+    //! 23:00–01:00
     (:test)
     function zenithAcrossMidnight(logger as Test.Logger) as Boolean {
         var daylight = daylightWith(new LatitudeStub(50.0));
@@ -96,8 +92,7 @@ module DaylightTest {
         return true;
     }
 
-    //! Sunrise at 23:00, sunset at 13:00, as far west of a time zone's
-    //! middle as clocks get: noon, dawn and dusk wrap round midnight
+    //! 23:00–13:00: as far west in a time zone as clocks get
     (:test)
     function acrossMidnight(logger as Test.Logger) as Boolean {
         var rise = 23 * 60;
@@ -120,8 +115,7 @@ module DaylightTest {
         return true;
     }
 
-    //! 65° north at the June solstice: dawn and dusk meet at midnight, and
-    //! the night is twilight through
+    //! 65° N, June solstice: dawn and dusk meet at midnight
     (:test)
     function whiteNight(logger as Test.Logger) as Boolean {
         var rise = 150;
@@ -140,8 +134,7 @@ module DaylightTest {
         return true;
     }
 
-    //! A latitude whose twilight ends before sunrise does not fit the sun:
-    //! no dawn or dusk rather than wrong ones
+    //! A latitude that doesn't fit the sun: none rather than wrong
     (:test)
     function twilightShorterThanDay(logger as Test.Logger) as Boolean {
         var daylight = daylightWith(new LatitudeStub(0.0));
@@ -155,8 +148,6 @@ module DaylightTest {
         return true;
     }
 
-    //! The day's length stands in for the latitude, but says nothing near
-    //! an equinox
     (:test)
     function noLatitude(logger as Test.Logger) as Boolean {
         var declination = Math.toRadians(15.0);
@@ -178,7 +169,6 @@ module DaylightTest {
         return true;
     }
 
-    //! Asked for with the first sun, and not again until the sun moves
     (:test)
     function latitudeReadWithTheSun(logger as Test.Logger) as Boolean {
         var stub = new LatitudeStub(50.0);
@@ -197,8 +187,6 @@ module DaylightTest {
         return true;
     }
 
-    //! Unknown, it is asked for again after an hour, and dawn and dusk are
-    //! worked out once it comes, the sun unmoved
     (:test)
     function latitudeRetriedHourly(logger as Test.Logger) as Boolean {
         var stub = new LatitudeStub(null);
@@ -223,7 +211,6 @@ module DaylightTest {
         return true;
     }
 
-    //! The hour counts across midnight
     (:test)
     function latitudeRetriedAcrossMidnight(logger as Test.Logger) as Boolean {
         var stub = new LatitudeStub(null);
@@ -239,7 +226,6 @@ module DaylightTest {
         return true;
     }
 
-    //! The phone gone and no fix: the last known latitude stands
     (:test)
     function lastLatitudeStands(logger as Test.Logger) as Boolean {
         var stub = new LatitudeStub(50.0);
@@ -256,9 +242,7 @@ module DaylightTest {
         return true;
     }
 
-    //! Latitude.read() unless told otherwise: the whole way from the
-    //! weather or the fix to dawn. Set weather in the simulator, or it
-    //! checks only that nothing breaks.
+    //! Without simulator weather, only checks nothing breaks
     (:test)
     function defaultSource(logger as Test.Logger) as Boolean {
         var declination = Math.toRadians(15.0);
@@ -291,7 +275,7 @@ module DaylightTest {
     }
 }
 
-//! A latitude the test sets, counting how often it is read
+//! Counts reads
 (:debug)
 class LatitudeStub {
 

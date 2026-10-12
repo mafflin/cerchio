@@ -11,14 +11,11 @@ module Numbers {
         return (first > second) ? first : second;
     }
 
-    //! Rounded, not truncated: truncation always errs the same way
     function round(value as Decimal) as Number {
         return Math.round(value).toNumber();
     }
 
-    //! From one point on a circle clockwise up to, not including, the other;
-    //! the span may run across the circle's zero, as minutes past midnight
-    //! or degrees round the dial do
+    //! [from, to) on a circle; may wrap past zero
     function isBetween(value as Numeric, from as Numeric, to as Numeric) as Boolean {
         return (from <= to)
             ? ((value >= from) && (value < to))

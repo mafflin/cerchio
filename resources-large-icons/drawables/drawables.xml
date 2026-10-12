@@ -1,18 +1,4 @@
-<!--
-    The 36px status bar icons and the 32px suns and data field icons, for the
-    larger screens.
-
-    These ids deliberately repeat resources/drawables/drawables.xml: monkey.jungle
-    puts this directory after the base one on the resourcePath of every device
-    with a screen of 360x360 or larger, and a repeated id overrides the earlier
-    one. LauncherIcon is not listed, so it keeps the base declaration.
-
-    packingFormat is on each of them for the same reason as in the base file:
-    a tinted bitmap may not carry a palette.
-
-    "large-icons" is not a device qualifier, so nothing picks this directory up
-    on its own - only the resourcePath lines in monkey.jungle do.
--->
+<!-- Overrides the base ids on large screens, via monkey.jungle -->
 <drawables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <bitmap id="Alarm" filename="alarm/alarm.png" packingFormat="png" />
     <bitmap id="Phone" filename="phone/phone.png" packingFormat="png" />
@@ -30,7 +16,7 @@
     <bitmap id="Battery90" filename="battery/battery_90.png" packingFormat="png" />
     <bitmap id="Battery100" filename="battery/battery_100.png" packingFormat="png" />
 
-    <!-- Named for where the wind comes from, and the ring alone for none; Wind picks -->
+    <!-- Named for where the wind comes from -->
     <bitmap id="WindN" filename="wind/wind_n.png" packingFormat="png" />
     <bitmap id="WindNe" filename="wind/wind_ne.png" packingFormat="png" />
     <bitmap id="WindE" filename="wind/wind_e.png" packingFormat="png" />
@@ -61,7 +47,6 @@
     <bitmap id="FieldHuman" filename="field/human.png" packingFormat="png" />
     <bitmap id="FieldThermometer" filename="field/thermometer.png" packingFormat="png" />
 
-    <!-- The weather field's conditions; WeatherIcon picks -->
     <bitmap id="WeatherSunny" filename="field/weather/sunny.png" packingFormat="png" />
     <bitmap id="WeatherNight" filename="field/weather/night.png" packingFormat="png" />
     <bitmap id="WeatherPartlyCloudy" filename="field/weather/partly-cloudy.png" packingFormat="png" />

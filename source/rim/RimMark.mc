@@ -1,44 +1,33 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! A mark on the 24 hour dial: a line across the circle, twice as wide as
-//! the circle, reaching past it either side, over a fatter one in the
-//! background color that sets it apart from the circle and any mark under
-//! it. The hour hand and the noon mark are both drawn as one.
+//! A line across the circle over a background outline. The hour hand and
+//! the noon mark.
 class RimMark {
 
-    //! The line's width, as a multiple of the circle's
+    //! Multiples of the circle's width
     private const WIDTH_FACTOR = 2;
-
-    //! The outline's width, as a multiple of the circle's: half the circle's
-    //! width past the line on either side
     private const OUTLINE_FACTOR = 3;
 
     private var width as Number = 1;
     private var outlineWidth as Number = 1;
 
-    //! Where the line runs from and to, from the center; the round pen
-    //! reaches half its width past each
     private var innerEnd as Number = 0;
     private var outerEnd as Number = 0;
 
     function initialize() {
     }
 
-    //! After Dial.setup(): the circle's line width, and its middle from the
-    //! center
     function prepare(circleWidth as Number, circleMiddle as Number) as Void {
         width = circleWidth * WIDTH_FACTOR;
         outlineWidth = circleWidth * OUTLINE_FACTOR;
 
-        // Inside, past the circle's edge by half the air it keeps from its
-        // neighbors. Outside, well past the glass, which cuts it off: a long
-        // line keeps its direction where the ends are rounded to whole pixels.
+        // Far past the glass: a long line keeps its angle despite pixel
+        // rounding
         innerEnd = circleMiddle - (Dial.air / 2);
         outerEnd = Dial.rim * 2;
     }
 
-    //! At a dial position, in degrees clockwise from the top
     function draw(dc as Dc, position as Float, color as Number) as Void {
         var radians = Dial.radiansOf(position);
 

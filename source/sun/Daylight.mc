@@ -1,34 +1,26 @@
 import Toybox.Complications;
 import Toybox.Lang;
 
-//! Today's sunrise and sunset off the complications, solar noon halfway
-//! between, and dawn and dusk either side of noon. Read once a minute,
-//! worked out again only when the sun moves, or once the latitude comes
-//! in: asked for with the sun, and hourly until known.
+//! Today's sunrise, sunset, solar noon, dawn and dusk
 class Daylight {
 
-    //! Minutes past midnight, null when not known
+    //! Minutes past midnight
     private var sunriseMinute as Number? = null;
     private var sunsetMinute as Number? = null;
     private var dawnMinute as Number? = null;
     private var duskMinute as Number? = null;
 
-    //! Degrees, north positive, as twilight was last worked out for; null
-    //! when not known
+    //! Degrees, north positive
     private var latitudeDegrees as Float? = null;
 
-    //! Either side of solar noon, the time it counts as noon: long enough to
-    //! catch at a glance, short enough to stay a moment of the day
+    //! Either side of solar noon
     const ZENITH_MINUTES = 15;
 
-    //! Unknown, it is asked for again this often: the phone or a fix may
-    //! have come in meanwhile
+    //! Retry while unknown
     private const LATITUDE_RETRY_MINUTES = Clock.MINUTES_PER_HOUR;
 
-    //! The minute of the day it was last asked for, null before the first
     private var latitudeAskedMinute as Number? = null;
 
-    //! Answers a Float or null, see setLatitudeSource()
     private var latitudeSource as Method;
 
     private var sunriseId as Complications.Id;
@@ -42,7 +34,7 @@ class Daylight {
         latitudeSource = new Lang.Method(Latitude, :read);
     }
 
-    //! Once per full update; reads at most once a minute
+    //! At most once a minute
     function refresh() as Void {
         if (!minuteGate.opens()) {
             return;
@@ -51,15 +43,12 @@ class Daylight {
         update(minutesOf(sunriseId), minutesOf(sunsetId), Clock.minuteOfDay(), Twilight.declination());
     }
 
-    //! The sun as read at a minute of the day, sunDeclination being today's;
-    //! refresh() hands over to it, and a test calls it directly
+    //! sunDeclination in radians
     function update(sunrise as Number?, sunset as Number?, minute as Number, sunDeclination as Decimal) as Void {
         var sunMoved = (sunrise != sunriseMinute) || (sunset != sunsetMinute);
         var sunKnown = (sunrise != null) && (sunset != null);
 
-        // The latitude goes with the sun, not the minute: read every minute
-        // it would flap between the weather's station and the last fix, and
-        // dawn and dusk with it. Nothing to work out without the sun.
+        // Not every minute: it would flap between weather station and last fix.
         var cameIn = sunKnown && (sunMoved || isLatitudeDue(minute)) && readLatitude(minute);
 
         if (!sunMoved && !cameIn) {
@@ -71,8 +60,7 @@ class Daylight {
         refreshTwilight(sunDeclination);
     }
 
-    //! Where the latitude comes from, Latitude.read() unless a test says
-    //! otherwise: a method taking nothing and answering degrees or null
+    //! For tests; answers Float? degrees
     function setLatitudeSource(source as Method) as Void {
         latitudeSource = source;
     }
@@ -93,7 +81,6 @@ class Daylight {
         return duskMinute;
     }
 
-    //! Between sunrise and sunset; null while either is not known
     function isUpAt(minute as Number) as Boolean? {
         var rise = sunriseMinute;
         var set = sunsetMinute;
@@ -105,8 +92,6 @@ class Daylight {
         return Numbers.isBetween(minute, rise, set);
     }
 
-    //! From dawn to sunrise, or sunset to dusk; false while they are not
-    //! known
     function isTwilightAt(minute as Number) as Boolean {
         var rise = sunriseMinute;
         var set = sunsetMinute;
@@ -120,8 +105,6 @@ class Daylight {
         return Numbers.isBetween(minute, dawn, rise) || Numbers.isBetween(minute, set, dusk);
     }
 
-    //! Within ZENITH_MINUTES of solar noon, either side; false while it is
-    //! not known
     function isZenithAt(minute as Number) as Boolean {
         var noon = zenith();
 
@@ -132,7 +115,7 @@ class Daylight {
         return Numbers.isBetween(minute, Clock.wrapMinutes(noon - ZENITH_MINUTES), Clock.wrapMinutes(noon + ZENITH_MINUTES + 1));
     }
 
-    //! Solar noon, halfway from sunrise to sunset; null with either unknown
+    //! Solar noon
     function zenith() as Number? {
         var rise = sunriseMinute;
         var length = dayLength();
@@ -144,7 +127,7 @@ class Daylight {
         return Clock.wrapMinutes(rise + (length / 2));
     }
 
-    //! Minutes from sunrise to sunset, which may run across midnight
+    //! May run across midnight
     private function dayLength() as Number? {
         var rise = sunriseMinute;
         var set = sunsetMinute;
@@ -156,7 +139,6 @@ class Daylight {
         return Clock.wrapMinutes(set - rise);
     }
 
-    //! Unknown, and not asked for an hour
     private function isLatitudeDue(minute as Number) as Boolean {
         var asked = latitudeAskedMinute;
 
@@ -167,8 +149,7 @@ class Daylight {
         return (asked == null) || (Clock.wrapMinutes(minute - asked) >= LATITUDE_RETRY_MINUTES);
     }
 
-    //! Whether it came in. The watch has not moved just because the phone
-    //! is away: the last known latitude stands.
+    //! A missing reading keeps the last latitude
     private function readLatitude(minute as Number) as Boolean {
         var latitude = latitudeSource.invoke() as Float?;
 
@@ -183,7 +164,7 @@ class Daylight {
         return true;
     }
 
-    //! Twilight has to reach past sunrise and sunset, or the latitude is off
+    //! Twilight inside the day means a bad latitude
     private function refreshTwilight(sunDeclination as Decimal) as Void {
         dawnMinute = null;
         duskMinute = null;
@@ -205,7 +186,7 @@ class Daylight {
         duskMinute = Clock.wrapMinutes(noon + fromNoon);
     }
 
-    //! The complication carries seconds past midnight
+    //! The complication gives seconds
     private function minutesOf(id as Complications.Id) as Number? {
         var value = ComplicationReader.valueOf(id);
 

@@ -2,7 +2,7 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Test;
 
-//! Speeds in m/s as the weather gives them; the limits are 20 and 40 km/h
+//! Speeds in m/s
 (:test)
 module WindReadingTest {
 

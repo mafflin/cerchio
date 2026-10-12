@@ -1,7 +1,6 @@
 import Toybox.Lang;
 import Toybox.Test;
 
-//! Eighths clockwise from north, each 45° wide and centered on its point
 (:test)
 module WindTest {
 

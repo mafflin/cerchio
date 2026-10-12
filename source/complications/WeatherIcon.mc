@@ -2,13 +2,10 @@ import Toybox.Lang;
 import Toybox.Weather;
 import Toybox.WatchUi;
 
-//! The weather's conditions as one icon to a group of them. Between sunset
-//! and sunrise a sun gives way to a moon, or where there is no moonlit
-//! version, to its cloud alone. A question mark while the conditions are not
-//! known. The sun is the dial's; until it is known, it is day.
+//! At night a sun becomes a moon, or just its cloud
 class WeatherIcon extends Icon {
 
-    //! A Weather.CONDITION_*, null while not known
+    //! Weather.CONDITION_*
     private var condition as Number? = null;
 
     function initialize() {
@@ -19,15 +16,13 @@ class WeatherIcon extends Icon {
         self.condition = condition;
     }
 
-    //! Day or night is settled as it draws, so the icon turns at sunset
-    //! whenever the weather last came in
+    //! Day or night per draw, so it turns at sunset
     protected function bitmap() as BitmapResource {
         var isUp = Sun.daylight().isUpAt(Clock.minuteOfDay());
 
         return chooseResource(imageFor(condition, isUp == false));
     }
 
-    //! The image for a Weather.CONDITION_*, by day or night
     function imageFor(condition as Number?, night as Boolean) as ResourceId {
         if (condition == null) {
             return Rez.Drawables.WeatherUnknown;
@@ -112,7 +107,7 @@ class WeatherIcon extends Icon {
             case Weather.CONDITION_MIST:
                 return Rez.Drawables.WeatherFog;
 
-            // The hazy icon is a sun behind the haze
+            // The hazy icon has a sun
             case Weather.CONDITION_HAZY:
             case Weather.CONDITION_HAZE:
                 return night ? Rez.Drawables.WeatherFog : Rez.Drawables.WeatherHazy;
@@ -141,7 +136,6 @@ class WeatherIcon extends Icon {
                 return Rez.Drawables.WeatherCloudQuestion;
         }
 
-        // CONDITION_UNKNOWN, and anything a later system adds
         return Rez.Drawables.WeatherUnknown;
     }
 }

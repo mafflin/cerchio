@@ -3,12 +3,10 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.Test;
 
-//! The kinds that follow the watch's units. Each checks the unit the
-//! simulator is set to; switch units and run again for the other.
+//! Checks the simulator's units; switch and rerun for the other
 (:test)
 module UnitKindsTest {
 
-    //! Meters in
     (:test)
     function altitude(logger as Test.Logger) as Boolean {
         var kind = new AltitudeKindProbe();
@@ -21,7 +19,6 @@ module UnitKindsTest {
         return true;
     }
 
-    //! Meters in, one decimal out
     (:test)
     function distance(logger as Test.Logger) as Boolean {
         var kind = new DistanceKindProbe();
@@ -34,7 +31,6 @@ module UnitKindsTest {
         return true;
     }
 
-    //! Celsius in
     (:test)
     function temperature(logger as Test.Logger) as Boolean {
         var kind = new TemperatureKindProbe();

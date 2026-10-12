@@ -2,7 +2,6 @@ import Toybox.Complications;
 import Toybox.Lang;
 import Toybox.Test;
 
-//! A degree mark after each number
 (:test)
 module HighLowKindTest {
 
@@ -17,7 +16,7 @@ module HighLowKindTest {
         return true;
     }
 
-    //! A separator with digits behind it is inside the number
+    //! A separator followed by digits is a decimal point
     (:test)
     function decimals(logger as Test.Logger) as Boolean {
         var kind = new HighLowKindProbe();
@@ -29,7 +28,6 @@ module HighLowKindTest {
         return true;
     }
 
-    //! A watch that hands over one number
     (:test)
     function oneNumber(logger as Test.Logger) as Boolean {
         var kind = new HighLowKindProbe();

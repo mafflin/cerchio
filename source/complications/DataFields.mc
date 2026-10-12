@@ -2,21 +2,16 @@ import Toybox.Complications;
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! The data fields below the time, side by side and centered as one, so the
-//! row stays under the time whatever each shows: where they go, what they
-//! show, and the live updates that follow it.
+//! The fields below the time, centered as one row
 class DataFields {
 
-    //! Between one field's value and the next field's icon, as a share of
-    //! the screen width
     private const GAP_RATIO = 0.03;
 
     private var fields as Array<ComplicationField>;
 
     private var gap as Number = 0;
 
-    //! What the last draw covered, left, top, right and bottom; null for
-    //! nothing
+    //! [left, top, right, bottom] of the last draw
     private var drawnBox as Array<Number>? = null;
 
     function initialize() {
@@ -26,7 +21,6 @@ class DataFields {
         ] as Array<ComplicationField>;
     }
 
-    //! Once per layout: the row from top
     function prepare(dc as Dc, top as Number) as Void {
         var centerY = top + (IconText.heightIn(dc) / 2);
 
@@ -43,18 +37,15 @@ class DataFields {
         }
     }
 
-    //! All but the one in skippedSlot, which the editor draws while it pulses
-    //! it; null for none. Every field is placed, that one too.
+    //! skippedSlot: the one the editor pulses
     function draw(dc as Dc, skippedSlot as Number?) as Void {
         placeContents(dc);
         drawPlaced(dc, skippedSlot);
         drawnBox = contentBox();
     }
 
-    //! The row alone, drawn again over the face it was drawn on: what the
-    //! last draw covered is painted background, then the row drawn anew.
-    //! Nothing else on the face may lie in the row's box. Returns the box
-    //! that changed, null for none.
+    //! Only the row, over the drawn face; nothing else may overlap its box.
+    //! Returns the changed box.
     function redraw(dc as Dc, skippedSlot as Number?) as Array<Number>? {
         placeContents(dc);
 
@@ -75,14 +66,12 @@ class DataFields {
         return box;
     }
 
-    //! The field in a slot, null for any other slot
     function fieldFor(slotId as Number?) as ComplicationField? {
         var index = indexOf(slotId);
 
         return (index != null) ? fields[index] : null;
     }
 
-    //! The slot under a point, or null
     function slotAt(x as Number, y as Number) as Number? {
         for (var i = 0; i < fields.size(); i++) {
             if (fields[i].containsPoint(x, y)) {
@@ -93,7 +82,6 @@ class DataFields {
         return null;
     }
 
-    //! What each field shows, in order
     function shownIds() as Array<Complications.Id> {
         var ids = new [fields.size()] as Array<Complications.Id>;
 
@@ -104,7 +92,6 @@ class DataFields {
         return ids;
     }
 
-    //! Whether any field changed
     function refreshShowing(complicationId as Complications.Id) as Boolean {
         var changed = false;
 
@@ -118,7 +105,6 @@ class DataFields {
         return changed;
     }
 
-    //! Once a minute: the fields whose value moves with the time
     function refreshClocked() as Void {
         for (var i = 0; i < fields.size(); i++) {
             if (fields[i].followsClock()) {
@@ -127,7 +113,6 @@ class DataFields {
         }
     }
 
-    //! Every field read again, for a face that may have missed updates
     function refreshAll() as Void {
         for (var i = 0; i < fields.size(); i++) {
             fields[i].refresh();
@@ -140,8 +125,7 @@ class DataFields {
         }
     }
 
-    //! Live updates follow the picks, previous being shownIds() before them.
-    //! A pick another field still shows keeps its updates.
+    //! previous: shownIds() before the pick
     function follow(previous as Array<Complications.Id>) as Void {
         for (var i = 0; i < fields.size(); i++) {
             if (fields[i].shows(previous[i])) {
@@ -156,7 +140,6 @@ class DataFields {
         }
     }
 
-    //! Side by side, a gap between those that show anything, centered as one
     private function placeContents(dc as Dc) as Void {
         var count = fields.size();
         var widths = new [count] as Array<Number>;
@@ -187,7 +170,6 @@ class DataFields {
         }
     }
 
-    //! As placed: all but the one in skippedSlot
     private function drawPlaced(dc as Dc, skippedSlot as Number?) as Void {
         for (var i = 0; i < fields.size(); i++) {
             if (fields[i].getSlotId() != skippedSlot) {
@@ -196,7 +178,6 @@ class DataFields {
         }
     }
 
-    //! Every field's icon and value as placed, one box; null for nothing
     private function contentBox() as Array<Number>? {
         var box = null as Array<Number>?;
 
@@ -207,7 +188,6 @@ class DataFields {
         return box;
     }
 
-    //! The box round both, either of which may be null
     private function union(first as Array<Number>?, second as Array<Number>?) as Array<Number>? {
         if (first == null) {
             return second;

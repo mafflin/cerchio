@@ -1,8 +1,7 @@
 import Toybox.Complications;
 import Toybox.Lang;
 
-//! Minutes, whatever older docs say, as whole hours rounded up, so the last
-//! few minutes still count as 1: recovery time
+//! Comes in minutes, despite older docs; shown as hours rounded up
 class HoursKind extends FieldKind {
 
     private const HOUR = "h";

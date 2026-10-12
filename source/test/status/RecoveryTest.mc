@@ -2,7 +2,6 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Test;
 
-//! Amber past a day, orange past two
 (:test)
 module RecoveryTest {
 

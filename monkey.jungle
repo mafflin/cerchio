@@ -1,14 +1,8 @@
 project.manifest = manifest.xml
 project.typecheck = strict
 
-# Status bar icons come in two sizes: 24px in resources/, 36px in
-# resources-large-icons/.
-#
-# The split is by screen size rather than by display technology, because that
-# is what the build system can see.
-#
-# Setting resourcePath for any qualifier drops the implicit default, so base
-# has to name resources/ explicitly.
+# Larger icons on larger screens. Any qualifier's resourcePath drops the
+# implicit default, so base names resources/ explicitly.
 base.resourcePath = resources
 
 round-360x360.resourcePath = $(base.resourcePath);resources-large-icons

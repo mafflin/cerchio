@@ -1,7 +1,7 @@
 import Toybox.ActivityMonitor;
 import Toybox.Lang;
 
-//! Progress to the day's steps goal, read once a minute
+//! Steps goal progress
 class GoalProgress {
 
     private var shareDone as Float? = null;
@@ -11,7 +11,6 @@ class GoalProgress {
         minuteGate = new MinuteGate();
     }
 
-    //! Once per full update
     function refresh() as Void {
         if (!minuteGate.opens()) {
             return;
@@ -22,12 +21,11 @@ class GoalProgress {
         shareDone = shareOf(info.steps, info.stepGoal);
     }
 
-    //! 0 to 1; null without a goal
     function share() as Float? {
         return shareDone;
     }
 
-    //! 0 to 1, 1 past the goal; null without a goal
+    //! 0 to 1; null without a goal
     function shareOf(value as Number?, goal as Number?) as Float? {
         if ((value == null) || (goal == null) || (goal <= 0)) {
             return null;

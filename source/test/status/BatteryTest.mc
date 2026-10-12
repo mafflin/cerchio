@@ -5,7 +5,6 @@ import Toybox.Test;
 (:test)
 module BatteryTest {
 
-    //! A tenth of the charge, rounded down
     (:test)
     function levels(logger as Test.Logger) as Boolean {
         var battery = new Battery();
@@ -22,7 +21,6 @@ module BatteryTest {
         return true;
     }
 
-    //! Orange when empty, amber when low
     (:test)
     function tints(logger as Test.Logger) as Boolean {
         var battery = new Battery();

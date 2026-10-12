@@ -2,8 +2,7 @@ import Toybox.Complications;
 import Toybox.Lang;
 import Toybox.System;
 
-//! Meters whatever the watch shows, in its unit but without it; whole units,
-//! as fine as the altimeter knows
+//! Comes in meters; shown in the watch's unit, unitless
 class AltitudeKind extends FieldKind {
 
     private const FEET_PER_METER = 3.28084;

@@ -2,18 +2,14 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
 
-//! The wind in the status row: a ring with a wedge in it pointing where the
-//! wind goes, one bitmap to each eighth of the compass, strength said with
-//! color - see WindReading. The ring alone when the wind is unknown or calm,
-//! nothing without any weather.
+//! Ring with a direction wedge; bare ring when calm or unknown
 class Wind extends Icon {
 
-    //! An eighth of the compass, in degrees
+    //! Degrees
     private const EIGHTH = 45;
     private const EIGHTHS = 8;
 
-    //! One per eighth, clockwise from north, named for where the wind comes
-    //! from
+    //! Clockwise from north, named for where the wind comes from
     private var images as Array<ResourceId> = [
         Rez.Drawables.WindN,
         Rez.Drawables.WindNe,
@@ -25,10 +21,8 @@ class Wind extends Icon {
         Rez.Drawables.WindNw
     ];
 
-    //! No direction to point
     private var calmImage as ResourceId = Rez.Drawables.WindCalm;
 
-    //! Its own: nothing else reads the wind's strength
     private var windReading as WindReading;
 
     function initialize() {
@@ -36,8 +30,6 @@ class Wind extends Icon {
         windReading = new WindReading();
     }
 
-    //! Shown whenever there is weather, the ring alone for no wind. Read
-    //! here, once a minute: the row asks every icon before it draws.
     function isReporting(settings as System.DeviceSettings) as Boolean {
         windReading.refresh();
 
@@ -58,7 +50,7 @@ class Wind extends Icon {
         return windReading.colorFor(Icon.tint());
     }
 
-    //! The nearest eighth, 0 for north
+    //! 0 for north
     function eighthOf(bearing as Number) as Number {
         return ((bearing + (EIGHTH / 2)) / EIGHTH) % EIGHTHS;
     }

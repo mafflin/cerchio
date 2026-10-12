@@ -1,8 +1,7 @@
 import Toybox.Lang;
 import Toybox.Test;
 
-//! The time stays as Clock last read it until something reads again, so
-//! within a test the minute does not move
+//! Clock is cached, so the minute holds within a test
 (:test)
 module MinuteGateTest {
 

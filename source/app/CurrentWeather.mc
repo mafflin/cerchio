@@ -1,11 +1,9 @@
 import Toybox.Lang;
 import Toybox.Weather;
 
-//! The weather the phone last sent, for the weather field, the wind and the
-//! latitude
 module CurrentWeather {
 
-    //! Null on a watch without weather, or before the phone has sent any
+    //! Null without weather support or data
     function conditions() as Weather.CurrentConditions? {
         if (!(Toybox has :Weather)) {
             return null;

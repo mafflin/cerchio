@@ -1,4 +1,4 @@
-//! Editor slot ids; must match watchface.xml
+//! As in watchface.xml
 module SlotId {
     enum Value {
         LEFT = 1,
