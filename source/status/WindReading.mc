@@ -4,18 +4,19 @@ class WindReading {
 
     //! Speed comes in m/s, limits are km/h
     private const KMH_PER_MS = 3.6;
-    private const LIGHT_LIMIT_KMH = 20;
-    private const MODERATE_LIMIT_KMH = 40;
 
-    //! Rounds to 0 km/h
-    private const CALM_LIMIT_KMH = 0.5;
+    //! Beaufort 4, 6 and 8
+    private const MODERATE_FROM_KMH = 20;
+    private const STRONG_FROM_KMH = 39;
+    private const GALE_FROM_KMH = 62;
+
+    //! Beaufort 0
+    private const CALM_LIMIT_KMH = 1;
 
     private const LIGHT = 0;
     private const MODERATE = 1;
     private const STRONG = 2;
-
-    private const MODERATE_COLOR = Palette.AMBER;
-    private const STRONG_COLOR = Palette.ORANGE;
+    private const GALE = 3;
 
     private var weatherKnown as Boolean = false;
 
@@ -81,12 +82,16 @@ class WindReading {
     function colorAt(windSpeed as Numeric?, lightColor as Number) as Number {
         var strength = strengthFor(windSpeed);
 
+        if (strength == GALE) {
+            return DayColors.TWILIGHT;
+        }
+
         if (strength == STRONG) {
-            return STRONG_COLOR;
+            return DayColors.DAY;
         }
 
         if (strength == MODERATE) {
-            return MODERATE_COLOR;
+            return DayColors.NIGHT;
         }
 
         return lightColor;
@@ -100,14 +105,18 @@ class WindReading {
 
         var kmh = windSpeed * KMH_PER_MS;
 
-        if (kmh <= LIGHT_LIMIT_KMH) {
+        if (kmh < MODERATE_FROM_KMH) {
             return LIGHT;
         }
 
-        if (kmh <= MODERATE_LIMIT_KMH) {
+        if (kmh < STRONG_FROM_KMH) {
             return MODERATE;
         }
 
-        return STRONG;
+        if (kmh < GALE_FROM_KMH) {
+            return STRONG;
+        }
+
+        return GALE;
     }
 }

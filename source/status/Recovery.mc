@@ -2,14 +2,12 @@ import Toybox.Complications;
 import Toybox.Lang;
 import Toybox.System;
 
-//! Amber past a day, orange past two
+//! Sky blue past a day, amber past two, orange past three
 class Recovery extends Icon {
 
-    private const MODERATE_LIMIT_MINUTES = 1440;
-    private const LONG_LIMIT_MINUTES = 2880;
-
-    private const MODERATE_COLOR = Palette.AMBER;
-    private const LONG_COLOR = Palette.ORANGE;
+    private const DAY_MINUTES = 1440;
+    private const TWO_DAYS_MINUTES = 2880;
+    private const THREE_DAYS_MINUTES = 4320;
 
     private var recoveryId as Complications.Id;
 
@@ -38,12 +36,16 @@ class Recovery extends Icon {
     }
 
     function tintFor(remaining as Number, plainColor as Number) as Number {
-        if (remaining > LONG_LIMIT_MINUTES) {
-            return LONG_COLOR;
+        if (remaining > THREE_DAYS_MINUTES) {
+            return DayColors.TWILIGHT;
         }
 
-        if (remaining > MODERATE_LIMIT_MINUTES) {
-            return MODERATE_COLOR;
+        if (remaining > TWO_DAYS_MINUTES) {
+            return DayColors.DAY;
+        }
+
+        if (remaining > DAY_MINUTES) {
+            return DayColors.NIGHT;
         }
 
         return plainColor;

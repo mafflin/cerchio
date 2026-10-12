@@ -12,9 +12,12 @@ module RecoveryTest {
 
         Approx.checkEqual(recovery.tintFor(1, plain), plain, "a minute");
         Approx.checkEqual(recovery.tintFor(1440, plain), plain, "a day");
-        Approx.checkEqual(recovery.tintFor(1441, plain), Palette.AMBER, "past a day");
-        Approx.checkEqual(recovery.tintFor(2880, plain), Palette.AMBER, "two days");
-        Approx.checkEqual(recovery.tintFor(2881, plain), Palette.ORANGE, "past two days");
+        Approx.checkEqual(recovery.tintFor(1441, plain), DayColors.NIGHT, "past a day");
+        Approx.checkEqual(recovery.tintFor(2880, plain), DayColors.NIGHT, "two days");
+        Approx.checkEqual(recovery.tintFor(2881, plain), DayColors.DAY, "past two days");
+        Approx.checkEqual(recovery.tintFor(4320, plain), DayColors.DAY, "three days");
+        Approx.checkEqual(recovery.tintFor(4321, plain), DayColors.TWILIGHT, "past three days");
+        Approx.checkEqual(recovery.tintFor(5760, plain), DayColors.TWILIGHT, "four days");
 
         return true;
     }
