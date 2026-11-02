@@ -101,8 +101,14 @@ class CerchioView extends WatchUi.WatchFace {
     }
 
     function onComplicationChange(complicationId as Complications.Id) as Void {
-        if (fields.refreshShowing(complicationId)) {
-            rowStale = true;
+        if (!fields.refreshShowing(complicationId)) {
+            return;
+        }
+
+        rowStale = true;
+
+        // Asleep, partial updates or the next minute pick up the row.
+        if (isAwake) {
             WatchUi.requestUpdate();
         }
     }
