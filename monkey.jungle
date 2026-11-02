@@ -5,7 +5,6 @@ project.typecheck = strict
 # implicit default, so base names resources/ explicitly.
 base.resourcePath = resources
 
-round-360x360.resourcePath = $(base.resourcePath);resources-large-icons
 round-390x390.resourcePath = $(base.resourcePath);resources-large-icons
 round-416x416.resourcePath = $(base.resourcePath);resources-large-icons
 round-454x454.resourcePath = $(base.resourcePath);resources-large-icons
