@@ -49,6 +49,14 @@ module ClockTest {
     }
 
     (:test)
+    function settingsAfterRead(logger as Test.Logger) as Boolean {
+        Clock.read();
+        Approx.check(Clock.settings() != null, "fetched after a read");
+
+        return true;
+    }
+
+    (:test)
     function minuteOfDay(logger as Test.Logger) as Boolean {
         var time = Clock.now();
 

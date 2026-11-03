@@ -1,7 +1,7 @@
 import Toybox.Lang;
 import Toybox.System;
 
-//! The one place time and device settings are read, once per update.
+//! The one place time and device settings are read, at most once per update.
 module Clock {
 
     const HOURS_PER_HALF_DAY = 12;
@@ -12,11 +12,15 @@ module Clock {
 
     //! Null before the first read()
     var time as System.ClockTime? = null;
+
+    //! Null until first asked for after a read()
     var deviceSettings as System.DeviceSettings? = null;
 
+    //! Settings are fetched on first use: most updates awake only copy the
+    //! drawn face and need none
     function read() as Void {
         readTime();
-        deviceSettings = System.getDeviceSettings();
+        deviceSettings = null;
     }
 
     //! For partial updates
@@ -33,11 +37,14 @@ module Clock {
     }
 
     function settings() as System.DeviceSettings {
-        if (deviceSettings == null) {
-            read();
+        var current = deviceSettings;
+
+        if (current == null) {
+            current = System.getDeviceSettings();
+            deviceSettings = current;
         }
 
-        return deviceSettings as System.DeviceSettings;
+        return current;
     }
 
     function minuteOfDay() as Number {
