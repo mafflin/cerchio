@@ -40,7 +40,6 @@
     <bitmap id="FieldTimer" filename="field/timer.png" packingFormat="png" />
     <bitmap id="FieldAltitude" filename="field/altitude.png" packingFormat="png" />
     <bitmap id="FieldNotifications" filename="field/notifications.png" packingFormat="png" />
-    <bitmap id="FieldHeart" filename="field/heart.png" packingFormat="png" />
     <bitmap id="FieldRun" filename="field/run.png" packingFormat="png" />
     <bitmap id="FieldBike" filename="field/bike.png" packingFormat="png" />
     <bitmap id="FieldRecovery" filename="field/recovery.png" packingFormat="png" />

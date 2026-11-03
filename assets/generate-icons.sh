@@ -90,7 +90,6 @@ field steps.svg steps
 field timer.svg timer
 field altitude.svg altitude
 field notifications.svg notifications
-field heart.svg heart
 field run.svg run
 field bike.svg bike
 field recovery.svg recovery

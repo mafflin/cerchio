@@ -107,7 +107,7 @@ class CerchioView extends WatchUi.WatchFace {
 
         rowStale = true;
 
-        // Asleep, partial updates or the next minute pick up the row.
+        // Asleep, the next minute picks up the row.
         if (isAwake) {
             WatchUi.requestUpdate();
         }
@@ -141,7 +141,8 @@ class CerchioView extends WatchUi.WatchFace {
 
         Clock.readTime();
 
-        // Never redraw the whole face here: it would eat the power budget.
+        // Only the seconds here: redrawing the row too cost twice the power
+        // budget while the dot was near the top.
         var face = faceBuffer.lastDrawn();
 
         if (face == null) {
@@ -149,11 +150,6 @@ class CerchioView extends WatchUi.WatchFace {
         }
 
         smooth(dc);
-
-        if (rowStale) {
-            copyRow(dc, face);
-        }
-
         secondsHand.drawPartial(dc, face);
     }
 
@@ -253,26 +249,12 @@ class CerchioView extends WatchUi.WatchFace {
         return face;
     }
 
-    //! The changed box, or null
-    private function redrawRow(face as BufferedBitmap) as Array<Number>? {
+    private function redrawRow(face as BufferedBitmap) as Void {
         var faceDc = face.getDc();
 
         rowStale = false;
         smooth(faceDc);
-
-        return fields.redraw(faceDc, editor.pulsedSlot());
-    }
-
-    private function copyRow(dc as Dc, face as BufferedBitmap) as Void {
-        var box = redrawRow(face);
-
-        if (box == null) {
-            return;
-        }
-
-        dc.setClip(box[0], box[1], box[2] - box[0], box[3] - box[1]);
-        dc.drawBitmap(0, 0, face);
-        dc.clearClip();
+        fields.redraw(faceDc, editor.pulsedSlot());
     }
 
     private function drawFace(dc as Dc) as Void {

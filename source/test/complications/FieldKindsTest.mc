@@ -24,7 +24,6 @@ module FieldKindsTest {
     function plainKindsWithIcon(logger as Test.Logger) as Boolean {
         checkPlain(Complications.COMPLICATION_TYPE_BODY_BATTERY, true, "body battery");
         checkPlain(Complications.COMPLICATION_TYPE_CALORIES, true, "calories");
-        checkPlain(Complications.COMPLICATION_TYPE_HEART_RATE, true, "heart rate");
         checkPlain(Complications.COMPLICATION_TYPE_INTENSITY_MINUTES, true, "intensity minutes");
         checkPlain(Complications.COMPLICATION_TYPE_NOTIFICATION_COUNT, true, "notifications");
         checkPlain(Complications.COMPLICATION_TYPE_STEPS, true, "steps");
